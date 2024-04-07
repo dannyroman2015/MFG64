@@ -3,4 +3,12 @@
 
 <button hx-get="/about" hx-swap="outerHTML">about</button>
 
+<a href="/about">about too</a>
+
+
+<input type="text" name="message" placeholder="nhap" hx-get="/change">
+
+
+<button hx-delete="/contact/trung" hx-target="body" hx-push-url="true" hx-confirm="are your suer">delete</button>
+
 {{template "footer" .Title}}
