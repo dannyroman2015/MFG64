@@ -1,0 +1,6 @@
+
+<h1 class="a">{{.Title}}</h1>
+
+<button hx-get="/about" hx-swap="outerHTML">about</button>
+
+{{template "footer" .Title}}
