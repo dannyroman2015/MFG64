@@ -39,7 +39,7 @@ func main() {
 		})
 	})
 
-	app.Listen(":8000")
+	app.Listen("0.0.0.0:8000")
 }
 
 type Person struct {
