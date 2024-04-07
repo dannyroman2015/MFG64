@@ -39,7 +39,7 @@ func main() {
 		})
 	})
 
-	app.Listen("localhost:3000")
+	app.Listen(":8000")
 }
 
 type Person struct {
