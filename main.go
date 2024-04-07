@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"os"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/template/html/v2"
@@ -39,7 +40,7 @@ func main() {
 		})
 	})
 
-	app.Listen("0.0.0.0:8000")
+	app.Listen(getPort())
 }
 
 type Person struct {
@@ -49,4 +50,14 @@ type Person struct {
 
 func (c Person) Show(s string) string {
 	return c.Name + " yeu " + s
+}
+func getPort() string {
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = ":3000"
+	} else {
+		port = ":" + port
+	}
+
+	return port
 }
