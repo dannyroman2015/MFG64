@@ -52,7 +52,7 @@ func main() {
 		return c.Redirect("/", fiber.StatusSeeOther)
 	})
 	app.Get("/change", func(c *fiber.Ctx) error {
-		log.Println("change")
+		log.Println(c.FormValue("message"))
 		return c.SendString(c.FormValue("message"))
 	})
 
