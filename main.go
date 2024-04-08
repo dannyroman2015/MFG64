@@ -35,6 +35,11 @@ func main() {
 		}, "layout")
 	}).Name("index")
 
+	app.Get("/dashboard", func(c *fiber.Ctx) error {
+		log.Println("enter dashboard")
+		return c.Render("dashboard", nil, "layout")
+	}).Name("dashboard")
+
 	app.Get("/about", func(c *fiber.Ctx) error {
 		return c.Render("about", fiber.Map{
 			"Title": "About",
