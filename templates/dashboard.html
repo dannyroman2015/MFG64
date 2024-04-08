@@ -1,162 +1,28 @@
-<div id="main-container">
-  <div id="value-container">
-    <div class="container is-fluid">
-      <a href="">Value</a>
-      <ul class="is-inline is-inline-block">
-        <li>YTD</li>
-        <li>MTD</li>
-        <li>Yesterday</li>
-        <li>Now</li>
-      </ul>
-    </div>
-    
- </div>
-
-  <div id="tiendokhung">the
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tienkhung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tienkhung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    o doi tien do
-  </div>
-
-  <div id="tieptheo">
-    khung tiep theo
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tienkhung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tienkhung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tienkhung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tienkhung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tienkhung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tienkhung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tienkhung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tienkhung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-    khung do gia tri tien
-  </div>
+<div>
+  <canvas id="myChart"></canvas>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+  const ctx = document.getElementById('myChart');
+
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+      datasets: [{
+        label: '# of Votes',
+        data: [12, 19, 3, 5, 2, 3],
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+</script>
