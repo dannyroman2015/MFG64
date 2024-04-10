@@ -1,12 +1,61 @@
-<div id="navigation">
-  <a href="">Brand</a>
+<nav class="navbar is-link has-shadow" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    <a class="navbar-item" href="https://bulma.io">
+      <img src="/static/images/logo.png" alt="brand-logo">
+    </a>
 
-  <span>list</span>
+    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a>
+  </div>
 
-  <span>user</span>
+  <div id="" class="navbar-menu">
+    <div class="navbar-start">
+      <a class="navbar-item">
+        Home
+      </a>
 
-  <button>
-    <span id="navbar-toggle-icon">menu icon</span>
-  </button>
+      <a class="navbar-item">
+        Placeholder1
+      </a>
 
-</div>
+      <div class="navbar-item has-dropdown is-hoverable">
+        <a class="navbar-link">
+          More
+        </a>
+
+        <div class="navbar-dropdown">
+          <a class="navbar-item">
+            Placeholder2
+          </a>
+          <a class="navbar-item is-selected">
+            Placeholder3
+          </a>
+          <a class="navbar-item">
+            Placeholder4
+          </a>
+          <hr class="navbar-divider">
+          <a class="navbar-item">
+            Placeholder5
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="navbar-end">
+      <div class="navbar-item">
+        <div class="buttons">
+          <a class="button is-primary">
+            <strong>Sign up</strong>
+          </a>
+          <a class="button is-light">
+            Log in
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
