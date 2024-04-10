@@ -13,11 +13,11 @@ import (
 
 func main() {
 	// init db connection
-	conn, err := sql.Open("postgres", "postgresql://postgres:kbEviyUjJecPLMxXRNweNyvIobFzCZAQ@monorail.proxy.rlwy.net:27572/railway")
-	if err != nil {
-		panic(err)
-	}
-	defer conn.Close()
+	// conn, err := sql.Open("postgres", "postgresql://postgres:kbEviyUjJecPLMxXRNweNyvIobFzCZAQ@monorail.proxy.rlwy.net:27572/railway")
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// defer conn.Close()
 
 	// init server app
 	engine := html.New("./templates", ".html")
@@ -37,7 +37,39 @@ func main() {
 
 	app.Get("/dashboard", func(c *fiber.Ctx) error {
 		log.Println("enter dashboard")
-		return c.Render("dashboard", nil, "layout")
+
+		conn, err := sql.Open("postgres", "postgresql://postgres:kbEviyUjJecPLMxXRNweNyvIobFzCZAQ@monorail.proxy.rlwy.net:27572/railway")
+		if err != nil {
+			panic(err)
+		}
+		defer conn.Close()
+
+		rows, err := conn.Query("SELECT bophan FROM tbl")
+		if err != nil {
+			panic(err)
+		}
+		var bp []string
+		var dint []int
+		for rows.Next() {
+			var version string
+			rows.Scan(&version)
+			bp = append(bp, version)
+		}
+		rows, err = conn.Query("SELECT value FROM tbl")
+		if err != nil {
+			panic(err)
+		}
+		for rows.Next() {
+			var version int
+			rows.Scan(&version)
+			dint = append(dint, version)
+		}
+		defer rows.Close()
+
+		return c.Render("dashboard", fiber.Map{
+			"bp":   bp,
+			"data": dint,
+		}, "layout")
 	}).Name("dashboard")
 
 	app.Get("/about", func(c *fiber.Ctx) error {
