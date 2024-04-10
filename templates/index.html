@@ -1,13 +1,2 @@
-
-<h1 class="a">{{.Title}}</h1>
-
-<button hx-get="/about" hx-swap="outerHTML">about</button>
-
-<a href="/about">about too</a>
-
-
-<input type="text" name="message" placeholder="nhap" hx-get="/change" hx-trigger="change, keyup delay:200ms changed" hx-target=".err">
-<span class="err"></span>
-
-<button hx-delete="/contact/trung" hx-target="body" hx-push-url="true" hx-confirm="are your suer">delete</button>
+<a hx-boost="false" href="/dashboard">go to dashboard</a>
 
