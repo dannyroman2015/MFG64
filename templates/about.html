@@ -1,5 +1,8 @@
-<div>
-  <p>aksdhff adfa sdfa sdf asdf
-    <span class="display is-sr-only">trung</span>
-    kshdfkashdf</p>
+<h1 class="title" x-data="{ message: 'message here' }" x-text="message"></h1>
+
+<div class="buttons" x-data="{count:0}">
+  <button class="button is-primary" x-on:mouseenter="count++">Increment</button>
+  <span x-text="count"></span>
 </div>
+
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
