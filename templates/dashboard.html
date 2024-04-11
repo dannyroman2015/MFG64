@@ -1,5 +1,5 @@
-<div class="fixed-grid has-1-cols-mobile">
-  <div class="grid">
+<div class="fixed-grid  has-1-cols-mobile has-4-cols-widescreen">
+  <div class="grid is-gap-2">
 
     <div class="cell">
       <div class="card">
@@ -13,20 +13,21 @@
         <div class="card-content">
           <div class="media">
             <div class="media-left">
-              <figure class="image is-1by1">
-                <div id="chart2" class="cell">
-                  <canvas id="myChart2"></canvas>
-                </div>
-              </figure>
-            </div>
-            <div class="media-content">
-              <p class="title is-5">Value</p>
+              <p class="title is-1">$</p>
               <ul>
                 <li><a href="">Now</a></li>
                 <li><a href="">Yesterday</a></li>
                 <li><a href="">MTD</a></li>
                 <li><a href="">YTD</a></li>
-              </ul>
+              </ul>       
+            </div>
+
+            <div class="media-content">
+              <figure class="image is-1by1">
+                <div id="chart2" class="cell">
+                  <canvas id="myChart2"></canvas>
+                </div>
+              </figure>
             </div>
           </div>
         </div>
@@ -34,11 +35,48 @@
     </div>
 
     <div class="cell">
-      <div id="chart4" class="cell">
+      <div id="chart4" class="box">
+        <label class="label">Shipped Value</label>
         <canvas id="myChart4"></canvas>
       </div>
+      <div id="chart5" class="box">
+        <label class="label">Production Value</label>
+        <canvas id="myChart5"></canvas>
+      </div>
     </div>
-    <div class="cell">three</div>
+
+    <div class="cell">
+      <div class="box">
+        <nav class="level is-mobile">
+          <div class="level-item has-text-centered">
+            <div>
+              <p class="title">Safety</p>
+            </div>
+          </div>
+          <div class="level-item has-text-centered">
+            <div>
+              <p>From</p>
+              <p>12/03/2022</p>
+            </div>
+          </div>
+          <div class="level-item has-text-centered">
+            <div>
+              <p>Days</p>
+              <p>45</p>
+            </div>
+          </div>
+          <div class="level-item has-text-centered">
+            <div class="is-large">
+              <span style="font-size: 4em;">  7  </span>
+              <span class="icon">
+                <i class="fa-solid fa-person-falling-burst" style="font-size: 2em;"></i>
+              </span>
+            </div>
+          </div>
+        </nav>
+      </div>       
+    </div>
+    
     <div class="cell">
       <div id="chart3" class="cell">
         <canvas id="myChart3"></canvas>
@@ -50,26 +88,6 @@
 
 
 
-
-
-
-<!-- <div class="fixed-grid has-1-cols-mobile">
-  <div class="grid">
-    <div id="chart" class="cell">
-      <canvas id="myChart"></canvas>
-    </div>
-
-    <div id="chart3" class="cell">
-      <canvas id="myChart2"></canvas>
-    </div>
-
-    <div id="chart2" class="cell">
-      <canvas id="myChart3"></canvas>
-    </div>
-  </div>
-</div> -->
-
-
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
@@ -79,42 +97,53 @@
   const ctx2 = document.getElementById('myChart2');
   const ctx3 = document.getElementById('myChart3');
   const ctx4 = document.getElementById('myChart4');
+  const ctx5 = document.getElementById('myChart5');
 
   new Chart(ctx, {
     type: 'bar',
     data: {
-      // labels: ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL'],
-      labels: {{.bp}},
+      labels: ['Factory'],
       datasets: [{
-    axis: 'y',
-    label: 'My First Dataset',
-    // data: [65, 59, 80, 81, 56, 55, 40],
-    data: {{.data}},
-    fill: false,
-    backgroundColor: [
-      'rgba(255, 99, 132, 0.2)',
-      'rgba(255, 159, 64, 0.2)',
-      'rgba(255, 205, 86, 0.2)',
-      'rgba(75, 192, 192, 0.2)',
-      'rgba(54, 162, 235, 0.2)',
-      'rgba(153, 102, 255, 0.2)',
-      'rgba(201, 203, 207, 0.2)'
-    ],
-    borderColor: [
-      'rgb(255, 99, 132)',
-      'rgb(255, 159, 64)',
-      'rgb(255, 205, 86)',
-      'rgb(75, 192, 192)',
-      'rgb(54, 162, 235)',
-      'rgb(153, 102, 255)',
-      'rgb(201, 203, 207)'
-    ],
-    borderWidth: 1
-  }]
+        axis: 'y',
+        label: 'Factory 1',
+        data: [30],
+        fill: false,
+        backgroundColor: [
+          'rgba(255, 99, 132, 0.2)',
+        ],
+        borderColor: [
+          'rgb(255, 99, 132)',
+        ],
+        borderWidth: 1
+      },
+      {
+        axis: 'y',
+        label: 'Factory 2',
+        data: [25],
+        fill: false,
+        backgroundColor: ['rgba(54, 162, 235, 0.2)',],
+        borderColor: ['rgb(54, 162, 235']
+      },
+      {
+        label: 'Target',
+        type: 'line',
+        data: [60, 60, 60],
+        borderWidth: 2,
+        borderColor: 'green',
+      }]
     },
-    options: {
-      indexAxis: 'y',
-    }
+      options: {
+        indexAxis: 'y',
+        scales: {
+          x: {
+            max: 65,
+            stacked: true,
+          },
+          y: {
+            stacked: true,
+          }
+        },
+      }
   });
 
   new Chart(ctx2, {
@@ -153,15 +182,47 @@
   });
 
   new Chart(ctx4, {
-    type: 'pie',
+    type: 'bar',
     data: {
       labels: [
-        'Red',
-        'Blue',
-        'Yellow'
+        'date 1',
+        'date 2',
+        'date 3'
       ],
       datasets: [{
-        label: 'My First Dataset',
+        label: 'Brand',
+        data: [300, 50, 100],
+        hoverOffset: 4
+      }, 
+      {
+        label: 'OEM',
+        data: [150, 150, 80],
+        hoverOffset: 4
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true,
+          stacked: true,
+        },
+        x: {
+          stacked: true,
+        },
+      }
+    },
+  });
+
+  new Chart(ctx5, {
+    type: 'bar',
+    data: {
+      labels: [
+        'date 1',
+        'date 2',
+        'date 3'
+      ],
+      datasets: [{
+        label: 'Product Value',
         data: [300, 50, 100],
         backgroundColor: [
           'rgb(255, 99, 132)',
@@ -171,5 +232,13 @@
         hoverOffset: 4
       }]
     },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    },
   });
+
 </script>
