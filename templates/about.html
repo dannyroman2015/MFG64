@@ -1,8 +1,19 @@
-<h1 class="title" x-data="{ message: 'message here' }" x-text="message"></h1>
-
-<div class="buttons" x-data="{count:0}">
-  <button class="button is-primary" x-on:mouseenter="count++">Increment</button>
-  <span x-text="count"></span>
+<div x-data="dropdown">
+  <button @click="toggle">open</button>
+  <div x-show="open">...</div>
 </div>
 
+
 <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+<script>
+  document.addEventListener('alpine:init', () => {
+    Alpine.data('dropdown', () => ({
+      open: false,
+
+      toggle() {
+        this.open = !this.open
+      }
+    }))
+  })
+</script>

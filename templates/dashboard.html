@@ -1,5 +1,60 @@
 <div class="fixed-grid has-1-cols-mobile">
   <div class="grid">
+
+    <div class="cell">
+      <div class="card">
+        <div class="card-image">
+          <figure class="image is-3by1">
+            <div id="chart" class="cell">
+              <canvas id="myChart"></canvas>
+            </div>
+          </figure>
+        </div>
+        <div class="card-content">
+          <div class="media">
+            <div class="media-left">
+              <figure class="image is-1by1">
+                <div id="chart2" class="cell">
+                  <canvas id="myChart2"></canvas>
+                </div>
+              </figure>
+            </div>
+            <div class="media-content">
+              <p class="title is-5">Value</p>
+              <ul>
+                <li><a href="">Now</a></li>
+                <li><a href="">Yesterday</a></li>
+                <li><a href="">MTD</a></li>
+                <li><a href="">YTD</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cell">
+      <div id="chart4" class="cell">
+        <canvas id="myChart4"></canvas>
+      </div>
+    </div>
+    <div class="cell">three</div>
+    <div class="cell">
+      <div id="chart3" class="cell">
+        <canvas id="myChart3"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+<!-- <div class="fixed-grid has-1-cols-mobile">
+  <div class="grid">
     <div id="chart" class="cell">
       <canvas id="myChart"></canvas>
     </div>
@@ -12,7 +67,7 @@
       <canvas id="myChart3"></canvas>
     </div>
   </div>
-</div>
+</div> -->
 
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -23,6 +78,7 @@
   const ctx = document.getElementById('myChart');
   const ctx2 = document.getElementById('myChart2');
   const ctx3 = document.getElementById('myChart3');
+  const ctx4 = document.getElementById('myChart4');
 
   new Chart(ctx, {
     type: 'bar',
@@ -62,7 +118,7 @@
   });
 
   new Chart(ctx2, {
-    type: 'doughnut',
+    type: 'pie',
     data: {
       labels: [
         'Red',
@@ -92,6 +148,27 @@
         fill: false,
         borderColor: 'rgb(75, 192, 192)',
         tension: 0.1
+      }]
+    },
+  });
+
+  new Chart(ctx4, {
+    type: 'pie',
+    data: {
+      labels: [
+        'Red',
+        'Blue',
+        'Yellow'
+      ],
+      datasets: [{
+        label: 'My First Dataset',
+        data: [300, 50, 100],
+        backgroundColor: [
+          'rgb(255, 99, 132)',
+          'rgb(54, 162, 235)',
+          'rgb(255, 205, 86)'
+        ],
+        hoverOffset: 4
       }]
     },
   });
