@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/template/html/v2"
@@ -34,6 +35,34 @@ func main() {
 			"Title": "Hello, World!",
 		}, "layout")
 	}).Name("index")
+
+	app.Get("/accident", func(c *fiber.Ctx) error {
+		log.Println("enter accident")
+
+		return c.Render("accident", fiber.Map{}, "layout")
+	})
+
+	app.Post("/accident", func(c *fiber.Ctx) error {
+		log.Println("post accident")
+		accdate := c.FormValue("accdate")
+
+		conn, err := sql.Open("postgres", "postgresql://postgres:kbEviyUjJecPLMxXRNweNyvIobFzCZAQ@monorail.proxy.rlwy.net:27572/railway")
+		if err != nil {
+			panic(err)
+		}
+		defer conn.Close()
+
+		sqlStatement := `
+    INSERT INTO accidents (accdate)
+    VALUES ($1)
+		`
+		_, err = conn.Exec(sqlStatement, accdate)
+
+		if err != nil {
+			panic(err)
+		}
+		return c.Redirect("/dashboard", fiber.StatusFound)
+	})
 
 	app.Get("/shipped", func(c *fiber.Ctx) error {
 		log.Println("enter shipped")
@@ -65,6 +94,8 @@ func main() {
 
 	app.Get("/dashboard", func(c *fiber.Ctx) error {
 		log.Println("enter dashboard")
+		days := int(time.Since(time.Date(2024, 1, 1, 0, 0, 0, 0, time.Local)).Hours() / 24)
+		var accidents int
 
 		conn, err := sql.Open("postgres", "postgresql://postgres:kbEviyUjJecPLMxXRNweNyvIobFzCZAQ@monorail.proxy.rlwy.net:27572/railway")
 		if err != nil {
@@ -94,11 +125,20 @@ func main() {
 			money = append(money, version)
 		}
 
+		rows, err = conn.Query("SELECT count(accdate) FROM accidents where accdate >= '2024-01-01'")
+		if err != nil {
+			panic(err)
+		}
+		rows.Next()
+		rows.Scan(&accidents)
+
 		defer rows.Close()
 
 		return c.Render("dashboard", fiber.Map{
-			"shipdate": shipdate,
-			"money":    money,
+			"shipdate":  shipdate,
+			"money":     money,
+			"days":      days,
+			"accidents": accidents,
 		}, "layout")
 	}).Name("dashboard")
 

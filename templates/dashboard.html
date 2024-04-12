@@ -54,29 +54,30 @@
           <nav class="level is-mobile">
             <div class="level-item has-text-centered">
               <div>
-                <p class="title">Safety</p>
+                <p class="title is-4"><a href="/accident">Safety</a></p>
               </div>
             </div>
             <div class="level-item has-text-centered">
               <div>
-                <p>From</p>
-                <p>12/03/2022</p>
+                <p class="title is-6">From</p>
+                <input  type="date" value="2024-01-01" name="accidentFrom" 
+                        id="accidentFrom" class="input is-small">
               </div>
             </div>
             <div class="level-item has-text-centered">
               <div>
-                <p>Days</p>
-                <p>45</p>
+                <p class="title is-6">Days</p>
+                <p class="subtitle is-4">{{.days}}</p>
               </div>
             </div>
             <div class="level-item has-text-centered">
-              <div class="is-large">
+              <div>
                 <p>
                   <span class="icon">
-                    <i class="fa-solid fa-person-falling-burst"></i>
+                    <i class="fa-solid fa-person-falling-burst title is-4"></i>
                   </span>
                 </p>
-                <span style="font-size: 4em;">7</span>
+                <span class="subtitle is-1">{{.accidents}}</span>
               </div>
             </div>
           </nav>
@@ -90,8 +91,6 @@
       </div>
     </div>
   </div>
-
-
 
 
 
@@ -155,17 +154,15 @@
     type: 'pie',
     data: {
       labels: [
-        'Red',
-        'Blue',
-        'Yellow'
+        'BRAND',
+        'OEM',
       ],
       datasets: [{
-        label: 'My First Dataset',
-        data: [300, 50, 100],
+        label: 'Type of Product',
+        data: [300, 50],
         backgroundColor: [
           'rgb(255, 99, 132)',
           'rgb(54, 162, 235)',
-          'rgb(255, 205, 86)'
         ],
         hoverOffset: 4
       }]
