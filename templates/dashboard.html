@@ -1,101 +1,102 @@
+<div class="fixed-grid  has-1-cols-mobile has-4-cols-widescreen">
+  <div class="grid">
 
-  <div class="fixed-grid  has-1-cols-mobile has-4-cols-widescreen">
-    <div class="grid">
-  
-      <div class="cell">
-        <div class="card">
-          <div class="card-image">
-            <figure class="image is-3by1">
-              <div id="chart" class="cell">
-                <canvas id="myChart"></canvas>
-              </div>
-            </figure>
+    <div class="cell">
+      <div class="card">
+        <div class="card-image">
+          <figure class="image is-3by1">
+            <div id="chart" class="cell">
+              <canvas id="myChart"></canvas>
+            </div>
+          </figure>
+        </div>
+        <div class="card-content">
+          <div class="media">
+            
+
+            <div class="media-content">
+              <p class="title is-3">$</p>
+              <ul>
+                <li><a href="">Now</a></li>
+                <li><a href="">Yes</a></li>
+                <li><a href="">MTD</a></li>
+                <li><a href="">YTD</a></li>
+              </ul>
+            </div>
+
+            <div class="media-left">
+              <figure class="image is-1by1">
+                <div id="chart2" class="cell">
+                  <canvas id="myChart2"></canvas>
+                </div>
+              </figure>     
+            </div>
+
           </div>
-          <div class="card-content">
-            <div class="media">
-              
-  
-              <div class="media-content">
-                <p class="title is-3">$</p>
-                <ul>
-                  <li><a href="">Now</a></li>
-                  <li><a href="">Yes</a></li>
-                  <li><a href="">MTD</a></li>
-                  <li><a href="">YTD</a></li>
-                </ul>
-              </div>
-  
-              <div class="media-left">
-                <figure class="image is-1by1">
-                  <div id="chart2" class="cell">
-                    <canvas id="myChart2"></canvas>
-                  </div>
-                </figure>     
-              </div>
-  
-            </div>
-          </div>
-        </div>
-      </div>
-  
-      <div class="cell">
-        <div id="chart4" class="box">
-          <a href="/shipped" class="label">Shipped</a>
-          <canvas id="myChart4"></canvas>
-        </div>
-        <div id="chart5" class="box">
-          <label class="label">Production</label>
-          <canvas id="myChart5"></canvas>
-        </div>
-      </div>
-  
-      <div class="cell">
-        <div class="box">
-          <nav class="level is-mobile">
-            <div class="level-item has-text-centered">
-              <div>
-                <p class="title is-4"><a href="/accident">Safety</a></p>
-              </div>
-            </div>
-            <div class="level-item has-text-centered">
-              <div>
-                <p class="title is-6">From</p>
-                <input  type="date" value="2024-01-01" name="accidentFrom" 
-                        id="accidentFrom" class="input is-small">
-              </div>
-            </div>
-            <div class="level-item has-text-centered">
-              <div>
-                <p class="title is-6">Days</p>
-                <p class="subtitle is-4">{{.days}}</p>
-              </div>
-            </div>
-            <div class="level-item has-text-centered">
-              <div>
-                <p>
-                  <span class="icon">
-                    <i class="fa-solid fa-person-falling-burst title is-4"></i>
-                  </span>
-                </p>
-                <span class="subtitle is-1">{{.accidents}}</span>
-              </div>
-            </div>
-          </nav>
-        </div>       
-      </div>
-      
-      <div class="cell">
-        <div id="chart3" class="cell">
-          <canvas id="myChart3"></canvas>
         </div>
       </div>
     </div>
+
+    <div class="cell">
+      <div id="chart4" class="box">
+        <a href="/shipped" class="label">Shipped</a>
+        <canvas id="myChart4"></canvas>
+      </div>
+      <div id="chart5" class="box">
+        <label class="label">Production</label>
+        <canvas id="myChart5"></canvas>
+      </div>
+    </div>
+
+    <div class="cell">
+      <div class="box">
+        <nav class="level is-mobile">
+          <div class="level-item has-text-centered">
+            <div>
+              <p class="title is-4"><a href="/accident">Safety</a></p>
+            </div>
+          </div>
+          <div class="level-item has-text-centered">
+            <div>
+              <p class="title is-6">From</p>
+              <input  type="date" value="2024-01-01" name="accidentFrom" 
+                      id="accidentFrom" class="input is-small">
+            </div>
+          </div>
+          <div class="level-item has-text-centered">
+            <div>
+              <p class="title is-6">Days</p>
+              <p class="subtitle is-4">{{.days}}</p>
+            </div>
+          </div>
+          <div class="level-item has-text-centered">
+            <div>
+              <p>
+                <span class="icon">
+                  <i class="fa-solid fa-person-falling-burst title is-4"></i>
+                </span>
+              </p>
+              <span class="subtitle is-1">{{.accidents}}</span>
+            </div>
+          </div>
+        </nav>
+      </div>       
+    </div>
+    
+    <div class="cell">
+      <div id="chart3" class="cell">
+        <canvas id="myChart3"></canvas>
+      </div>
+    </div>
+
   </div>
+</div> 
+  
+<style>
 
-
+</style>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 <script>
   const ctx = document.getElementById('myChart');
   const ctx2 = document.getElementById('myChart2');
@@ -107,7 +108,7 @@
     type: 'bar',
     data: {
       labels: ['Factory'],
-      datasets: [{
+      datasets: [{0
         axis: 'y',
         label: 'Factory 1',
         data: [30],

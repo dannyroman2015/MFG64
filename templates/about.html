@@ -1,19 +1,13 @@
-<div x-data="dropdown">
-  <button @click="toggle">open</button>
-  <div x-show="open">...</div>
-</div>
+<div class="fixed-grid  has-1-cols-mobile has-4-cols-widescreen">
+  <div class="grid">
+    <div class="cell">
+      <div id="chart3" class="cell">
+        {{template "fragments/x"}}
+      </div>
+    </div>
+
+  </div>
+</div> 
 
 
-<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
-<script>
-  document.addEventListener('alpine:init', () => {
-    Alpine.data('dropdown', () => ({
-      open: false,
-
-      toggle() {
-        this.open = !this.open
-      }
-    }))
-  })
-</script>

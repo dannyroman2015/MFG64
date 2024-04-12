@@ -1,0 +1,25 @@
+<canvas id="myChart"></canvas>
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const ctx = document.getElementById('myChart');
+  new Chart(ctx, {
+    type: 'pie',
+    data: {
+      labels: [
+        'BRAND',
+        'OEM',
+      ],
+      datasets: [{
+        label: 'Type of Product',
+        data: [300, 50],
+        backgroundColor: [
+          'rgb(255, 99, 132)',
+          'rgb(54, 162, 235)',
+        ],
+        hoverOffset: 4
+      }]
+    },
+  });
+</script>
