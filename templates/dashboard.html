@@ -97,6 +97,7 @@
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
 <script>
   const ctx = document.getElementById('myChart');
   const ctx2 = document.getElementById('myChart2');
@@ -105,10 +106,11 @@
   const ctx5 = document.getElementById('myChart5');
 
   new Chart(ctx, {
+    plugins: [ChartDataLabels],
     type: 'bar',
     data: {
       labels: ['Factory'],
-      datasets: [{0
+      datasets: [{
         axis: 'y',
         label: 'Factory 1',
         data: [30],
@@ -141,17 +143,20 @@
         indexAxis: 'y',
         scales: {
           x: {
-            max: 65,
             stacked: true,
+            grid: {display: false,}
           },
           y: {
             stacked: true,
+            grid: {display: false,}
           }
         },
-      }
+      },
+
   });
 
   new Chart(ctx2, {
+    plugins: [ChartDataLabels],
     type: 'pie',
     data: {
       labels: [
@@ -171,6 +176,7 @@
   });
 
   new Chart(ctx3, {
+    plugins: [ChartDataLabels],
     type: 'line',
     data: {
       labels: ['Rawmill', 'Finemill', 'Veneer', 'Steel', 'Concrete', 'Wood', 'Packing'],
@@ -185,6 +191,7 @@
   });
 
   new Chart(ctx4, {
+    plugins: [ChartDataLabels],
     type: 'bar',
     data: {
       labels: {{.shipdate}},
@@ -204,6 +211,7 @@
   });
 
   new Chart(ctx5, {
+    plugins: [ChartDataLabels],
     type: 'bar',
     data: {
       labels: [
