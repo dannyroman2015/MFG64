@@ -35,6 +35,34 @@ func main() {
 		}, "layout")
 	}).Name("index")
 
+	app.Get("/shipped", func(c *fiber.Ctx) error {
+		log.Println("enter shipped")
+		return c.Render("shipped", nil, "layout")
+	})
+
+	app.Post("/shipped", func(c *fiber.Ctx) error {
+		shipdate := c.FormValue("shipdate")
+		money := c.FormValue("money")
+
+		conn, err := sql.Open("postgres", "postgresql://postgres:kbEviyUjJecPLMxXRNweNyvIobFzCZAQ@monorail.proxy.rlwy.net:27572/railway")
+		if err != nil {
+			panic(err)
+		}
+		defer conn.Close()
+
+		sqlStatement := `
+    INSERT INTO ship (shipdate, money)
+    VALUES ($1, $2)
+		`
+		_, err = conn.Exec(sqlStatement, shipdate, money)
+
+		if err != nil {
+			panic(err)
+		}
+
+		return c.Redirect("/shipped", fiber.StatusFound)
+	})
+
 	app.Get("/dashboard", func(c *fiber.Ctx) error {
 		log.Println("enter dashboard")
 
@@ -44,31 +72,33 @@ func main() {
 		}
 		defer conn.Close()
 
-		rows, err := conn.Query("SELECT bophan FROM tbl")
+		rows, err := conn.Query("SELECT shipdate FROM ship")
 		if err != nil {
 			panic(err)
 		}
-		var bp []string
-		var dint []int
+		var shipdate []string
+		var money []float64
 		for rows.Next() {
 			var version string
 			rows.Scan(&version)
-			bp = append(bp, version)
+			shipdate = append(shipdate, version)
 		}
-		rows, err = conn.Query("SELECT value FROM tbl")
+
+		rows, err = conn.Query("SELECT money FROM ship")
 		if err != nil {
 			panic(err)
 		}
 		for rows.Next() {
-			var version int
+			var version float64
 			rows.Scan(&version)
-			dint = append(dint, version)
+			money = append(money, version)
 		}
+
 		defer rows.Close()
 
 		return c.Render("dashboard", fiber.Map{
-			"bp":   bp,
-			"data": dint,
+			"shipdate": shipdate,
+			"money":    money,
 		}, "layout")
 	}).Name("dashboard")
 

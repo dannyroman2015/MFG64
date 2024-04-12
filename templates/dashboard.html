@@ -13,21 +13,21 @@
         <div class="card-content">
           <div class="media">
             <div class="media-left">
+              <figure class="image is-1by1">
+                <div id="chart2" class="cell">
+                  <canvas id="myChart2"></canvas>
+                </div>
+              </figure>     
+            </div>
+
+            <div class="media-content">
               <p class="title is-1">$</p>
               <ul>
                 <li><a href="">Now</a></li>
                 <li><a href="">Yesterday</a></li>
                 <li><a href="">MTD</a></li>
                 <li><a href="">YTD</a></li>
-              </ul>       
-            </div>
-
-            <div class="media-content">
-              <figure class="image is-1by1">
-                <div id="chart2" class="cell">
-                  <canvas id="myChart2"></canvas>
-                </div>
-              </figure>
+              </ul>
             </div>
           </div>
         </div>
@@ -36,7 +36,7 @@
 
     <div class="cell">
       <div id="chart4" class="box">
-        <label class="label">Shipped Value</label>
+        <a href="/shipped" class="label">Shipped Value</a>
         <canvas id="myChart4"></canvas>
       </div>
       <div id="chart5" class="box">
@@ -91,8 +91,6 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-  console.log({{.bp}})
-
   const ctx = document.getElementById('myChart');
   const ctx2 = document.getElementById('myChart2');
   const ctx3 = document.getElementById('myChart3');
@@ -184,30 +182,17 @@
   new Chart(ctx4, {
     type: 'bar',
     data: {
-      labels: [
-        'date 1',
-        'date 2',
-        'date 3'
-      ],
+      labels: {{.shipdate}},
       datasets: [{
-        label: 'Brand',
-        data: [300, 50, 100],
+        label: 'Value',
+        data: {{.money}},
         hoverOffset: 4
-      }, 
-      {
-        label: 'OEM',
-        data: [150, 150, 80],
-        hoverOffset: 4
-      }]
+      },]
     },
     options: {
       scales: {
         y: {
           beginAtZero: true,
-          stacked: true,
-        },
-        x: {
-          stacked: true,
         },
       }
     },
