@@ -3,6 +3,14 @@
 
     <div class="cell">
       <div class="card">
+        <header class="card-header">
+          <p class="card-header-title">{{.dtype}}'s Value</p>
+          <button class="card-header-icon" aria-label="more options">
+            <span class="icon">
+              <i class="fas fa-angle-down" aria-hidden="true"></i>
+            </span>
+          </button>
+        </header>
         <div class="card-image">
           <figure class="image is-3by1">
             <div id="chart" class="cell">
@@ -14,35 +22,31 @@
           <div class="media">
 
             <div class="media-content">
-              <p class="title is-3">$</p>
-              <ul>
-                <li><a href="">Now</a></li>
-                <li><a href="">Yes</a></li>
-                <li><a href="">MTD</a></li>
-                <li><a href="">YTD</a></li>
-              </ul>
-            </div>
-
-            <div class="media-left">
-              <figure class="image is-1by1">
+              <figure class="image">
                 <div id="chart2" class="cell">
                   <canvas id="myChart2"></canvas>
                 </div>
               </figure>
             </div>
-
           </div>
         </div>
+
+        <footer class="card-footer has-background-grey-lighter">
+          <a href="/dashboard/YTD" class="card-footer-item">Year</a>
+          <a href="/dashboard/MTD" class="card-footer-item">Month</a>
+          <a href="/dashboard/yesterday" class="card-footer-item">Yesterday</a>
+          <a href="/dashboard/today" class="card-footer-item">Today</a>
+        </footer>
       </div>
     </div>
 
     <div class="cell">
       <div id="chart4" class="box">
-        <a href="/shipped" class="label">Shipped</a>
+        <a href="/shipped" class="label">Shipped Value</a>
         <canvas id="myChart4"></canvas>
       </div>
       <div id="chart5" class="box">
-        <label class="label">Production</label>
+        <a href="/provalue" class="label">Production Value</a>
         <canvas id="myChart5"></canvas>
       </div>
     </div>
@@ -72,7 +76,7 @@
             <div>
               <p>
                 <span id="fallicon" class="icon">
-                  <i class="fa-solid fa-person-falling-burst title is-4"></i>
+                  <i class="fa-solid fa-person-falling title is-4"></i>
                 </span>
               </p>
                 <span class="subtitle is-1">{{.accidents}}</span>
@@ -97,10 +101,10 @@
   }
   @keyframes animate {
     0% {
-      transform: translate(100%, -50%) rotate(360deg);
+      transform: translate(100%, -50%) rotate(40deg);
     }
     100% {
-      transform: translate(0%, 80%) rotate(-90deg);
+      transform: translate(0%, 100%) rotate(-50deg);
     }
   }
 </style>

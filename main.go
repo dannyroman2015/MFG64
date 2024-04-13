@@ -32,6 +32,11 @@ func main() {
 
 	app.Get("/", indexHandler).Name("index")
 
+	app.Get("/provalue", func(c *fiber.Ctx) error {
+
+		return c.Render("provalue", fiber.Map{}, "layout")
+	})
+
 	app.Get("/accident", accidentHandler).Name("accident")
 
 	app.Post("/accident", func(c *fiber.Ctx) error {
@@ -68,8 +73,10 @@ func main() {
 		return c.Redirect("/shipped", fiber.StatusFound)
 	})
 
-	app.Get("/dashboard", func(c *fiber.Ctx) error {
-		log.Println("enter dashboard")
+	app.Get("/dashboard/:dtype", func(c *fiber.Ctx) error {
+		dtype := c.Params("dtype")
+		var whichToDate string
+
 		days := int(time.Since(time.Date(2024, 1, 1, 0, 0, 0, 0, time.Local)).Hours() / 24)
 		var accidents int
 
@@ -87,8 +94,6 @@ func main() {
 			money = append(money, m)
 		}
 
-		log.Println(shipdate, money)
-
 		rows, err = conn.Query("SELECT count(accdate) FROM accidents where accdate >= '2024-01-01'")
 		if err != nil {
 			panic(err)
@@ -96,9 +101,18 @@ func main() {
 		rows.Next()
 		rows.Scan(&accidents)
 
-		yesterday := time.Now().AddDate(0, 0, -1)
-		yesterdayStr := yesterday.Format("2006-01-02")
-		rows, err = conn.Query("SELECT sum(money) FROM moneyvalue where dateissue = '" + yesterdayStr + "' AND type = 'OEM'")
+		switch dtype {
+		case "today":
+			whichToDate = time.Now().Format("2006-01-02")
+		case "yesterday":
+			whichToDate = time.Now().AddDate(0, 0, -1).Format("2006-01-02")
+		case "MTD":
+			whichToDate = time.Date(time.Now().Year(), time.Now().Month(), 1, 0, 0, 0, 0, time.Local).Format("2006-01-02")
+		default:
+			whichToDate = time.Date(time.Now().Year(), 01, 01, 0, 0, 0, 0, time.Local).Format("2006-01-02")
+		}
+
+		rows, err = conn.Query("SELECT sum(money) FROM moneyvalue where dateissue >= '" + whichToDate + "' AND type = 'OEM'")
 		if err != nil {
 			panic(err)
 		}
@@ -106,7 +120,7 @@ func main() {
 		var sumOEM float64
 		rows.Scan(&sumOEM)
 
-		rows, err = conn.Query("SELECT sum(money) FROM moneyvalue where dateissue = '" + yesterdayStr + "' AND type = 'BRAND'")
+		rows, err = conn.Query("SELECT sum(money) FROM moneyvalue where dateissue >= '" + whichToDate + "' AND type = 'BRAND'")
 		if err != nil {
 			panic(err)
 		}
@@ -114,7 +128,7 @@ func main() {
 		var sumBRAND float64
 		rows.Scan(&sumBRAND)
 
-		rows, err = conn.Query("SELECT sum(money) FROM moneyvalue where dateissue = '" + yesterdayStr + "' AND factory_no = '1'")
+		rows, err = conn.Query("SELECT sum(money) FROM moneyvalue where dateissue >= '" + whichToDate + "' AND factory_no = '1'")
 		if err != nil {
 			panic(err)
 		}
@@ -122,7 +136,7 @@ func main() {
 		var factory_1 string
 		rows.Scan(&factory_1)
 
-		rows, err = conn.Query("SELECT sum(money) FROM moneyvalue where dateissue = '" + yesterdayStr + "' AND factory_no = '2'")
+		rows, err = conn.Query("SELECT sum(money) FROM moneyvalue where dateissue >= '" + whichToDate + "' AND factory_no = '2'")
 		if err != nil {
 			panic(err)
 		}
@@ -156,6 +170,7 @@ func main() {
 			"factory_2": factory_2,
 			"dateissue": dateissue,
 			"proValue":  moneys,
+			"dtype":     dtype,
 		}, "layout")
 	}).Name("dashboard")
 
