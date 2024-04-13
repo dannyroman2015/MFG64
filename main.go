@@ -91,6 +91,7 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
+
 		for rows.Next() {
 			var version float64
 			rows.Scan(&version)
@@ -104,6 +105,38 @@ func main() {
 		rows.Next()
 		rows.Scan(&accidents)
 
+		rows, err = conn.Query("SELECT sum(money) FROM moneyvalue where dateissue < '2024-02-01' AND type = 'OEM'")
+		if err != nil {
+			panic(err)
+		}
+		rows.Next()
+		var sumOEM float64
+		rows.Scan(&sumOEM)
+
+		rows, err = conn.Query("SELECT sum(money) FROM moneyvalue where dateissue < '2024-02-01' AND type = 'BRAND'")
+		if err != nil {
+			panic(err)
+		}
+		rows.Next()
+		var sumBRAND float64
+		rows.Scan(&sumBRAND)
+
+		rows, err = conn.Query("SELECT sum(money) FROM moneyvalue where dateissue < '2024-02-01' AND factory_no = '1'")
+		if err != nil {
+			panic(err)
+		}
+		rows.Next()
+		var factory_1 string
+		rows.Scan(&factory_1)
+
+		rows, err = conn.Query("SELECT sum(money) FROM moneyvalue where dateissue < '2024-02-01' AND factory_no = '2'")
+		if err != nil {
+			panic(err)
+		}
+		rows.Next()
+		var factory_2 string
+		rows.Scan(&factory_2)
+
 		defer rows.Close()
 
 		return c.Render("dashboard", fiber.Map{
@@ -111,6 +144,10 @@ func main() {
 			"money":     money,
 			"days":      days,
 			"accidents": accidents,
+			"sumOEM":    sumOEM,
+			"sumBRAND":  sumBRAND,
+			"factory_1": factory_1,
+			"factory_2": factory_2,
 		}, "layout")
 	}).Name("dashboard")
 

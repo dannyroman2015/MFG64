@@ -12,7 +12,6 @@
         </div>
         <div class="card-content">
           <div class="media">
-            
 
             <div class="media-content">
               <p class="title is-3">$</p>
@@ -112,7 +111,7 @@
       datasets: [{
         axis: 'y',
         label: 'Factory 1',
-        data: [30],
+        data: [{{.factory_1}}],
         fill: false,
         backgroundColor: [
           'rgba(255, 99, 132, 0.2)',
@@ -120,34 +119,51 @@
         borderColor: [
           'rgb(255, 99, 132)',
         ],
-        borderWidth: 1
       },
       {
         axis: 'y',
         label: 'Factory 2',
-        data: [25],
+        data: [{{.factory_2}}],
         fill: false,
         backgroundColor: ['rgba(54, 162, 235, 0.2)',],
         borderColor: ['rgb(54, 162, 235']
       },
-      {
-        label: 'Target',
-        type: 'line',
-        data: [60, 60, 60],
-        borderWidth: 2,
-        borderColor: 'green',
-      }]
+      // {
+      //   label: 'Target',
+      //   type: 'line',
+      //   data: [130000],
+      // }
+    ]
     },
       options: {
+        plugins: {
+          datalabels: {
+            font: {
+              size: 20,
+            }
+          }
+        },
+        elements: {
+          point: {
+            borderColor: 'red',
+            radius: 15,
+            backgroundColor: ['rgba(54, 162, 235, 0.2)',],
+            pointStyle: 'cross'
+          }
+        },
         indexAxis: 'y',
         scales: {
           x: {
             stacked: true,
-            grid: {display: false,}
+            grid: {display: false,},
+            border: { display: false},
+            ticks: {display: false}
           },
           y: {
             stacked: true,
-            grid: {display: false,}
+            grid: {display: false,},
+            border: { display: false},
+            ticks: {display: false}
           }
         },
       },
@@ -156,6 +172,15 @@
 
   new Chart(ctx2, {
     plugins: [ChartDataLabels],
+    options: {
+      plugins: {
+          datalabels: {
+            font: {
+              size: 20,
+            }
+          }
+        },
+    }, 
     type: 'pie',
     data: {
       labels: [
@@ -164,7 +189,7 @@
       ],
       datasets: [{
         label: 'Type of Product',
-        data: [300, 50],
+        data: [{{.sumBRAND}}, {{.sumOEM}}],
         backgroundColor: [
           'rgb(255, 99, 132)',
           'rgb(54, 162, 235)',
