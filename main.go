@@ -33,6 +33,10 @@ func main() {
 	app.Get("/", indexHandler).Name("index")
 
 	app.Get("/provalue", func(c *fiber.Ctx) error {
+		return c.Render("provalue", fiber.Map{}, "layout")
+	})
+
+	app.Post("/provalue", func(c *fiber.Ctx) error {
 
 		return c.Render("provalue", fiber.Map{}, "layout")
 	})

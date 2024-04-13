@@ -142,11 +142,6 @@
         backgroundColor: ['rgba(54, 162, 235, 0.2)',],
         borderColor: ['rgb(54, 162, 235']
       },
-      // {
-      //   label: 'Target',
-      //   type: 'line',
-      //   data: [130000],
-      // }
     ]
     },
       options: {
@@ -236,14 +231,19 @@
       datasets: [{
         label: 'USD',
         data: {{.money}},
-        hoverOffset: 4
+        hoverOffset: 4,
+        backgroundColor: ['rgb(149, 211, 135)',],
       },]
     },
     options: {
       scales: {
         y: {
           beginAtZero: true,
+          grid: { display: false }
         },
+        x: {
+          grid: { display: false }
+        }
       }
     },
   });
@@ -256,13 +256,18 @@
       datasets: [{
         label: 'USD',
         data: {{.proValue}},
-        hoverOffset: 4
+        hoverOffset: 4,
+        backgroundColor: ['rgb(255, 203, 0)',],
       }]
     },
     options: {
       scales: {
         y: {
-          beginAtZero: true
+          beginAtZero: true,
+          grid: { display: false },
+        },
+        x: {
+          grid: { display: false },
         }
       }
     },
