@@ -73,29 +73,21 @@ func main() {
 		days := int(time.Since(time.Date(2024, 1, 1, 0, 0, 0, 0, time.Local)).Hours() / 24)
 		var accidents int
 
-		rows, err := conn.Query("SELECT shipdate FROM ship")
+		rows, err := conn.Query("SELECT shipdate, money FROM ship order by shipdate")
 		if err != nil {
 			panic(err)
 		}
 		var shipdate []string
-		var money []float64
+		var money []string
 		for rows.Next() {
-			var version string
-			rows.Scan(&version)
-			str := strings.Split(version, "T")[0]
+			var s, m string
+			rows.Scan(&s, &m)
+			str := strings.Split(s, "T")[0]
 			shipdate = append(shipdate, str)
+			money = append(money, m)
 		}
 
-		rows, err = conn.Query("SELECT money FROM ship")
-		if err != nil {
-			panic(err)
-		}
-
-		for rows.Next() {
-			var version float64
-			rows.Scan(&version)
-			money = append(money, version)
-		}
+		log.Println(shipdate, money)
 
 		rows, err = conn.Query("SELECT count(accdate) FROM accidents where accdate >= '2024-01-01'")
 		if err != nil {
@@ -138,6 +130,19 @@ func main() {
 		var factory_2 string
 		rows.Scan(&factory_2)
 
+		rows, err = conn.Query("SELECT dateissue, sum(money) FROM moneyvalue group by dateissue order by dateissue")
+		if err != nil {
+			panic(err)
+		}
+
+		var dateissue, moneys []string
+		for rows.Next() {
+			var v, m string
+			rows.Scan(&v, &m)
+			dateissue = append(dateissue, strings.Split(v, "T")[0])
+			moneys = append(moneys, m)
+		}
+
 		defer rows.Close()
 
 		return c.Render("dashboard", fiber.Map{
@@ -149,6 +154,8 @@ func main() {
 			"sumBRAND":  sumBRAND,
 			"factory_1": factory_1,
 			"factory_2": factory_2,
+			"dateissue": dateissue,
+			"proValue":  moneys,
 		}, "layout")
 	}).Name("dashboard")
 
