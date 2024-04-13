@@ -28,7 +28,7 @@
                 <div id="chart2" class="cell">
                   <canvas id="myChart2"></canvas>
                 </div>
-              </figure>     
+              </figure>
             </div>
 
           </div>
@@ -71,11 +71,11 @@
           <div class="level-item has-text-centered">
             <div>
               <p>
-                <span class="icon">
+                <span id="fallicon" class="icon">
                   <i class="fa-solid fa-person-falling-burst title is-4"></i>
                 </span>
               </p>
-              <span class="subtitle is-1">{{.accidents}}</span>
+                <span class="subtitle is-1">{{.accidents}}</span>
             </div>
           </div>
         </nav>
@@ -92,7 +92,17 @@
 </div> 
   
 <style>
-
+  #fallicon {
+    animation: animate 3s linear infinite;
+  }
+  @keyframes animate {
+    0% {
+      transform: translate(100%, -50%) rotate(360deg);
+    }
+    100% {
+      transform: translate(0%, 80%) rotate(-90deg);
+    }
+  }
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
@@ -188,7 +198,7 @@
         'OEM',
       ],
       datasets: [{
-        label: 'Type of Product',
+        label: 'USD',
         data: [{{.sumBRAND}}, {{.sumOEM}}],
         backgroundColor: [
           'rgb(255, 99, 132)',
@@ -220,7 +230,7 @@
     data: {
       labels: {{.shipdate}},
       datasets: [{
-        label: 'Value',
+        label: 'USD',
         data: {{.money}},
         hoverOffset: 4
       },]

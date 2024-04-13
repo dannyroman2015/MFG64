@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -57,10 +58,7 @@ func main() {
 		shipdate := c.FormValue("shipdate")
 		money := c.FormValue("money")
 
-		sqlStatement := `
-    INSERT INTO ship (shipdate, money)
-    VALUES ($1, $2)
-		`
+		sqlStatement := `INSERT INTO ship (shipdate, money) VALUES ($1, $2)`
 		_, err = conn.Exec(sqlStatement, shipdate, money)
 
 		if err != nil {
@@ -84,7 +82,8 @@ func main() {
 		for rows.Next() {
 			var version string
 			rows.Scan(&version)
-			shipdate = append(shipdate, version)
+			str := strings.Split(version, "T")[0]
+			shipdate = append(shipdate, str)
 		}
 
 		rows, err = conn.Query("SELECT money FROM ship")
@@ -105,7 +104,9 @@ func main() {
 		rows.Next()
 		rows.Scan(&accidents)
 
-		rows, err = conn.Query("SELECT sum(money) FROM moneyvalue where dateissue < '2024-02-01' AND type = 'OEM'")
+		yesterday := time.Now().AddDate(0, 0, -1)
+		yesterdayStr := yesterday.Format("2006-01-02")
+		rows, err = conn.Query("SELECT sum(money) FROM moneyvalue where dateissue = '" + yesterdayStr + "' AND type = 'OEM'")
 		if err != nil {
 			panic(err)
 		}
@@ -113,7 +114,7 @@ func main() {
 		var sumOEM float64
 		rows.Scan(&sumOEM)
 
-		rows, err = conn.Query("SELECT sum(money) FROM moneyvalue where dateissue < '2024-02-01' AND type = 'BRAND'")
+		rows, err = conn.Query("SELECT sum(money) FROM moneyvalue where dateissue = '" + yesterdayStr + "' AND type = 'BRAND'")
 		if err != nil {
 			panic(err)
 		}
@@ -121,7 +122,7 @@ func main() {
 		var sumBRAND float64
 		rows.Scan(&sumBRAND)
 
-		rows, err = conn.Query("SELECT sum(money) FROM moneyvalue where dateissue < '2024-02-01' AND factory_no = '1'")
+		rows, err = conn.Query("SELECT sum(money) FROM moneyvalue where dateissue = '" + yesterdayStr + "' AND factory_no = '1'")
 		if err != nil {
 			panic(err)
 		}
@@ -129,7 +130,7 @@ func main() {
 		var factory_1 string
 		rows.Scan(&factory_1)
 
-		rows, err = conn.Query("SELECT sum(money) FROM moneyvalue where dateissue < '2024-02-01' AND factory_no = '2'")
+		rows, err = conn.Query("SELECT sum(money) FROM moneyvalue where dateissue = '" + yesterdayStr + "' AND factory_no = '2'")
 		if err != nil {
 			panic(err)
 		}
