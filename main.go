@@ -37,9 +37,11 @@ func main() {
 		})
 	})
 
-	app.Get("/fortest", func(c *fiber.Ctx) error {
-		log.Println("fortest")
-		return c.Render("fragments/a", nil)
+	app.Delete("/fortest", func(c *fiber.Ctx) error {
+		time.Sleep(1 * time.Second)
+		s := c.FormValue("s")
+		log.Println(s)
+		return c.SendString("")
 	})
 
 	app.Get("/", indexHandler).Name("index")
@@ -49,8 +51,17 @@ func main() {
 	})
 
 	app.Post("/provalue", func(c *fiber.Ctx) error {
+		fd := c.FormValue("finishdate")
+		pt := c.FormValue("proType")
+		fn := c.FormValue("fac_no")
+		mn := c.FormValue("money")
 
-		return c.Render("provalue", fiber.Map{}, "layout")
+		sqlStatement := `INSERT INTO moneyvalue (dateissue, type, money, factory_no)VALUES ($1, $2, $3, $4)`
+		_, err = conn.Exec(sqlStatement, fd, pt, mn, fn)
+		if err != nil {
+			panic(err)
+		}
+		return c.Redirect("provalue", fiber.StatusFound)
 	})
 
 	app.Get("/accident", accidentHandler).Name("accident")
