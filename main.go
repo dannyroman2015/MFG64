@@ -30,6 +30,18 @@ func main() {
 	// routes here
 	app.Static("/static", "./static")
 
+	app.Get("/test", func(c *fiber.Ctx) error {
+		q := "trung"
+		return c.Render("test", fiber.Map{
+			"q": q,
+		})
+	})
+
+	app.Get("/fortest", func(c *fiber.Ctx) error {
+		log.Println("fortest")
+		return c.Render("fragments/a", nil)
+	})
+
 	app.Get("/", indexHandler).Name("index")
 
 	app.Get("/provalue", func(c *fiber.Ctx) error {
