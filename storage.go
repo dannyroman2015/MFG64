@@ -3,13 +3,19 @@ package main
 import "database/sql"
 
 type PosgreDB struct {
-	Connection *sql.DB
+	db *sql.DB
 }
 
-func NewPosgreDB(uri string) PosgreDB {
-	conn, err := sql.Open("postgres", uri)
+func NewPosgreDB() *PosgreDB {
+	db, err := sql.Open("postgres", "postgresql://postgres:kbEviyUjJecPLMxXRNweNyvIobFzCZAQ@monorail.proxy.rlwy.net:27572/railway")
 	if err != nil {
 		panic(err)
 	}
-	return PosgreDB{Connection: conn}
+	if err = db.Ping(); err != nil {
+		panic(err)
+	}
+
+	return &PosgreDB{
+		db: db,
+	}
 }
