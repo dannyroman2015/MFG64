@@ -1,9 +1,7 @@
 package main
 
 import (
-	"context"
 	"database/sql"
-	"fmt"
 	"log"
 	"os"
 	"strings"
@@ -11,118 +9,88 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/template/html/v2"
-	_ "github.com/lib/pq"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func main() {
+type Server struct {
+	App *fiber.App
+}
 
-	// init mongodb connection
-	uri := `mongodb://mongo:tivQFYEUmIyUGohuWrXjssTMqHQmJHGe@monorail.proxy.rlwy.net:32885`
-	serverAPI := options.ServerAPI(options.ServerAPIVersion1)
-	opts := options.Client().ApplyURI(uri).SetServerAPIOptions(serverAPI)
-
-	client, err := mongo.Connect(context.TODO(), opts)
-	if err != nil {
-		panic(err)
-	}
-	defer func() {
-		if err = client.Disconnect(context.TODO()); err != nil {
-			panic(err)
-		}
-	}()
-
-	var result bson.M
-	if err := client.Database("test").RunCommand(context.TODO(), bson.D{{"ping", 1}}).Decode(&result); err != nil {
-		panic(err)
-	}
-	fmt.Println("Pinged your deployment. You successfully connected to MongoDB!")
-
-	// init db connection
-
+func (s *Server) Run() {
 	conn, err := sql.Open("postgres", "postgresql://postgres:kbEviyUjJecPLMxXRNweNyvIobFzCZAQ@monorail.proxy.rlwy.net:27572/railway")
 	if err != nil {
 		panic(err)
 	}
 	defer conn.Close()
 
-	// init server app
-	engine := html.New("./templates", ".html")
-	app := fiber.New(fiber.Config{
-		Views: engine,
+	s.App.Static("/static", "./static")
+
+	s.App.Get("/", func(c *fiber.Ctx) error {
+		log.Println("enter index")
+		return c.Render("index", fiber.Map{
+			"Title": "Hello, World!",
+		}, "layout")
 	})
 
-	// routes here
-	app.Static("/static", "./static")
-
-	app.Get("/test", func(c *fiber.Ctx) error {
+	s.App.Get("/test", func(c *fiber.Ctx) error {
 		q := "trung"
 		return c.Render("test", fiber.Map{
 			"q": q,
 		})
 	})
 
-	app.Delete("/fortest", func(c *fiber.Ctx) error {
+	s.App.Delete("/fortest", func(c *fiber.Ctx) error {
 		time.Sleep(1 * time.Second)
-		s := c.FormValue("s")
-		log.Println(s)
+		str := c.FormValue("s")
+		log.Println(str)
 		return c.SendString("")
 	})
 
-	app.Get("/", indexHandler).Name("index")
-
-	app.Get("/provalue", func(c *fiber.Ctx) error {
+	s.App.Get("/provalue", func(c *fiber.Ctx) error {
 		return c.Render("provalue", fiber.Map{}, "layout")
 	})
 
-	app.Post("/provalue", func(c *fiber.Ctx) error {
+	s.App.Post("/provalue", func(c *fiber.Ctx) error {
 		fd := c.FormValue("finishdate")
 		pt := c.FormValue("proType")
 		fn := c.FormValue("fac_no")
 		mn := c.FormValue("money")
 
 		sqlStatement := `INSERT INTO moneyvalue (dateissue, type, money, factory_no)VALUES ($1, $2, $3, $4)`
-		_, err = conn.Exec(sqlStatement, fd, pt, mn, fn)
+		_, err := conn.Exec(sqlStatement, fd, pt, mn, fn)
 		if err != nil {
 			panic(err)
 		}
 		return c.Redirect("provalue", fiber.StatusFound)
 	})
 
-	app.Get("/accident", func(c *fiber.Ctx) error {
+	s.App.Get("/accident", func(c *fiber.Ctx) error {
 		log.Println("enter accident")
 
 		return c.Render("accident", fiber.Map{}, "layout")
 	}).Name("accident")
 
-	app.Post("/accident", func(c *fiber.Ctx) error {
+	s.App.Post("/accident", func(c *fiber.Ctx) error {
 		log.Println("post accident")
 		accdate := c.FormValue("accdate")
 
-		sqlStatement := `
-	  INSERT INTO accidents (accdate)
-	  VALUES ($1)
-		`
-		_, err = conn.Exec(sqlStatement, accdate)
+		sqlStatement := `INSERT INTO accidents (accdate) VALUES ($1)`
+		_, err := conn.Exec(sqlStatement, accdate)
 		if err != nil {
 			panic(err)
 		}
 		return c.Redirect("/dashboard", fiber.StatusFound)
 	})
 
-	app.Get("/shipped", func(c *fiber.Ctx) error {
+	s.App.Get("/shipped", func(c *fiber.Ctx) error {
 		log.Println("enter shipped")
 		return c.Render("shipped", nil, "layout")
 	})
 
-	app.Post("/shipped", func(c *fiber.Ctx) error {
+	s.App.Post("/shipped", func(c *fiber.Ctx) error {
 		shipdate := c.FormValue("shipdate")
 		money := c.FormValue("money")
-
 		sqlStatement := `INSERT INTO ship (shipdate, money) VALUES ($1, $2)`
-		_, err = conn.Exec(sqlStatement, shipdate, money)
+		_, err := conn.Exec(sqlStatement, shipdate, money)
 
 		if err != nil {
 			panic(err)
@@ -131,7 +99,7 @@ func main() {
 		return c.Redirect("/shipped", fiber.StatusFound)
 	})
 
-	app.Get("/dashboard/:dtype", func(c *fiber.Ctx) error {
+	s.App.Get("/dashboard/:dtype", func(c *fiber.Ctx) error {
 		dtype := c.Params("dtype")
 		var whichToDate string
 
@@ -232,80 +200,41 @@ func main() {
 		}, "layout")
 	}).Name("dashboard")
 
-	app.Get("/about", func(c *fiber.Ctx) error {
+	s.App.Get("/about", func(c *fiber.Ctx) error {
 		return c.Render("about", fiber.Map{
 			"Title": "About",
 		}, "layout")
 	})
 
-	app.Post("/about", func(c *fiber.Ctx) error {
+	s.App.Post("/about", func(c *fiber.Ctx) error {
 		log.Println(c.FormValue("message"))
 		return c.Render("about", fiber.Map{
 			"Title": "About",
 		}, "layout")
 	})
 
-	app.Delete("/contact/:id", func(c *fiber.Ctx) error {
+	s.App.Delete("/contact/:id", func(c *fiber.Ctx) error {
 		id := c.Params("id")
 		log.Println(id)
 		return c.Redirect("/", fiber.StatusSeeOther)
 	})
 
-	app.Get("/change", func(c *fiber.Ctx) error {
+	s.App.Get("/change", func(c *fiber.Ctx) error {
 		log.Println(c.FormValue("message"))
 		return c.SendString(c.FormValue("message"))
 	})
 
-	// run server
-	app.Listen(getPort())
-}
-
-func getPort() string {
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = ":3000"
 	} else {
 		port = ":" + port
 	}
-
-	return port
+	s.App.Listen(port)
 }
 
-// ************* database *************
-func connectDb() {
-	connectionStr := "postgresql://postgres:kbEviyUjJecPLMxXRNweNyvIobFzCZAQ@monorail.proxy.rlwy.net:27572/railway"
-
-	conn, err := sql.Open("postgres", connectionStr)
-	if err != nil {
-		panic(err)
+func NewServer() *Server {
+	return &Server{
+		App: fiber.New(fiber.Config{Views: html.New("./templates", ".html")}),
 	}
-	defer conn.Close()
-
-	rows, err := conn.Query("SELECT version();")
-	if err != nil {
-		panic(err)
-	}
-
-	for rows.Next() {
-		var version string
-		rows.Scan(&version)
-		fmt.Println(version)
-	}
-	defer rows.Close()
-}
-
-//*************/database *************
-
-// ************* routes' handlers *************
-func indexHandler(c *fiber.Ctx) error {
-	log.Println("enter index")
-	return c.Render("index", fiber.Map{
-		"Title": "Hello, World!",
-	}, "layout")
-}
-
-func accidentHandler(c *fiber.Ctx) error {
-	log.Println("enter accident")
-
-	return c.Render("accident", fiber.Map{}, "layout")
 }
