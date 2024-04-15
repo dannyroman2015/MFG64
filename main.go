@@ -13,45 +13,29 @@ import (
 )
 
 func main() {
-
-	// init mongodb connection
-	// uri := `mongodb://mongo:tivQFYEUmIyUGohuWrXjssTMqHQmJHGe@monorail.proxy.rlwy.net:32885`
-	// serverAPI := options.ServerAPI(options.ServerAPIVersion1)
-	// opts := options.Client().ApplyURI(uri).SetServerAPIOptions(serverAPI)
-
-	// client, err := mongo.Connect(context.TODO(), opts)
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// defer func() {
-	// 	if err = client.Disconnect(context.TODO()); err != nil {
-	// 		panic(err)
-	// 	}
-	// }()
-
-	// var result bson.M
-	// if err := client.Database("test").RunCommand(context.TODO(), bson.D{{"ping", 1}}).Decode(&result); err != nil {
-	// 	panic(err)
-	// }
-	// fmt.Println("Pinged your deployment. You successfully connected to MongoDB!")
-
-	// init db connection
-
+	////////////////////////
+	// init db connection //
+	////////////////////////
 	conn, err := sql.Open("postgres", "postgresql://postgres:kbEviyUjJecPLMxXRNweNyvIobFzCZAQ@monorail.proxy.rlwy.net:27572/railway")
 	if err != nil {
 		panic(err)
 	}
 	defer conn.Close()
 
-	// init server app
+	////////////////////
+	// init server app//
+	////////////////////
 	engine := html.New("./templates", ".html")
 	app := fiber.New(fiber.Config{
 		Views: engine,
 	})
 
-	// routes here
+	////////////////
+	// routes here//
+	////////////////
 	app.Static("/static", "./static")
 
+	// just for test, delete later/////
 	app.Get("/test", func(c *fiber.Ctx) error {
 		q := "trung"
 		return c.Render("test", fiber.Map{
@@ -65,8 +49,17 @@ func main() {
 		log.Println(s)
 		return c.SendString("")
 	})
+	////////////////////////////////////
 
-	app.Get("/", indexHandler).Name("index")
+	////////////////
+	// index Get //
+	///////////////
+	app.Get("/", func(c *fiber.Ctx) error {
+		log.Println("enter index")
+		return c.Render("index", fiber.Map{
+			"Title": "Hello, World!",
+		}, "layout")
+	}).Name("index")
 
 	app.Get("/provalue", func(c *fiber.Ctx) error {
 		return c.Render("provalue", fiber.Map{}, "layout")
@@ -96,10 +89,7 @@ func main() {
 		log.Println("post accident")
 		accdate := c.FormValue("accdate")
 
-		sqlStatement := `
-	  INSERT INTO accidents (accdate)
-	  VALUES ($1)
-		`
+		sqlStatement := `INSERT INTO accidents (accdate) VALUES ($1)`
 		_, err = conn.Exec(sqlStatement, accdate)
 		if err != nil {
 			panic(err)
@@ -271,12 +261,6 @@ func getPort() string {
 //*************/database *************
 
 // ************* routes' handlers *************
-func indexHandler(c *fiber.Ctx) error {
-	log.Println("enter index")
-	return c.Render("index", fiber.Map{
-		"Title": "Hello, World!",
-	}, "layout")
-}
 
 func accidentHandler(c *fiber.Ctx) error {
 	log.Println("enter accident")

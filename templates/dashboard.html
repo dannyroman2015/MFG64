@@ -56,14 +56,46 @@
         <nav class="level is-mobile">
           <div class="level-item has-text-centered">
             <div>
-              <p class="title is-4"><a href="/accident">Safety</a></p>
+              <p class="title is-6"><a href="#">Customer Service</a></p>
+            </div>
+          </div>
+          <div class="level-item has-text-centered">
+            <div>
+              <p class="title is-6">OTD</p>
+              <p class="subtitle is-4">76%</p>
+            </div>
+          </div>
+          <div class="level-item has-text-centered">
+            <div>
+              <p class="title is-6">SA</p>
+              <p class="subtitle is-4">95%</p>
+            </div>
+          </div>
+          <div class="level-item has-text-centered">
+            <div>
+              <p class="title is-6">Backlog</p>
+              <p class="subtitle is-4">1.5</p>
+            </div>
+          </div>
+        </nav>
+      </div>       
+    </div>
+
+    <div class="cell">
+      <div class="box">
+        <nav class="level is-mobile">
+          <div class="level-item has-text-centered">
+            <div>
+              <p class="title is-4"><a href="/accident">
+                <img src="/static/images/s1.png" alt="">
+              </a></p>
             </div>
           </div>
           <div class="level-item has-text-centered">
             <div>
               <p class="title is-6">From</p>
               <input  type="date" value="2024-01-01" name="accidentFrom" 
-                      id="accidentFrom" class="input is-small">
+                      id="accidentFrom" class="input is-small" disabled>
             </div>
           </div>
           <div class="level-item has-text-centered">
@@ -80,6 +112,37 @@
                 </span>
               </p>
                 <span class="subtitle is-1">{{.accidents}}</span>
+            </div>
+          </div>
+        </nav>
+      </div>       
+    </div>
+
+    <div class="cell">
+      <div class="box">
+        <nav class="level is-mobile">
+          <div class="level-item has-text-centered">
+            <div>
+              <p class="title is-4"><a href="#">Quality</a></p>
+            </div>
+          </div>
+          <div class="level-item has-text-centered">
+            <div>
+              <p class="title is-6">From</p>
+              <input  type="date" value="2024-01-01" name="qualityFrom" 
+                      id="qualityFrom" class="input is-small" disabled>
+            </div>
+          </div>
+          <div class="level-item has-text-centered">
+            <div>
+              <p class="title is-6">Claims</p>
+              <p class="subtitle is-4">5</p>
+            </div>
+          </div>
+          <div class="level-item has-text-centered">
+            <div>
+              <p class="title is-6">OQC</p>
+              <p class="subtitle is-4">90%</p>
             </div>
           </div>
         </nav>
@@ -212,14 +275,22 @@
     plugins: [ChartDataLabels],
     type: 'line',
     data: {
-      labels: ['Rawmill', 'Finemill', 'Veneer', 'Steel', 'Concrete', 'Wood', 'Packing'],
+      labels: ['LY', 'YTD', 'MTD', '1', '2', '3', '4'],
       datasets: [{
-        label: 'My First Dataset',
-        data: [65, 59, 80, 81, 56, 55, 40],
+        label: 'Efficiency',
+        data: [94, 96, 90, 81, 92, 93, 96],
         fill: false,
         borderColor: 'rgb(75, 192, 192)',
         tension: 0.1
       }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true,
+          max: 120
+        },
+      },
     },
   });
 
