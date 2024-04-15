@@ -1,9 +1,7 @@
 package main
 
 import (
-	"context"
 	"database/sql"
-	"fmt"
 	"log"
 	"os"
 	"strings"
@@ -12,33 +10,30 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/template/html/v2"
 	_ "github.com/lib/pq"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func main() {
 
 	// init mongodb connection
-	uri := `mongodb://mongo:tivQFYEUmIyUGohuWrXjssTMqHQmJHGe@monorail.proxy.rlwy.net:32885`
-	serverAPI := options.ServerAPI(options.ServerAPIVersion1)
-	opts := options.Client().ApplyURI(uri).SetServerAPIOptions(serverAPI)
+	// uri := `mongodb://mongo:tivQFYEUmIyUGohuWrXjssTMqHQmJHGe@monorail.proxy.rlwy.net:32885`
+	// serverAPI := options.ServerAPI(options.ServerAPIVersion1)
+	// opts := options.Client().ApplyURI(uri).SetServerAPIOptions(serverAPI)
 
-	client, err := mongo.Connect(context.TODO(), opts)
-	if err != nil {
-		panic(err)
-	}
-	defer func() {
-		if err = client.Disconnect(context.TODO()); err != nil {
-			panic(err)
-		}
-	}()
+	// client, err := mongo.Connect(context.TODO(), opts)
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// defer func() {
+	// 	if err = client.Disconnect(context.TODO()); err != nil {
+	// 		panic(err)
+	// 	}
+	// }()
 
-	var result bson.M
-	if err := client.Database("test").RunCommand(context.TODO(), bson.D{{"ping", 1}}).Decode(&result); err != nil {
-		panic(err)
-	}
-	fmt.Println("Pinged your deployment. You successfully connected to MongoDB!")
+	// var result bson.M
+	// if err := client.Database("test").RunCommand(context.TODO(), bson.D{{"ping", 1}}).Decode(&result); err != nil {
+	// 	panic(err)
+	// }
+	// fmt.Println("Pinged your deployment. You successfully connected to MongoDB!")
 
 	// init db connection
 
@@ -109,7 +104,7 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
-		return c.Redirect("/dashboard", fiber.StatusFound)
+		return c.Redirect("/dashboard/yesterday", fiber.StatusFound)
 	})
 
 	app.Get("/shipped", func(c *fiber.Ctx) error {
@@ -138,7 +133,7 @@ func main() {
 		days := int(time.Since(time.Date(2024, 1, 1, 0, 0, 0, 0, time.Local)).Hours() / 24)
 		var accidents int
 
-		rows, err := conn.Query("SELECT shipdate, money FROM ship order by shipdate")
+		rows, err := conn.Query("SELECT shipdate, sum(money) FROM ship group by shipdate order by shipdate")
 		if err != nil {
 			panic(err)
 		}
@@ -272,27 +267,6 @@ func getPort() string {
 }
 
 // ************* database *************
-func connectDb() {
-	connectionStr := "postgresql://postgres:kbEviyUjJecPLMxXRNweNyvIobFzCZAQ@monorail.proxy.rlwy.net:27572/railway"
-
-	conn, err := sql.Open("postgres", connectionStr)
-	if err != nil {
-		panic(err)
-	}
-	defer conn.Close()
-
-	rows, err := conn.Query("SELECT version();")
-	if err != nil {
-		panic(err)
-	}
-
-	for rows.Next() {
-		var version string
-		rows.Scan(&version)
-		fmt.Println(version)
-	}
-	defer rows.Close()
-}
 
 //*************/database *************
 
