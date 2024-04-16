@@ -23,24 +23,22 @@ func (s *Server) Run() {
 	})
 	//test
 	app.Get("/test", func(c *fiber.Ctx) error {
-		q := "trung"
+
 		return c.Render("test", fiber.Map{
-			"q": q,
+			"status": "waiting",
 		})
 	})
 	//test
-	app.Delete("/fortest", func(c *fiber.Ctx) error {
-		time.Sleep(1 * time.Second)
-		str := c.FormValue("s")
-		log.Println(str)
-		return c.SendString("")
+	app.Get("/fortest", func(c *fiber.Ctx) error {
+		log.Println("fortest")
+		return c.Render("fragments/t", nil)
 	})
 
 	app.Static("/static", "./static")
 
-	app.Get("/login", s.loginGetHandler)
-
 	app.Get("/", s.indexGetHandler)
+
+	app.Get("/login", s.loginGetHandler)
 
 	app.Get("/productionadmin", s.productionAdminGetHandler)
 
