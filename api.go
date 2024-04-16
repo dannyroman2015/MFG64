@@ -9,6 +9,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/template/html/v2"
+	"github.com/xuri/excelize/v2"
 )
 
 type Server struct {
@@ -22,6 +23,60 @@ func (s *Server) Run() {
 		Views: engine,
 	})
 	//test
+	app.Post("/exceltest", func(c *fiber.Ctx) error {
+		log.Println("exceltest")
+		file, err := c.FormFile("file")
+		if err != nil {
+			panic(err)
+		}
+		fi, err := file.Open()
+		if err != nil {
+			panic(err)
+		}
+		defer fi.Close()
+
+		f, err := excelize.OpenReader(fi)
+		if err != nil {
+			panic(err)
+		}
+		cell, err := f.GetCellValue("Sheet1", "A2")
+		if err != nil {
+			panic(err)
+
+		}
+		log.Println(cell)
+		// c.SaveFile(file, "public/"+file.Filename)
+
+		// f, err := excelize.OpenFile("public/" + file.Filename)
+		// if err != nil {
+		// 	panic(err)
+		// }
+		// cell, err := f.GetCellValue("Sheet1", "A2")
+		// if err != nil {
+		// 	panic(err)
+		// }
+		// log.Println(cell)
+
+		return nil
+	})
+	app.Get("/excel", func(c *fiber.Ctx) error {
+
+		// fi, err := file.Open()
+		// if err != nil {
+		// 	panic(err)
+		// }
+		// defer fi.Close()
+
+		// f, _ := excelize.OpenReader(fi)
+		// f.Path = "xx.xlxs"
+		// f.NewSheet("new")
+
+		// c.Response().Header.Set("Content-Disposition", fmt.Sprintf("attachment; filename=%s", f.Path))
+		// c.Response().Header.Set("Content-Type", c.Get("Content-Type"))
+
+		return c.Render("testexcel", nil)
+	})
+
 	app.Get("/test", func(c *fiber.Ctx) error {
 
 		return c.Render("test", fiber.Map{
