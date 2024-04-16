@@ -38,7 +38,11 @@ func (s *Server) Run() {
 
 	app.Static("/static", "./static")
 
+	app.Get("/login", s.loginGetHandler)
+
 	app.Get("/", s.indexGetHandler)
+
+	app.Get("/productionadmin", s.productionAdminGetHandler)
 
 	app.Get("/provalue", s.provalueGetHandler)
 	app.Post("/provalue", s.provaluePostHandler)
@@ -243,4 +247,14 @@ func (s *Server) aboutPostHandler(c *fiber.Ctx) error {
 	return c.Render("about", fiber.Map{
 		"Title": "About",
 	}, "layout")
+}
+
+func (s *Server) productionAdminGetHandler(c *fiber.Ctx) error {
+
+	return c.Render("productionadmin", fiber.Map{}, "layout")
+}
+
+func (s *Server) loginGetHandler(c *fiber.Ctx) error {
+
+	return c.Render("login", nil)
 }
