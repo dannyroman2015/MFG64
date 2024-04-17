@@ -301,5 +301,7 @@ func (s *Server) testprocessimportedexcelfile(c *fiber.Ctx) error {
 	// }
 	// log.Println(cell)
 
-	return nil
+	return c.Render("test", fiber.Map{
+		"excel": cell,
+	})
 }
