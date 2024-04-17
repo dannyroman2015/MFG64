@@ -254,8 +254,19 @@ func (s *Server) aboutPostHandler(c *fiber.Ctx) error {
 }
 
 func (s *Server) productionAdminGetHandler(c *fiber.Ctx) error {
+	var title string
+	var filters []string
+	var mos []string
 
-	return c.Render("productionadmin", fiber.Map{}, "layout")
+	title = "All Of MO"
+	filters = []string{"All", "Running", "Done", "Pending", "Cancelled"}
+	mos = []string{"L24-MO-215", "L24-MO-216", "L24-MO-217", "L24-MO-218"}
+
+	return c.Render("productionadmin", fiber.Map{
+		"title":   title,
+		"filters": filters,
+		"mos":     mos,
+	}, "layout")
 }
 
 func (s *Server) loginGetHandler(c *fiber.Ctx) error {
