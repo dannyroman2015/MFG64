@@ -255,18 +255,29 @@ func (s *Server) aboutPostHandler(c *fiber.Ctx) error {
 
 func (s *Server) productionAdminGetHandler(c *fiber.Ctx) error {
 	var title string
-	var filters []string
 	var mos []string
 
-	title = "All Of MO"
-	filters = []string{"All", "Running", "Done", "Pending", "Cancelled"}
-	mos = []string{"L24-MO-215", "L24-MO-216", "L24-MO-217", "L24-MO-218"}
+	title = "Running"
+
+	rows, err := s.db.Query("Select mo_id from mo_tracking where status = 'Available'")
+	if err != nil {
+		panic(err)
+	}
+	for rows.Next() {
+		var mo string
+		rows.Scan(&mo)
+		mos = append(mos, mo)
+	}
 
 	return c.Render("productionadmin", fiber.Map{
-		"title":   title,
-		"filters": filters,
-		"mos":     mos,
+		"title": title,
+		"mos":   mos,
 	}, "layout")
+}
+
+func (s *Server) searchPostProdAdHandler(c *fiber.Ctx) error {
+	log.Println("search")
+	return c.Redirect("/productionadmin", fiber.StatusFound)
 }
 
 func (s *Server) loginGetHandler(c *fiber.Ctx) error {

@@ -3,18 +3,26 @@
 
   <div class="panel-block">
     <p class="control has-icons-left">
-      <input class="input" type="text" placeholder="Search" />
+      <input  
+              class="input" name="search" type="search" placeholder="Search" />
       <span class="icon is-left">
         <i class="fas fa-search" aria-hidden="true"></i>
       </span>
     </p>
   </div>
 
-  {{ template "fragments/prodAdFilter" .filters }}
+  <p class="panel-tabs">
+      <a>All</a>
+      <a>Available</a>
+      <a>Running</a>
+      <a>Ready</a>
+      <a>Done</a>
+  </p>
 
-  {{ range .mos }}
-    {{ template "fragments/prodAdItem" . }}
-  {{ end }}
+  <div>
+    {{ template "fragments/prodAdContent" .mos }}
+  </div>
+
 
   <div class="panel-block">
     <button class="button is-link is-outlined is-fullwidth">
