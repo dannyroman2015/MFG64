@@ -1,5 +1,5 @@
-<nav class="panel is-primary">
-  <p class="panel-heading">{{.title}}</p>
+<nav x-data="{title:''}" class="panel is-primary">
+  <p class="panel-heading" x-text="title"></p>
 
   <div class="panel-block">
     <p class="control has-icons-left">
@@ -11,16 +11,16 @@
     </p>
   </div>
 
-  <p class="panel-tabs">
-      <a>All</a>
-      <a>Available</a>
-      <a>Running</a>
-      <a>Ready</a>
-      <a>Done</a>
+  <p class="panel-tabs" hx-target="#filter_results" hx-swap="innerHTML">
+      <a hx-get="/prodadfilter/All" @click="title = 'All of MO'">All</a>
+      <a hx-get="/prodadfilter/Available" @click="title = 'Available MOs'">Available</a>
+      <a hx-get="/prodadfilter/Running" @click="title = 'MOs that is running'">Running</a>
+      <a hx-get="/prodadfilter/Ready" @click="title = 'MOs that is waiting for running'">Ready</a>
+      <a hx-get="/prodadfilter/Done" @click="title = 'Finished MOs'">Done</a>
   </p>
 
-  <div>
-    {{ template "fragments/prodAdContent" .mos }}
+  <div id="filter_results">
+    {{ template "fragments/prodAdContent" . }}
   </div>
 
 

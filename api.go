@@ -46,7 +46,10 @@ func (s *Server) Run() {
 
 	app.Get("/login", s.loginGetHandler)
 
+	app.Get("/mo/:mo_id", s.getProdIdHandler)
+
 	app.Get("/productionadmin", s.productionAdminGetHandler)
+	app.Get("/prodadfilter/:status", s.prodAdFilterHandler)
 
 	app.Get("/provalue", s.provalueGetHandler)
 	app.Post("/provalue", s.provaluePostHandler)
@@ -325,5 +328,51 @@ func (s *Server) testprocessimportedexcelfile(c *fiber.Ctx) error {
 
 	return c.Render("test", fiber.Map{
 		"excel": cell,
+	})
+}
+
+func (s *Server) prodAdFilterHandler(c *fiber.Ctx) error {
+	status := c.Params("status")
+	var sql string
+	var mos []string
+
+	if status == "All" {
+		sql = "Select mo_id from mo_tracking"
+	} else {
+		sql = "Select mo_id from mo_tracking where status = '" + status + "'"
+	}
+
+	rows, err := s.db.Query(sql)
+	if err != nil {
+		panic(err)
+	}
+	for rows.Next() {
+		var mo string
+		rows.Scan(&mo)
+		mos = append(mos, mo)
+	}
+
+	return c.Render("fragments/prodAdContent", fiber.Map{
+		"mos": mos,
+	})
+}
+
+func (s *Server) getProdIdHandler(c *fiber.Ctx) error {
+	var prods []string
+
+	rows, err := s.db.Query("select product_id from mo_tracking where mo_id = '" + c.Params("mo_id") + "'")
+	if err != nil {
+		panic(err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var prod string
+		rows.Scan(&prod)
+		prods = append(prods, prod)
+	}
+
+	return c.Render("fragments/prodcontent", fiber.Map{
+		"prods": prods,
 	})
 }
