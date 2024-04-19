@@ -1,5 +1,5 @@
 {{ range .prods }}
-  <a @click="title = '{{.}}'" class="panel-block">
+  <a hx-get="/manu_groups/{{.}}" hx-target="#filter_results" @click="title = '{{.}}'" class="panel-block">
     <span class="panel-icon">
       <i class="fas fa-book" aria-hidden="true"></i>
     </span>

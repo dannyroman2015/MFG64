@@ -50,6 +50,7 @@ func (s *Server) Run() {
 
 	app.Get("/productionadmin", s.productionAdminGetHandler)
 	app.Get("/prodadfilter/:status", s.prodAdFilterHandler)
+	app.Get("/manu_groups/:prodId", s.getManuGroupsHandler)
 
 	app.Get("/provalue", s.provalueGetHandler)
 	app.Post("/provalue", s.provaluePostHandler)
@@ -359,8 +360,9 @@ func (s *Server) prodAdFilterHandler(c *fiber.Ctx) error {
 
 func (s *Server) getProdIdHandler(c *fiber.Ctx) error {
 	var prods []string
+	mo_id := c.Params("mo_id")
 
-	rows, err := s.db.Query("select product_id from mo_tracking where mo_id = '" + c.Params("mo_id") + "'")
+	rows, err := s.db.Query("select product_id from mo_tracking where mo_id = '" + mo_id + "'")
 	if err != nil {
 		panic(err)
 	}
@@ -374,5 +376,14 @@ func (s *Server) getProdIdHandler(c *fiber.Ctx) error {
 
 	return c.Render("fragments/prodcontent", fiber.Map{
 		"prods": prods,
+		"mo_id": mo_id,
+	})
+}
+
+func (s *Server) getManuGroupsHandler(c *fiber.Ctx) error {
+	log.Println(c.Params("prodId"))
+
+	return c.Render("fragments/prodAdManuGroups", fiber.Map{
+		"manu_groups": []string{"Veneer", "CNC", "Steel"},
 	})
 }

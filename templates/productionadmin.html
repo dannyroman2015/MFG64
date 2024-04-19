@@ -1,5 +1,5 @@
 <nav x-data="{title:''}" class="panel is-primary">
-  <p class="panel-heading" x-text="title"></p>
+  <p id="title" class="panel-heading" x-text="title"></p>
 
   <div class="panel-block">
     <p class="control has-icons-left">
@@ -20,7 +20,7 @@
   </p>
 
   <div id="filter_results">
-    {{ template "fragments/prodAdContent" . }}
+    {{ template "fragments/listMos" . }}
   </div>
 
 
