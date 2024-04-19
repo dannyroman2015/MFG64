@@ -13,9 +13,9 @@
 
   <p class="panel-tabs" hx-target="#filter_results" hx-swap="innerHTML">
       <a hx-get="/prodadfilter/All" @click="title = 'All of MO'">All</a>
-      <a hx-get="/prodadfilter/Available" @click="title = 'Available MOs'">Available</a>
-      <a hx-get="/prodadfilter/Running" @click="title = 'MOs that is running'">Running</a>
+      <a hx-get="/prodadfilter/Running" @click="title = 'MOs that is running'">Running</a>   
       <a hx-get="/prodadfilter/Ready" @click="title = 'MOs that is waiting for running'">Ready</a>
+      <a hx-get="/prodadfilter/Available" @click="title = 'Available MOs'">Available</a>
       <a hx-get="/prodadfilter/Done" @click="title = 'Finished MOs'">Done</a>
   </p>
 

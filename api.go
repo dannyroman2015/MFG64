@@ -338,9 +338,9 @@ func (s *Server) prodAdFilterHandler(c *fiber.Ctx) error {
 	var mos []string
 
 	if status == "All" {
-		sql = "Select mo_id from mo_tracking"
+		sql = "Select mo_id from mo order by mo_id"
 	} else {
-		sql = "Select mo_id from mo_tracking where status = '" + status + "'"
+		sql = "Select mo_id from mo where status = '" + status + "' order by mo_id"
 	}
 
 	rows, err := s.db.Query(sql)
