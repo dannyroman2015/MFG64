@@ -382,6 +382,7 @@ func (s *Server) getProdIdHandler(c *fiber.Ctx) error {
 
 func (s *Server) getManuGroupsHandler(c *fiber.Ctx) error {
 	log.Println(c.Params("prodId"))
+	log.Println(c.Query("myVal"))
 
 	return c.Render("fragments/prodAdManuGroups", fiber.Map{
 		"manu_groups": []string{"Veneer", "CNC", "Steel"},

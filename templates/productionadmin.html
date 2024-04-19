@@ -25,8 +25,9 @@
 
 
   <div class="panel-block">
-    <button class="button is-link is-outlined is-fullwidth">
+    <a  hx-get="/prodadfilter/All" hx-target="#filter_results" hx-swap="innerHTML" @click="title = 'All of MO'" 
+        class="button is-link is-outlined is-fullwidth">
       Reset all filters
-    </button>
+    </a>
   </div>
 </nav>
