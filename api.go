@@ -353,7 +353,7 @@ func (s *Server) prodAdFilterHandler(c *fiber.Ctx) error {
 		mos = append(mos, mo)
 	}
 
-	return c.Render("fragments/prodAdContent", fiber.Map{
+	return c.Render("fragments/listMos", fiber.Map{
 		"mos": mos,
 	})
 }
