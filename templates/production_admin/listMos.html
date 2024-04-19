@@ -1,0 +1,25 @@
+{{ range .mos }}
+  <a hx-get="/prods/{{.Mo_id}}" hx-target="#content" @click="title = '{{.Mo_id}}'" class="panel-block custom">
+    {{ .Mo_id }}
+    <progress class="progress is-primary" style="max-width: 150px;" data-text="{{.Done_percent}}%" value="{{.Done_percent}}" max="100">{{.Done_percent}}%</progress>
+  </a>
+{{ end }}
+
+<style>
+  .custom {
+    display: flex;
+    justify-content:space-between;
+  }
+  .progress:before {
+    content:attr(data-text);
+    position:absolute;
+    left:0;
+    right:0;
+  }
+  .progress {
+   text-align:center;
+   align-items: center;
+   position:relative;
+   font-size: 0.75em;
+  }
+</style>

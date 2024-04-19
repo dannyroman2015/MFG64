@@ -12,6 +12,11 @@ import (
 	"github.com/xuri/excelize/v2"
 )
 
+type Mo_data struct {
+	Mo_id        string
+	Done_percent int
+}
+
 type Server struct {
 	addr string
 	db   *sql.DB
@@ -46,7 +51,7 @@ func (s *Server) Run() {
 
 	app.Get("/login", s.loginGetHandler)
 
-	app.Get("/mo/:mo_id", s.getProdIdHandler)
+	app.Get("/prods/:mo_id", s.getProdIdHandler)
 
 	app.Get("/productionadmin", s.productionAdminGetHandler)
 	app.Get("/prodadfilter/:status", s.prodAdFilterHandler)
@@ -273,7 +278,7 @@ func (s *Server) productionAdminGetHandler(c *fiber.Ctx) error {
 		mos = append(mos, mo)
 	}
 
-	return c.Render("productionadmin", fiber.Map{
+	return c.Render("production_admin/main", fiber.Map{
 		"title": title,
 		"mos":   mos,
 	}, "layout")
@@ -333,14 +338,22 @@ func (s *Server) testprocessimportedexcelfile(c *fiber.Ctx) error {
 }
 
 func (s *Server) prodAdFilterHandler(c *fiber.Ctx) error {
-	status := c.Params("status")
+	var mos_data []Mo_data
+	status := strings.ToLower(c.Params("status"))
 	var sql string
-	var mos []string
-
-	if status == "All" {
-		sql = "Select mo_id from mo order by mo_id"
-	} else {
-		sql = "Select mo_id from mo where status = '" + status + "' order by mo_id"
+	// var mos []string
+	switch status {
+	case "all":
+		sql = "Select mo_id, sum(needed_qty), sum(done_qty) from mo_tracking group by mo_id order by mo_id"
+	case "running":
+		sql = `Select mo_id, sum(needed_qty), sum(done_qty) from mo_tracking 
+					group by mo_id having sum(done_qty) > 0 and sum(done_qty) < sum(needed_qty) order by mo_id`
+	case "ready":
+		sql = `Select mo_id, sum(needed_qty), sum(done_qty) from mo_tracking 
+					group by mo_id having sum(done_qty) = 0 order by mo_id`
+	case "done":
+		sql = `Select mo_id, sum(needed_qty), sum(done_qty) from mo_tracking 
+								group by mo_id having sum(done_qty) = 100 order by mo_id`
 	}
 
 	rows, err := s.db.Query(sql)
@@ -349,12 +362,16 @@ func (s *Server) prodAdFilterHandler(c *fiber.Ctx) error {
 	}
 	for rows.Next() {
 		var mo string
-		rows.Scan(&mo)
-		mos = append(mos, mo)
+		var needed, done int
+		rows.Scan(&mo, &needed, &done)
+		mos_data = append(mos_data, Mo_data{
+			Mo_id:        mo,
+			Done_percent: done * 100 / needed,
+		})
 	}
 
-	return c.Render("fragments/listMos", fiber.Map{
-		"mos": mos,
+	return c.Render("production_admin/listMos", fiber.Map{
+		"mos": mos_data,
 	})
 }
 
@@ -374,7 +391,7 @@ func (s *Server) getProdIdHandler(c *fiber.Ctx) error {
 		prods = append(prods, prod)
 	}
 
-	return c.Render("fragments/prodcontent", fiber.Map{
+	return c.Render("production_admin/listProds", fiber.Map{
 		"prods": prods,
 		"mo_id": mo_id,
 	})
