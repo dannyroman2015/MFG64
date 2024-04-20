@@ -1,0 +1,42 @@
+{{ range .blueprints }}
+  <a  hx-get="/prods/{{.Mo_id}}/{{.Blueprint_id}}" hx-target="#{{.Blueprint_id}}"
+      @click="title = '{{.Blueprint_id}}'" 
+      class="panel-block" hx-swap="innerHTML">
+    <span class="panel-icon">
+      <i class="fas fa-book" aria-hidden="true"></i>
+    </span>
+    {{ .Blueprint_id }}
+  </a>
+  <span class="bar"><span style="--w:{{.Done_percent}}%"></span></span>
+  <div id="{{.Blueprint_id}}"></div>
+{{ end }}
+
+
+<style>
+  .bar {
+    /* background: #353b48; */
+    background: rgba(249, 237, 237, 0.653);
+    display: block;
+    height: 3px;
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    border-radius: 3px;
+    overflow: hidden;
+    box-shadow: 0 0 10px #2187e7b3;
+  }
+  .bar span {
+    height: 3px;
+    float: left;
+    background: #2187e7;
+    /* background: #db0e0e; */
+    width: var(--w);
+    animation: animate 2s;
+  }
+  @keyframes animate {
+    0% {
+      width: 0%;
+    }
+    100% {
+      width: var(--w);
+    }
+  }
+</style>

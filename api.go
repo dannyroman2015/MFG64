@@ -12,6 +12,19 @@ import (
 	"github.com/xuri/excelize/v2"
 )
 
+type Subblueprint_data struct {
+	Product_id   string
+	Done_percent int
+}
+
+type Blueprint_data struct {
+	Mo_id        string
+	Blueprint_id string
+	Needed_qty   int
+	Done_qty     int
+	Done_percent int
+}
+
 type Mo_data struct {
 	Mo_id        string
 	Done_percent int
@@ -51,11 +64,11 @@ func (s *Server) Run() {
 
 	app.Get("/login", s.loginGetHandler)
 
-	app.Get("/prods/:mo_id", s.getProdIdHandler)
+	app.Get("/prodAdBlueprints/:mo_id", s.prodAdBlueprintsHandler)
 
 	app.Get("/productionadmin", s.productionAdminGetHandler)
 	app.Get("/prodadfilter/:status", s.prodAdFilterHandler)
-	app.Get("/manu_groups/:prodId", s.getManuGroupsHandler)
+	app.Get("/prods/:mo_id/:blueprint_id", s.prodsHandler)
 
 	app.Get("/provalue", s.provalueGetHandler)
 	app.Post("/provalue", s.provaluePostHandler)
@@ -263,24 +276,41 @@ func (s *Server) aboutPostHandler(c *fiber.Ctx) error {
 }
 
 func (s *Server) productionAdminGetHandler(c *fiber.Ctx) error {
-	var title string
-	var mos []string
+	var mos_data []Mo_data
 
-	title = "Running"
+	status := "running"
+	var sql string
 
-	rows, err := s.db.Query("Select mo_id from mo_tracking where status = 'Available'")
+	switch status {
+	case "all":
+		sql = "Select mo_id, sum(needed_qty), sum(done_qty) from mo_tracking group by mo_id order by mo_id"
+	case "running":
+		sql = `Select mo_id, sum(needed_qty), sum(done_qty) from mo_tracking 
+					group by mo_id having sum(done_qty) > 0 and sum(done_qty) < sum(needed_qty) order by mo_id`
+	case "ready":
+		sql = `Select mo_id, sum(needed_qty), sum(done_qty) from mo_tracking 
+					group by mo_id having sum(done_qty) = 0 order by mo_id`
+	case "done":
+		sql = `Select mo_id, sum(needed_qty), sum(done_qty) from mo_tracking 
+								group by mo_id having sum(done_qty) = 100 order by mo_id`
+	}
+
+	rows, err := s.db.Query(sql)
 	if err != nil {
 		panic(err)
 	}
 	for rows.Next() {
 		var mo string
-		rows.Scan(&mo)
-		mos = append(mos, mo)
+		var needed, done int
+		rows.Scan(&mo, &needed, &done)
+		mos_data = append(mos_data, Mo_data{
+			Mo_id:        mo,
+			Done_percent: done * 100 / needed,
+		})
 	}
 
 	return c.Render("production_admin/main", fiber.Map{
-		"title": title,
-		"mos":   mos,
+		"mos": mos_data,
 	}, "layout")
 }
 
@@ -341,7 +371,7 @@ func (s *Server) prodAdFilterHandler(c *fiber.Ctx) error {
 	var mos_data []Mo_data
 	status := strings.ToLower(c.Params("status"))
 	var sql string
-	// var mos []string
+
 	switch status {
 	case "all":
 		sql = "Select mo_id, sum(needed_qty), sum(done_qty) from mo_tracking group by mo_id order by mo_id"
@@ -375,33 +405,55 @@ func (s *Server) prodAdFilterHandler(c *fiber.Ctx) error {
 	})
 }
 
-func (s *Server) getProdIdHandler(c *fiber.Ctx) error {
-	var prods []string
-	mo_id := c.Params("mo_id")
+func (s *Server) prodAdBlueprintsHandler(c *fiber.Ctx) error {
+	log.Println("come here")
+	var blueprints_data []Blueprint_data
 
-	rows, err := s.db.Query("select product_id from mo_tracking where mo_id = '" + mo_id + "'")
+	mo_id := c.Params("mo_id")
+	sql := `SELECT mo_id, blueprint_id, sum(m.needed_qty), sum(m.done_qty) 
+					FROM mo_tracking m join products p on m.product_id = p.product_id 
+					GROUP BY mo_id, p.blueprint_id HAVING mo_id = '` + mo_id + `'`
+	rows, err := s.db.Query(sql)
 	if err != nil {
 		panic(err)
 	}
 	defer rows.Close()
 
 	for rows.Next() {
-		var prod string
-		rows.Scan(&prod)
-		prods = append(prods, prod)
+		var data Blueprint_data
+		rows.Scan(&data.Mo_id, &data.Blueprint_id, &data.Needed_qty, &data.Done_qty)
+		data.Done_percent = data.Done_qty * 100 / data.Needed_qty
+		blueprints_data = append(blueprints_data, data)
 	}
 
-	return c.Render("production_admin/listProds", fiber.Map{
-		"prods": prods,
-		"mo_id": mo_id,
+	return c.Render("production_admin/listBlueprints", fiber.Map{
+		"blueprints": blueprints_data,
 	})
 }
 
-func (s *Server) getManuGroupsHandler(c *fiber.Ctx) error {
-	log.Println(c.Params("prodId"))
-	log.Println(c.Query("myVal"))
+func (s *Server) prodsHandler(c *fiber.Ctx) error {
+	log.Println(c.Params("blueprint_id"))
+	log.Println(c.Params("mo_id"))
 
-	return c.Render("fragments/prodAdManuGroups", fiber.Map{
-		"manu_groups": []string{"Veneer", "CNC", "Steel"},
+	var subBp []Subblueprint_data
+
+	rows, err := s.db.Query("SELECT m.product_id, m.needed_qty, m.done_qty FROM mo_tracking m join products p on m.product_id = p.product_id where m.mo_id ='" + c.Params("mo_id") + "' and p.blueprint_id ='" + c.Params("blueprint_id") + "'")
+	if err != nil {
+		panic(err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var data Subblueprint_data
+		var n, d int
+		var proid string
+		rows.Scan(&proid, &n, &d)
+		data.Product_id = proid
+		data.Done_percent = d * 100 / n
+		subBp = append(subBp, data)
+	}
+
+	return c.Render("production_admin/listSubblueprint", fiber.Map{
+		"subBluePrint": subBp,
 	})
 }

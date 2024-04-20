@@ -1,7 +1,8 @@
 {{ range .mos }}
-  <a hx-get="/prods/{{.Mo_id}}" hx-target="#content" @click="title = '{{.Mo_id}}'" class="panel-block custom">
+  <a hx-get="/prodAdBlueprints/{{.Mo_id}}" hx-target="#content" @click="title = '{{.Mo_id}}'" class="panel-block custom">
     {{ .Mo_id }}
-    <progress class="progress is-primary" style="max-width: 150px;" data-text="{{.Done_percent}}%" value="{{.Done_percent}}" max="100">{{.Done_percent}}%</progress>
+    <progress class="progress is-primary" style="max-width: 150px;" data-text="{{.Done_percent}}%" 
+              value="{{.Done_percent}}" max="100">{{.Done_percent}}%</progress>
   </a>
 {{ end }}
 

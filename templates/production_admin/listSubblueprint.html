@@ -1,0 +1,13 @@
+
+{{ range .subBluePrint }}
+  <a @click="title = '{{.Product_id}}'" class="panel-block custom">
+    {{ .Product_id }}
+  </a>
+{{ end }}
+
+
+<style>
+  .custom {
+    padding-left: 44px;
+  }
+</style>
