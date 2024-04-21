@@ -7,14 +7,14 @@
     </span>
     {{ .Blueprint_id }}
   </a>
-  <span class="bar"><span style="--w:{{.Done_percent}}%"></span></span>
+  <span class="bar"><span class="bar-per" style="--w:{{.Done_percent}}%"><span class="tooltip">{{.Done_qty}}/{{.Needed_qty}}</span></span></span>
   <div id="{{.Blueprint_id}}"></div>
 {{ end }}
 
 
 <style>
+  /*
   .bar {
-    /* background: #353b48; */
     background: rgba(249, 237, 237, 0.653);
     display: block;
     height: 3px;
@@ -27,7 +27,6 @@
     height: 3px;
     float: left;
     background: #2187e7;
-    /* background: #db0e0e; */
     width: var(--w);
     animation: animate 2s;
   }
@@ -38,5 +37,39 @@
     100% {
       width: var(--w);
     }
+  }
+  */
+
+  .bar {
+    display: block;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.1);
+    height: 2px;
+    border-radius: 2px;
+    box-shadow: 0 0 2px #2187e7b3;
+  }
+  .bar .bar-per {
+    position: relative;
+    display: block;
+    height: 100%;
+    width: var(--w);
+    border-radius: 2px;
+    background: #2187e7;
+    animation: animate 2s;
+  }
+  @keyframes animate {
+    0% {
+      width: 0%;
+    }
+    100% {
+      width: var(--w);
+    }
+  }
+  .bar-per .tooltip {
+    position: absolute;
+    right: 0px;
+    top: -15px;
+    font-size: 12px;
+    font-weight: 500;
   }
 </style>

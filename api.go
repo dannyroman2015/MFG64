@@ -14,6 +14,8 @@ import (
 
 type Subblueprint_data struct {
 	Product_id   string
+	Needed_qty   int
+	Done_qty     int
 	Done_percent int
 }
 
@@ -406,7 +408,6 @@ func (s *Server) prodAdFilterHandler(c *fiber.Ctx) error {
 }
 
 func (s *Server) prodAdBlueprintsHandler(c *fiber.Ctx) error {
-	log.Println("come here")
 	var blueprints_data []Blueprint_data
 
 	mo_id := c.Params("mo_id")
@@ -432,9 +433,6 @@ func (s *Server) prodAdBlueprintsHandler(c *fiber.Ctx) error {
 }
 
 func (s *Server) prodsHandler(c *fiber.Ctx) error {
-	log.Println(c.Params("blueprint_id"))
-	log.Println(c.Params("mo_id"))
-
 	var subBp []Subblueprint_data
 
 	rows, err := s.db.Query("SELECT m.product_id, m.needed_qty, m.done_qty FROM mo_tracking m join products p on m.product_id = p.product_id where m.mo_id ='" + c.Params("mo_id") + "' and p.blueprint_id ='" + c.Params("blueprint_id") + "'")
@@ -445,11 +443,8 @@ func (s *Server) prodsHandler(c *fiber.Ctx) error {
 
 	for rows.Next() {
 		var data Subblueprint_data
-		var n, d int
-		var proid string
-		rows.Scan(&proid, &n, &d)
-		data.Product_id = proid
-		data.Done_percent = d * 100 / n
+		rows.Scan(&data.Product_id, &data.Needed_qty, &data.Done_qty)
+		data.Done_percent = data.Done_qty * 100 / data.Needed_qty
 		subBp = append(subBp, data)
 	}
 
