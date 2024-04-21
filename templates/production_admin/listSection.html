@@ -1,0 +1,28 @@
+{{ range .sections }}
+  <a 
+      @click="title = '{{.Section_id}}'" class="panel-block cust">
+    <li>{{ .Section_id }}</li>
+    <progress class="progress is-info" style="max-width: 100px;" data-text="{{.Done_qty}}" 
+              value="{{.Done_qty}}" max="{{.Needed_qty}}">{{.Done_qty}}</progress>
+  </a>
+{{ end }}
+
+<style>
+  .cust {
+    display: flex;
+    justify-content:space-between;
+    padding-left: 60px;
+  }
+  .progress:before {
+    content:attr(data-text);
+    position:absolute;
+    left:0;
+    right:0;
+  }
+  .progress {
+   text-align:center;
+   align-items: center;
+   position:relative;
+   font-size: 0.75em;
+  }
+</style>

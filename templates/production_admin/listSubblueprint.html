@@ -1,10 +1,12 @@
 
 {{ range .subBluePrint }}
-  <a @click="title = '{{.Product_id}}'" class="panel-block custom">
+  <a  hx-get="/section/{{.Mo_id}}/{{.Product_id}}/{{.Needed_qty}}" hx-target="#{{.Product_id}}" 
+      @click="title = '{{.Product_id}}'" class="panel-block custom">
     {{ .Product_id }}
     <progress class="progress is-info" style="max-width: 100px;" data-text="{{.Done_qty}}/{{.Needed_qty}}" 
               value="{{.Done_percent}}" max="100">{{.Done_percent}}</progress>
   </a>
+  <div id="{{.Product_id}}"></div>
 {{ end }}
 
 

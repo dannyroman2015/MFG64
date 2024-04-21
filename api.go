@@ -12,7 +12,16 @@ import (
 	"github.com/xuri/excelize/v2"
 )
 
+type Section_data struct {
+	Mo_id      string
+	Product_id string
+	Section_id string
+	Needed_qty string
+	Done_qty   int
+}
+
 type Subblueprint_data struct {
+	Mo_id        string
 	Product_id   string
 	Needed_qty   int
 	Done_qty     int
@@ -71,6 +80,7 @@ func (s *Server) Run() {
 	app.Get("/productionadmin", s.productionAdminGetHandler)
 	app.Get("/prodadfilter/:status", s.prodAdFilterHandler)
 	app.Get("/prods/:mo_id/:blueprint_id", s.prodsHandler)
+	app.Get("/section/:mo_id/:product_id/:needed_qty", s.sectionHandler)
 
 	app.Get("/provalue", s.provalueGetHandler)
 	app.Post("/provalue", s.provaluePostHandler)
@@ -445,10 +455,35 @@ func (s *Server) prodsHandler(c *fiber.Ctx) error {
 		var data Subblueprint_data
 		rows.Scan(&data.Product_id, &data.Needed_qty, &data.Done_qty)
 		data.Done_percent = data.Done_qty * 100 / data.Needed_qty
+		data.Mo_id = c.Params("mo_id")
 		subBp = append(subBp, data)
 	}
 
 	return c.Render("production_admin/listSubblueprint", fiber.Map{
 		"subBluePrint": subBp,
+	})
+}
+
+func (s *Server) sectionHandler(c *fiber.Ctx) error {
+	var sections_data []Section_data
+	log.Println(c.Params("Needed_qty"))
+
+	sql := `SELECT mo_id, product_id, section, sum(qty) FROM prod_reports GROUP BY mo_id, product_id, section 
+					HAVING mo_id = '` + c.Params("Mo_id") + `' and product_id = '` + c.Params("Product_id") + `'`
+	rows, err := s.db.Query(sql)
+	if err != nil {
+		panic(err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var data Section_data
+		rows.Scan(&data.Mo_id, &data.Product_id, &data.Section_id, &data.Done_qty)
+		data.Needed_qty = c.Params("Needed_qty")
+		sections_data = append(sections_data, data)
+	}
+
+	return c.Render("production_admin/listSection", fiber.Map{
+		"sections": sections_data,
 	})
 }
