@@ -3,26 +3,23 @@
     <thead>
       <tr>
         <th>Section</th>
-        <th>Input Date</th>
         <th>Quanity</th>
-        <th>Quanity</th>
-        <th>Quanity</th>
+        <th>Date</th>
+        <th>Staff</th>
+        <th>Product</th>
+        <th>MO</th>
       </tr>
     </thead>
     <tbody>
       <tr>
-        <td>Mechanical iron</td>
-        <td>2024-01-06</td>
-        <td>26</td>
-        <td>Mechanical iron</td>
-        <td>Mechanical iron</td>
-      </tr>
-      <tr>
-        <td>CNC</td>
-        <td>2024-01-06</td>
-        <td>26</td>
-        <td>Mechanical iron</td>
-        <td>Mechanical iron</td>
+        {{ range .inputdates }}
+        <td>{{.Section_id}}</td>
+        <td>{{.Qty}}</td>
+        <td>{{.InputDate}}</td>
+        <td>{{.Staff}}</td>
+        <td>{{.Product_id}}</td>
+        <td>{{.Mo_id}}</td>
+        {{ end }}
       </tr>
     </tbody>
   </table>
@@ -31,5 +28,8 @@
   
 
 <style>
-
+  td, th {
+    white-space: nowrap;
+    overflow: hidden;
+  }
 </style>

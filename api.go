@@ -12,6 +12,15 @@ import (
 	"github.com/xuri/excelize/v2"
 )
 
+type InputDate_data struct {
+	Mo_id      string
+	Product_id string
+	Section_id string
+	InputDate  string
+	Qty        int
+	Staff      string
+}
+
 type Section_data struct {
 	Mo_id      string
 	Product_id string
@@ -81,7 +90,7 @@ func (s *Server) Run() {
 	app.Get("/prodadfilter/:status", s.prodAdFilterHandler)
 	app.Get("/prods/:mo_id/:blueprint_id", s.prodsHandler)
 	app.Get("/section/:mo_id/:product_id/:needed_qty", s.sectionHandler)
-	app.Get("/inputdate", s.inputdateHandler)
+	app.Get("/inputdate/:mo_id/:product_id/:section_id", s.inputdateHandler)
 
 	app.Get("/provalue", s.provalueGetHandler)
 	app.Post("/provalue", s.provaluePostHandler)
@@ -490,5 +499,29 @@ func (s *Server) sectionHandler(c *fiber.Ctx) error {
 
 func (s *Server) inputdateHandler(c *fiber.Ctx) error {
 	log.Println("here")
-	return c.Render("production_admin/listInputdates", fiber.Map{})
+	log.Println(c.Params("mo_id"))
+	log.Println(c.Params("product_id"))
+	log.Println(c.Params("section_id"))
+
+	var inputdates []InputDate_data
+
+	sql := `SELECT mo_id, product_id, section, input_date, qty, staff FROM prod_reports 
+				WHERE mo_id = '` + c.Params("Mo_id") + `' and 
+				product_id = '` + c.Params("Product_id") + `' and 
+				section = '` + c.Params("section_id") + `'`
+	rows, err := s.db.Query(sql)
+	if err != nil {
+		panic(err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var data InputDate_data
+		rows.Scan(&data.Mo_id, &data.Product_id, &data.Section_id, &data.InputDate, &data.Qty, &data.Staff)
+		inputdates = append(inputdates, data)
+	}
+
+	return c.Render("production_admin/listInputdates", fiber.Map{
+		"inputdates": inputdates,
+	})
 }
