@@ -1,4 +1,4 @@
-<div class="table-container">
+<div id="table-container" class="table-container">
   <table class="table is-fullwidth">
     <thead>
       <tr>
@@ -10,26 +10,31 @@
         <th>MO</th>
       </tr>
     </thead>
-    <tbody>
+    <tbody>  
+      <a  href="/inputSection/{{.mo_id}}/{{.product_id}}/{{.section_id}}" >
+        Add more...
+      </a>
+      {{ range .inputdates }}
       <tr>
-        {{ range .inputdates }}
         <td>{{.Section_id}}</td>
         <td>{{.Qty}}</td>
         <td>{{.InputDate}}</td>
         <td>{{.Staff}}</td>
         <td>{{.Product_id}}</td>
         <td>{{.Mo_id}}</td>
-        {{ end }}
       </tr>
+      {{ end }}
     </tbody>
   </table>
 </div>
-
-  
 
 <style>
   td, th {
     white-space: nowrap;
     overflow: hidden;
+  }
+  .table-container {
+    padding: 0;
+    margin: 0;
   }
 </style>

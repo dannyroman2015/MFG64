@@ -91,6 +91,7 @@ func (s *Server) Run() {
 	app.Get("/prods/:mo_id/:blueprint_id", s.prodsHandler)
 	app.Get("/section/:mo_id/:product_id/:needed_qty", s.sectionHandler)
 	app.Get("/inputdate/:mo_id/:product_id/:section_id", s.inputdateHandler)
+	app.Get("/inputSection/:mo_id/:product_id/:section_id", s.inputSectionHandler)
 
 	app.Get("/provalue", s.provalueGetHandler)
 	app.Post("/provalue", s.provaluePostHandler)
@@ -498,12 +499,10 @@ func (s *Server) sectionHandler(c *fiber.Ctx) error {
 }
 
 func (s *Server) inputdateHandler(c *fiber.Ctx) error {
-	log.Println("here")
-	log.Println(c.Params("mo_id"))
-	log.Println(c.Params("product_id"))
-	log.Println(c.Params("section_id"))
-
 	var inputdates []InputDate_data
+	mo_id := c.Params("Mo_id")
+	product_id := c.Params("Product_id")
+	section_id := c.Params("section_id")
 
 	sql := `SELECT mo_id, product_id, section, input_date, qty, staff FROM prod_reports 
 				WHERE mo_id = '` + c.Params("Mo_id") + `' and 
@@ -523,5 +522,14 @@ func (s *Server) inputdateHandler(c *fiber.Ctx) error {
 
 	return c.Render("production_admin/listInputdates", fiber.Map{
 		"inputdates": inputdates,
+		"mo_id":      mo_id,
+		"product_id": product_id,
+		"section_id": section_id,
 	})
+}
+
+func (s *Server) inputSectionHandler(c *fiber.Ctx) error {
+	log.Println("here")
+
+	return c.Render("production_admin/inputSection", fiber.Map{})
 }
