@@ -531,5 +531,5 @@ func (s *Server) inputdateHandler(c *fiber.Ctx) error {
 func (s *Server) inputSectionHandler(c *fiber.Ctx) error {
 	log.Println("here")
 
-	return c.Render("production_admin/inputSection", fiber.Map{})
+	return c.Render("production_admin/inputSection", fiber.Map{}, "layout")
 }
