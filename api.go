@@ -93,6 +93,8 @@ func (s *Server) Run() {
 	app.Get("/inputdate/:mo_id/:product_id/:section_id", s.inputdateHandler)
 	app.Get("/inputSection/:mo_id/:product_id/:section_id", s.inputSectionHandler)
 
+	app.Get("/section/getProductIds", s.getProductIdsHandler)
+
 	app.Get("/provalue", s.provalueGetHandler)
 	app.Post("/provalue", s.provaluePostHandler)
 
@@ -529,7 +531,36 @@ func (s *Server) inputdateHandler(c *fiber.Ctx) error {
 }
 
 func (s *Server) inputSectionHandler(c *fiber.Ctx) error {
-	log.Println("here")
+	mo_id := c.Params("Mo_id")
+	product_id := c.Params("Product_id")
+	section_id := c.Params("Section_id")
+	var Mo_ids []string
 
-	return c.Render("production_admin/inputSection", fiber.Map{}, "layout")
+	sql := `select mo_id from mo_tracking group by mo_id 
+					having sum(done_qty) < sum(needed_qty)`
+	rows, err := s.db.Query(sql)
+	if err != nil {
+		panic(err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var mo string
+		rows.Scan(&mo)
+		Mo_ids = append(Mo_ids, mo)
+	}
+
+	return c.Render("section/inputSection", fiber.Map{
+		"data": map[string]interface{}{
+			"Mo_id":      mo_id,
+			"Product_id": product_id,
+			"Section_id": section_id,
+			"Mo_ids":     Mo_ids,
+		},
+	}, "layout")
+}
+
+func (s *Server) getProductIdsHandler(c *fiber.Ctx) error {
+	log.Println("here")
+	return c.Render("sections/listProducts", fiber.Map{})
 }

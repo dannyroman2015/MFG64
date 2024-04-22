@@ -13,10 +13,10 @@
       <div class="field is-narrow">
         <div class="control">
           <div class="select is-fullwidth">
-            <select placeholder="sdf">
-              <option>MO-215</option>
-              <option>MO-216</option>
-              <option>MO-217</option>
+            <select>
+              {{ range .data.Mo_ids }}
+              <option value="{{.}}">{{ . }}</option>
+              {{ end }}
             </select>
           </div>
         </div>
@@ -26,9 +26,7 @@
         <div class="control">
           <div class="select is-fullwidth">
             <select>
-              <option>TEA001-123-12</option>
-              <option>TEA001-12123-12</option>
-              <option>TEA001-12123-1223</option>
+              <option></option>
             </select>
           </div>
         </div>
