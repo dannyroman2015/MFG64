@@ -406,7 +406,7 @@ func (s *Server) prodAdFilterHandler(c *fiber.Ctx) error {
 					group by mo_id having sum(done_qty) = 0 order by mo_id`
 	case "done":
 		sql = `Select mo_id, sum(needed_qty), sum(done_qty) from mo_tracking 
-								group by mo_id having sum(done_qty) = 100 order by mo_id`
+								group by mo_id having sum(done_qty) = sum(needed_qty) order by mo_id`
 	}
 
 	rows, err := s.db.Query(sql)
