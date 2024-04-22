@@ -1,54 +1,113 @@
+<div class="notification has-text-centered is-link is-light">
+  Form for input data from sections. Most of cases, just input <strong>quanity</strong>. The other fields 
+  will be filled automatically. Check and only change when needed.
+</div>
+
 <form class="box">
+  <div class="field is-horizontal">
+    <div class="field-label is-normal">
+      <label class="label">For</label>
+    </div>
 
-  <div class="field">
-    <label class="label">MO</label>
-    <div class="control">
-      <div class="select">
-        <select>
-          <option>L24-MO-216</option>
-          <option>L24-MO-217</option>
-        </select>
+    <div class="field-body">
+      <div class="field is-narrow">
+        <div class="control">
+          <div class="select is-fullwidth">
+            <select placeholder="sdf">
+              <option>MO-215</option>
+              <option>MO-216</option>
+              <option>MO-217</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="field is-expanded">
+        <div class="control">
+          <div class="select is-fullwidth">
+            <select>
+              <option>TEA001-123-12</option>
+              <option>TEA001-12123-12</option>
+              <option>TEA001-12123-1223</option>
+            </select>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
-  <div class="field">
-    <label class="label">Product ID</label>
-    <div class="control">
-      <div class="select">
-        <select>
-          <option>TAE003-324-23</option>
-          <option>M2001-234-234</option>
-        </select>
+  <div class="field is-horizontal">
+    <div class="field-label is-normal">
+      <label class="label">From</label>
+    </div>  
+
+    <div class="field-body">
+      <div class="field is-narrow">
+        <div class="control">
+          <div class="select is-fullwidth">
+            <select>
+              <option>CNC</option>
+              <option>VENEER</option>
+              <option>STEEL</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="field">
+        <p class="control is-expanded has-icons-left">
+          <input class="input" type="text" placeholder="Name">
+          <span class="icon is-small is-left">
+            <i class="fas fa-user"></i>
+          </span>
+        </p>
+        <p class="help is-danger">This field gets info from your account. Change only needed</p>
+      </div>
+      
+    </div>
+  </div>
+  
+  <div class="field is-horizontal">
+    <div class="field-label is-normal">
+      <label class="label">Input Data</label>
+    </div>  
+
+    <div class="field-body">
+      <div class="field is-narrow">
+        <p class="control">
+          <input class="input" type="date" value="2024-04-01">
+        </p>
+        <p class="help is-danger">Default is current time. Change only needed</p>
+      </div>
+
+      <div class="field has-addons">
+        <p class="control is-expanded">
+          <input class="input" type="number" placeholder="Nhập số lượng theo đơn vị">
+        </p>
+
+        <p class="control">
+          <span class="select">
+            <select>
+              <option>pcs</option>
+              <option>m2</option>
+              <option>m3</option>
+            </select>
+          </span>
+        </p>
+      </div> 
+    </div>
+  </div>
+  
+  <div class="field is-horizontal">
+    <div class="field-label"></div>
+    <div class="field-body">
+      <div class="field">
+        <div class="control">
+          <button class="button is-link is-outlined is-fullwidth">
+            Send Data
+          </button>
+        </div>
       </div>
     </div>
   </div>
-
-  <div class="field">
-    <label class="label">Section</label>
-    <div class="control">
-      <div class="select">
-        <select>
-          <option>CNC</option>
-          <option>Veneer</option>
-        </select>
-      </div>
-    </div>
-  </div>
-
-  <div class="field">
-    <label class="label">Date</label>
-    <div class="control">
-      <input class="input" type="datetime" />
-    </div>
-  </div>
-
-  <div class="field">
-    <label class="label">Password</label>
-    <div class="control">
-      <input class="input" type="password" placeholder="********" />
-    </div>
-  </div>
-
-  <button class="button is-primary">Sign in</button>
 </form>
