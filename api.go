@@ -81,6 +81,7 @@ func (s *Server) Run() {
 	app.Get("/prodadfilter/:status", s.prodAdFilterHandler)
 	app.Get("/prods/:mo_id/:blueprint_id", s.prodsHandler)
 	app.Get("/section/:mo_id/:product_id/:needed_qty", s.sectionHandler)
+	app.Get("/inputdate", s.inputdateHandler)
 
 	app.Get("/provalue", s.provalueGetHandler)
 	app.Post("/provalue", s.provaluePostHandler)
@@ -466,7 +467,6 @@ func (s *Server) prodsHandler(c *fiber.Ctx) error {
 
 func (s *Server) sectionHandler(c *fiber.Ctx) error {
 	var sections_data []Section_data
-	log.Println(c.Params("Needed_qty"))
 
 	sql := `SELECT mo_id, product_id, section, sum(qty) FROM prod_reports GROUP BY mo_id, product_id, section 
 					HAVING mo_id = '` + c.Params("Mo_id") + `' and product_id = '` + c.Params("Product_id") + `'`
@@ -486,4 +486,9 @@ func (s *Server) sectionHandler(c *fiber.Ctx) error {
 	return c.Render("production_admin/listSection", fiber.Map{
 		"sections": sections_data,
 	})
+}
+
+func (s *Server) inputdateHandler(c *fiber.Ctx) error {
+	log.Println("here")
+	return c.Render("production_admin/listInputdates", fiber.Map{})
 }

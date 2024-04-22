@@ -1,5 +1,5 @@
 {{ range .sections }}
-  <a 
+  <a  hx-get="/inputdate"
       @click="title = '{{.Section_id}}'" class="panel-block cust">
     <li>{{ .Section_id }}</li>
     <progress class="progress is-info" style="max-width: 100px;" data-text="{{.Done_qty}}" 
