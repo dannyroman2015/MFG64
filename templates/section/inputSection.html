@@ -51,6 +51,7 @@
               <option value="CNC">CNC</option>
               <option value="PACKING">PACKING</option>
               <option value="STEEL">STEEL</option>
+              <option value="WELDING">WELDING</option>
             </select>
           </div>
         </div>
@@ -85,7 +86,7 @@
       <div class="field" hx-target="this" hx-swap="outerHTML">
         <p class="control is-expanded">
           <input  hx-post="/section/checkremains" hx-include="#inputForm"
-                  hx-trigger="keyup delay:1s, changed" name="qty" class="input" 
+                  hx-trigger="click once" name="qty" class="input" 
                   min="1" type="number" placeholder="Enter quanity/Nhập số lượng">
         </p>
         <p class="help is-primary">Want to know remains? Just input number and wait a second</p>

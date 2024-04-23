@@ -95,7 +95,7 @@ func (s *Server) Run() {
 	app.Get("/inputdate/:mo_id/:product_id/:section_id", s.inputdateHandler)
 
 	app.Get("/inputSection", s.inputSectionHandler)
-	app.Post("/inputSection", s.inputSettionPostHandler)
+	app.Post("/inputSection", s.inputSectionPostHandler)
 	app.Get("/inputSection/:mo_id/:product_id/:section_id", s.inputSectionWithParamsHandler)
 	app.Get("/sections/productIds", s.getProductIdsHandler)
 	app.Post("/section/checkremains", s.checkremainsHandler)
@@ -640,7 +640,7 @@ func (s *Server) inputSectionWithParamsHandler(c *fiber.Ctx) error {
 	return c.SendString("chua lam")
 }
 
-func (s *Server) inputSettionPostHandler(c *fiber.Ctx) error {
+func (s *Server) inputSectionPostHandler(c *fiber.Ctx) error {
 	mo_id := c.FormValue("mo")
 	product_id := c.FormValue("productId")
 	section := c.FormValue("section_id")

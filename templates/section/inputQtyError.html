@@ -1,10 +1,12 @@
 <div class="field" hx-target="this" hx-swap="outerHTML">
   <p class="control is-expanded">
-    <input  hx-post="/section/checkremains" hx-include="#inputForm"
-            hx-trigger="keyup delay:500ms, changed" name="qty" class="input" 
-            min="1" max="{{.remains}}" type="number" placeholder="Enter quanity/Nhập số lượng"
+    <input  hx-post="/section/checkremains" hx-include="#inputForm" hx-trigger="keyup delay:2s, changed"
+            name="qty" class="input" min="1" max="{{.remains}}" 
+            type="number" placeholder="Enter quanity/Nhập số lượng"
             value="{{.input_qty}}"
-            >
+    >
   </p>
   <p class="help {{.msgColor}}">{{.message}}</p>
 </div>
+
+
