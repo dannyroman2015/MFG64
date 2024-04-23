@@ -3,7 +3,7 @@
   will be filled automatically. Check and only change when needed.
 </div>
 
-<form id="inputForm" action="/section" method="post" class="box">
+<form id="inputForm" action="/inputSection" method="post" class="box">
   <div class="field is-horizontal">
     <div class="field-label is-normal">
       <label class="label">For</label>
@@ -58,7 +58,7 @@
 
       <div class="field">
         <p class="control is-expanded has-icons-left">
-          <input class="input" type="text" placeholder="Name">
+          <input class="input" name="staff" type="text" placeholder="Name">
           <span class="icon is-small is-left">
             <i class="fas fa-user"></i>
           </span>
@@ -77,7 +77,7 @@
     <div class="field-body">
       <div class="field is-narrow">
         <p class="control">
-          <input id="inputdate" class="input" type="date">
+          <input id="inputdate" name="inputdate" class="input" type="date">
         </p>
         <p class="help is-link">Default is current time. Change only needed</p>
       </div>
@@ -86,9 +86,9 @@
         <p class="control is-expanded">
           <input  hx-post="/section/checkremains" hx-include="#inputForm"
                   hx-trigger="keyup delay:1s, changed" name="qty" class="input" 
-                  min="0" type="number" placeholder="Enter quanity/Nhập số lượng">
+                  min="1" type="number" placeholder="Enter quanity/Nhập số lượng">
         </p>
-        <p class="help is-primary">Want know remains? Just input number and wait a second</p>
+        <p class="help is-primary">Want to know remains? Just input number and wait a second</p>
       </div>
     </div>
   </div>

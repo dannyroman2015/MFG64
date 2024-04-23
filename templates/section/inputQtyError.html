@@ -2,7 +2,7 @@
   <p class="control is-expanded">
     <input  hx-post="/section/checkremains" hx-include="#inputForm"
             hx-trigger="keyup delay:500ms, changed" name="qty" class="input" 
-            min="0" max="{{.remains}}" type="number" placeholder="Enter quanity/Nhập số lượng"
+            min="1" max="{{.remains}}" type="number" placeholder="Enter quanity/Nhập số lượng"
             value="{{.input_qty}}"
             >
   </p>

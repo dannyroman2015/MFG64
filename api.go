@@ -95,6 +95,7 @@ func (s *Server) Run() {
 	app.Get("/inputdate/:mo_id/:product_id/:section_id", s.inputdateHandler)
 
 	app.Get("/inputSection", s.inputSectionHandler)
+	app.Post("/inputSection", s.inputSettionPostHandler)
 	app.Get("/inputSection/:mo_id/:product_id/:section_id", s.inputSectionWithParamsHandler)
 	app.Get("/sections/productIds", s.getProductIdsHandler)
 	app.Post("/section/checkremains", s.checkremainsHandler)
@@ -587,7 +588,6 @@ func (s *Server) getProductIdsHandler(c *fiber.Ctx) error {
 }
 
 func (s *Server) checkremainsHandler(c *fiber.Ctx) error {
-	log.Println("herer")
 	input_qty, _ := strconv.Atoi(c.FormValue("qty"))
 	mo_id := c.FormValue("mo")
 	product_id := c.FormValue("productId")
@@ -620,7 +620,7 @@ func (s *Server) checkremainsHandler(c *fiber.Ctx) error {
 
 	var message string
 	var msgColor string
-	if input_qty >= remains {
+	if input_qty > remains {
 		message = fmt.Sprintf("Invalid. Your input quanity is greater than needs. Remains %d", remains)
 		msgColor = "is-danger"
 	} else {
@@ -638,4 +638,23 @@ func (s *Server) checkremainsHandler(c *fiber.Ctx) error {
 
 func (s *Server) inputSectionWithParamsHandler(c *fiber.Ctx) error {
 	return c.SendString("chua lam")
+}
+
+func (s *Server) inputSettionPostHandler(c *fiber.Ctx) error {
+	mo_id := c.FormValue("mo")
+	product_id := c.FormValue("productId")
+	section := c.FormValue("section_id")
+	input_date := c.FormValue("inputdate")
+	qty := c.FormValue("qty")
+	staff := c.FormValue("staff")
+
+	sql := `insert into prod_reports(mo_id, product_id, section, input_date, qty, staff)
+					values($1, $2, $3, $4, $5, $6)`
+
+	_, err := s.db.Exec(sql, mo_id, product_id, section, input_date, qty, staff)
+	if err != nil {
+		panic(err)
+	}
+
+	return c.Redirect("/inputSection", fiber.StatusFound)
 }
