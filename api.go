@@ -63,8 +63,6 @@ func (s *Server) Run() {
 		Views: engine,
 	})
 	//test import and process excel file
-	app.Post("/testprocessimportedexcelfile", s.testprocessimportedexcelfile)
-	app.Get("/testimportexcel", s.testimportexcel)
 	//end test
 
 	//just for test
@@ -99,6 +97,9 @@ func (s *Server) Run() {
 	app.Get("/inputSection/:mo_id/:product_id/:section_id", s.inputSectionWithParamsHandler)
 	app.Get("/sections/productIds", s.getProductIdsHandler)
 	app.Post("/section/checkremains", s.checkremainsHandler)
+
+	app.Get("/importexcelfile", s.importexcelfileHandler)
+	app.Post("/proccesexcelfile", s.proccesexcelfileHandler)
 
 	app.Get("/provalue", s.provalueGetHandler)
 	app.Post("/provalue", s.provaluePostHandler)
@@ -354,47 +355,8 @@ func (s *Server) loginGetHandler(c *fiber.Ctx) error {
 	return c.Render("login", nil)
 }
 
-func (s *Server) testimportexcel(c *fiber.Ctx) error {
-	return c.Render("testexcel", nil)
-}
-
-func (s *Server) testprocessimportedexcelfile(c *fiber.Ctx) error {
-	log.Println("exceltest")
-	file, err := c.FormFile("file")
-	if err != nil {
-		panic(err)
-	}
-	fi, err := file.Open()
-	if err != nil {
-		panic(err)
-	}
-	defer fi.Close()
-
-	f, err := excelize.OpenReader(fi)
-	if err != nil {
-		panic(err)
-	}
-	cell, err := f.GetCellValue("Sheet2", "A2")
-	if err != nil {
-		panic(err)
-
-	}
-	log.Println(cell)
-	// c.SaveFile(file, "static/public/"+file.Filename)
-
-	// f, err := excelize.OpenFile("static/public/" + file.Filename)
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// cell, err := f.GetCellValue("Sheet1", "A2")
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// log.Println(cell)
-
-	return c.Render("test", fiber.Map{
-		"excel": cell,
-	})
+func (s *Server) extractFromExcelHandler(c *fiber.Ctx) error {
+	return nil
 }
 
 func (s *Server) prodAdFilterHandler(c *fiber.Ctx) error {
@@ -657,4 +619,47 @@ func (s *Server) inputSectionPostHandler(c *fiber.Ctx) error {
 	}
 
 	return c.Redirect("/inputSection", fiber.StatusFound)
+}
+
+func (s *Server) importexcelfileHandler(c *fiber.Ctx) error {
+	return c.Render("production_admin/importexcelfile", fiber.Map{}, "layout")
+}
+
+func (s *Server) proccesexcelfileHandler(c *fiber.Ctx) error {
+	log.Println("exceltest")
+	file, err := c.FormFile("file")
+	if err != nil {
+		panic(err)
+	}
+	fi, err := file.Open()
+	if err != nil {
+		panic(err)
+	}
+	defer fi.Close()
+
+	f, err := excelize.OpenReader(fi)
+	if err != nil {
+		panic(err)
+	}
+	cell, err := f.GetCellValue("Sheet2", "A2")
+	if err != nil {
+		panic(err)
+
+	}
+	log.Println(cell)
+	// c.SaveFile(file, "static/public/"+file.Filename)
+
+	// f, err := excelize.OpenFile("static/public/" + file.Filename)
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// cell, err := f.GetCellValue("Sheet1", "A2")
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// log.Println(cell)
+
+	return c.Render("test", fiber.Map{
+		"excel": cell,
+	})
 }
