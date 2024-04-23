@@ -13,7 +13,7 @@
       <div class="field is-narrow">
         <div class="control">
           <div class="select is-fullwidth">
-            <select>
+            <select hx-get="/sections/productIds" hx-target="#productIds" name="mo">
               {{ range .data.Mo_ids }}
               <option value="{{.}}">{{ . }}</option>
               {{ end }}
@@ -25,8 +25,8 @@
       <div class="field is-expanded">
         <div class="control">
           <div class="select is-fullwidth">
-            <select>
-              <option></option>
+            <select id="productIds" name="productId">
+              <option>A</option>
             </select>
           </div>
         </div>

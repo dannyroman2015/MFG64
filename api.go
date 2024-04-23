@@ -93,7 +93,7 @@ func (s *Server) Run() {
 	app.Get("/inputdate/:mo_id/:product_id/:section_id", s.inputdateHandler)
 	app.Get("/inputSection/:mo_id/:product_id/:section_id", s.inputSectionHandler)
 
-	app.Get("/section/getProductIds", s.getProductIdsHandler)
+	app.Get("/sections/productIds", s.getProductIdsHandler)
 
 	app.Get("/provalue", s.provalueGetHandler)
 	app.Post("/provalue", s.provaluePostHandler)
@@ -561,6 +561,23 @@ func (s *Server) inputSectionHandler(c *fiber.Ctx) error {
 }
 
 func (s *Server) getProductIdsHandler(c *fiber.Ctx) error {
-	log.Println("here")
-	return c.Render("sections/listProducts", fiber.Map{})
+	mo_id := c.Query("mo")
+	var product_ids []string
+
+	sql := `select product_id from mo_tracking where 
+					mo_id = '` + mo_id + `' and done_qty < needed_qty`
+
+	rows, err := s.db.Query(sql)
+	if err != nil {
+		panic(err)
+	}
+	for rows.Next() {
+		var product_id string
+		rows.Scan(&product_id)
+		product_ids = append(product_ids, product_id)
+	}
+
+	return c.Render("section/listProducts", fiber.Map{
+		"product_ids": product_ids,
+	})
 }
