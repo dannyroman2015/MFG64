@@ -2,8 +2,10 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -91,9 +93,11 @@ func (s *Server) Run() {
 	app.Get("/prods/:mo_id/:blueprint_id", s.prodsHandler)
 	app.Get("/section/:mo_id/:product_id/:needed_qty", s.sectionHandler)
 	app.Get("/inputdate/:mo_id/:product_id/:section_id", s.inputdateHandler)
-	app.Get("/inputSection/:mo_id/:product_id/:section_id", s.inputSectionHandler)
 
+	app.Get("/inputSection", s.inputSectionHandler)
+	app.Get("/inputSection/:mo_id/:product_id/:section_id", s.inputSectionWithParamsHandler)
 	app.Get("/sections/productIds", s.getProductIdsHandler)
+	app.Post("/section/checkremains", s.checkremainsHandler)
 
 	app.Get("/provalue", s.provalueGetHandler)
 	app.Post("/provalue", s.provaluePostHandler)
@@ -531,9 +535,9 @@ func (s *Server) inputdateHandler(c *fiber.Ctx) error {
 }
 
 func (s *Server) inputSectionHandler(c *fiber.Ctx) error {
-	mo_id := c.Params("Mo_id")
-	product_id := c.Params("Product_id")
-	section_id := c.Params("Section_id")
+	// mo_id := c.Params("Mo_id")
+	// product_id := c.Params("Product_id")
+	// section_id := c.Params("Section_id")
 	var Mo_ids []string
 
 	sql := `select mo_id from mo_tracking group by mo_id 
@@ -552,10 +556,10 @@ func (s *Server) inputSectionHandler(c *fiber.Ctx) error {
 
 	return c.Render("section/inputSection", fiber.Map{
 		"data": map[string]interface{}{
-			"Mo_id":      mo_id,
-			"Product_id": product_id,
-			"Section_id": section_id,
-			"Mo_ids":     Mo_ids,
+			// "Mo_id":      mo_id,
+			// "Product_id": product_id,
+			// "Section_id": section_id,
+			"Mo_ids": Mo_ids,
 		},
 	}, "layout")
 }
@@ -580,4 +584,58 @@ func (s *Server) getProductIdsHandler(c *fiber.Ctx) error {
 	return c.Render("section/listProducts", fiber.Map{
 		"product_ids": product_ids,
 	})
+}
+
+func (s *Server) checkremainsHandler(c *fiber.Ctx) error {
+	log.Println("herer")
+	input_qty, _ := strconv.Atoi(c.FormValue("qty"))
+	mo_id := c.FormValue("mo")
+	product_id := c.FormValue("productId")
+	section := c.FormValue("section_id")
+	var sectionDoneQty int
+	var needed_qty int
+
+	sql := `select sum(qty) from prod_reports group by mo_id, product_id, section 
+		having mo_id = '` + mo_id + `' and product_id = '` + product_id + `' and 
+		section = '` + section + `'`
+	rows, err := s.db.Query(sql)
+	if err != nil {
+		panic(err)
+	}
+	for rows.Next() {
+		rows.Scan(&sectionDoneQty)
+	}
+
+	sql = `select needed_qty from mo_tracking where 
+		mo_id = '` + mo_id + `' and product_id = '` + product_id + `'`
+	rows, err = s.db.Query(sql)
+	if err != nil {
+		panic(err)
+	}
+
+	rows.Next()
+	rows.Scan(&needed_qty)
+
+	remains := needed_qty - sectionDoneQty
+
+	var message string
+	var msgColor string
+	if input_qty >= remains {
+		message = fmt.Sprintf("Invalid. Your input quanity is greater than needs. Remains %d", remains)
+		msgColor = "is-danger"
+	} else {
+		message = fmt.Sprintf("Valid. The remains are %d", remains-input_qty)
+		msgColor = "is-link"
+	}
+
+	return c.Render("section/inputQtyError", fiber.Map{
+		"message":   message,
+		"input_qty": input_qty,
+		"remains":   remains,
+		"msgColor":  msgColor,
+	})
+}
+
+func (s *Server) inputSectionWithParamsHandler(c *fiber.Ctx) error {
+	return c.SendString("chua lam")
 }

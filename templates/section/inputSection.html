@@ -3,7 +3,7 @@
   will be filled automatically. Check and only change when needed.
 </div>
 
-<form class="box">
+<form id="inputForm" action="/section" method="post" class="box">
   <div class="field is-horizontal">
     <div class="field-label is-normal">
       <label class="label">For</label>
@@ -13,7 +13,8 @@
       <div class="field is-narrow">
         <div class="control">
           <div class="select is-fullwidth">
-            <select hx-get="/sections/productIds" hx-target="#productIds" name="mo">
+            <select id="mo" hx-get="/sections/productIds" hx-target="#productId" name="mo">
+              <option value="" disabled selected>Select MO</option>
               {{ range .data.Mo_ids }}
               <option value="{{.}}">{{ . }}</option>
               {{ end }}
@@ -25,8 +26,7 @@
       <div class="field is-expanded">
         <div class="control">
           <div class="select is-fullwidth">
-            <select id="productIds" name="productId">
-              <option>A</option>
+            <select id="productId" name="productId">
             </select>
           </div>
         </div>
@@ -43,10 +43,14 @@
       <div class="field is-narrow">
         <div class="control">
           <div class="select is-fullwidth">
-            <select>
-              <option>CNC</option>
-              <option>VENEER</option>
-              <option>STEEL</option>
+            <select name="section_id">
+              <option value="RAWMILL">RAWMILL</option>
+              <option value="FINEMILL">FINEMILL</option>
+              <option value="REEDED">REEDED</option>
+              <option value="STEEL">STEEL</option>
+              <option value="CNC">CNC</option>
+              <option value="PACKING">PACKING</option>
+              <option value="STEEL">STEEL</option>
             </select>
           </div>
         </div>
@@ -59,7 +63,7 @@
             <i class="fas fa-user"></i>
           </span>
         </p>
-        <p class="help is-danger">This field gets info from your account. Change only needed</p>
+        <p class="help is-link">This field gets info from your account. Change only needed</p>
       </div>
       
     </div>
@@ -73,26 +77,19 @@
     <div class="field-body">
       <div class="field is-narrow">
         <p class="control">
-          <input class="input" type="date" value="2024-04-01">
+          <input id="inputdate" class="input" type="date">
         </p>
-        <p class="help is-danger">Default is current time. Change only needed</p>
+        <p class="help is-link">Default is current time. Change only needed</p>
       </div>
 
-      <div class="field has-addons">
+      <div class="field" hx-target="this" hx-swap="outerHTML">
         <p class="control is-expanded">
-          <input class="input" type="number" placeholder="Nhập số lượng theo đơn vị">
+          <input  hx-post="/section/checkremains" hx-include="#inputForm"
+                  hx-trigger="keyup delay:1s, changed" name="qty" class="input" 
+                  min="0" type="number" placeholder="Enter quanity/Nhập số lượng">
         </p>
-
-        <p class="control">
-          <span class="select">
-            <select>
-              <option>pcs</option>
-              <option>m2</option>
-              <option>m3</option>
-            </select>
-          </span>
-        </p>
-      </div> 
+        <p class="help is-primary">Want know remains? Just input number and wait a second</p>
+      </div>
     </div>
   </div>
   
@@ -101,7 +98,7 @@
     <div class="field-body">
       <div class="field">
         <div class="control">
-          <button class="button is-link is-outlined is-fullwidth">
+          <button x-show="showBtn" class="button is-link is-outlined is-fullwidth">
             Send Data
           </button>
         </div>
@@ -109,3 +106,7 @@
     </div>
   </div>
 </form>
+
+<script>
+  document.getElementById("inputdate").valueAsDate = new Date()
+</script>
