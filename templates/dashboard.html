@@ -1,5 +1,44 @@
-<div class="fixed-grid  has-1-cols-mobile has-4-cols-widescreen">
+<div class="fixed-grid has-1-cols-mobile has-4-cols-widescreen">
   <div class="grid">
+
+    <div class="cell">
+      <div class="card">
+        <header class="card-header">
+          <p class="card-header-title">Efficiency</p>
+          <label for="" class="card-header-icon">
+            From: 
+            <input type="date" value="2024-04-01" class="card-header-icon">
+          </label>     
+        </header>
+        
+        <div class="card-image">
+          <figure class="image is-3by1">
+            <div id="efficiency" class="cell">
+              <canvas id="efficientChart"></canvas>
+            </div>
+          </figure>
+        </div>
+        
+        <div class="card-content">
+          <nav class="pagination is-centered is-rounded is-small" role="navigation" aria-label="pagination">      
+            <a href="#" class="pagination-previous"><</a>
+            <ul class="pagination-list is-small">
+              <li><a href="#" class="pagination-link" aria-label="Goto page 1">1</a></li>
+              <li><a href="#" class="pagination-link" aria-label="Goto page 2">2</a></li>
+              <li><a href="#" class="pagination-link" aria-label="Goto page 3">3</a></li>
+              <li><a href="#" class="pagination-link" aria-label="Goto page 4">4</a></li>
+              <li><a class="pagination-link is-current" aria-label="Page 5" aria-current="page">5</a></li>
+              <li><a href="#" class="pagination-link" aria-label="Goto page 6">6</a></li>
+              <li><a href="#" class="pagination-link" aria-label="Goto page 7">7</a></li>
+              <li><a href="#" class="pagination-link" aria-label="Goto page 8">8</a></li>
+              <li><a href="#" class="pagination-link" aria-label="Goto page 9">9</a></li>
+            </ul>
+            <a href="#" class="pagination-next">></a>
+          </nav>
+        </div>
+
+      </div>
+    </div>
 
     <div class="cell">
       <div class="card">
@@ -145,12 +184,6 @@
         </nav>
       </div>       
     </div>
-    
-    <div class="cell">
-      <div id="chart3" class="cell">
-        <canvas id="myChart3"></canvas>
-      </div>
-    </div>
 
   </div>
 </div> 
@@ -172,10 +205,33 @@
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
 <script>
   const ctx = document.getElementById('myChart');
-  const ctx2 = document.getElementById('myChart2');
-  const ctx3 = document.getElementById('myChart3');
+  const ctx2 = document.getElementById('myChart2');  
   const ctx4 = document.getElementById('myChart4');
   const ctx5 = document.getElementById('myChart5');
+
+  const efficientChartCtx = document.getElementById('efficientChart');
+  new Chart(efficientChartCtx, {
+    plugins: [ChartDataLabels],
+    type: 'line',
+    data: {
+      labels: ['LY', 'YTD', 'MTD', '1', '2', '3', '4'],
+      datasets: [{
+        label: 'Efficiency',
+        data: [94, 96, 90, 81, 92, 93, 96],
+        fill: false,
+        borderColor: 'rgb(75, 192, 192)',
+        tension: 0.1
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true,
+          max: 120
+        },
+      },
+    },
+  });
 
   new Chart(ctx, {
     plugins: [ChartDataLabels],
@@ -265,29 +321,6 @@
         ],
         hoverOffset: 4
       }]
-    },
-  });
-
-  new Chart(ctx3, {
-    plugins: [ChartDataLabels],
-    type: 'line',
-    data: {
-      labels: ['LY', 'YTD', 'MTD', '1', '2', '3', '4'],
-      datasets: [{
-        label: 'Efficiency',
-        data: [94, 96, 90, 81, 92, 93, 96],
-        fill: false,
-        borderColor: 'rgb(75, 192, 192)',
-        tension: 0.1
-      }]
-    },
-    options: {
-      scales: {
-        y: {
-          beginAtZero: true,
-          max: 120
-        },
-      },
     },
   });
 
