@@ -1,0 +1,93 @@
+<div class="notification has-text-centered is-link is-light">
+  Form for input data for efficient charts
+</div>
+
+<form id="inputForm" action="/efficiencyreport" method="post" class="box">
+  <div class="field is-horizontal">
+    <div class="field-label is-normal">
+      <label class="label">WORK CENTER</label>
+    </div>
+
+    <div class="field-body">
+      <div class="field">
+        <div class="control">
+          <div class="select">
+            <select id="mo" name="workcenter">
+              <option disabled selected>Select Work Center</option>
+              <option value="CUTTING">CUTTING</option>
+              <option value="LAMINATION">LAMINATION</option>
+              <option value="REEDED LINE">REEDED LINE</option>
+              <option value="VENEER LAMINATION">VENEER LAMINATION</option>
+              <option value="PANEL CNC">PANEL CNC</option>
+              <option value="ASSEMBLY">ASSEMBLY</option>
+              <option value="WOOD FINISHING ">WOOD FINISHING </option>
+              <option value="PACKING">PACKING</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="field is-horizontal">
+    <div class="field-label is-normal">
+      <label class="label">DATE</label>
+    </div>
+
+    <div class="field-body">
+      <div class="field is-narrow">
+        <p class="control">
+          <input id="inputdate" name="inputdate" class="input" type="date">
+        </p>
+        <p class="help is-link">Default is current time. Change only needed</p>
+      </div>
+    </div>
+  </div>
+  
+  <div class="field is-horizontal">
+    <div class="field-label is-normal">
+      <label class="label">QUANITY</label>
+    </div>
+
+    <div class="field-body">
+      <div class="field has-addons">
+        <p class="control">
+          <input  name="qty" class="input" min="1" type="number" placeholder="Enter quanity">
+        </p>
+
+        <!-- <p class="control"><a x-text="wc" class="button is-static"></a></p> -->
+      </div>
+    </div>
+  </div>
+
+  <div class="field is-horizontal">
+    <div class="field-label is-normal">
+      <label class="label">MANHR</label>
+    </div>
+
+    <div class="field-body">
+      <div class="field">
+        <p class="control">
+          <input  name="manhr" class="input" min="1" type="number" placeholder="Enter quanity">
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="field is-horizontal">
+    <div class="field-label"></div>
+    <div class="field-body">
+      <div class="field">
+        <div class="control">
+          <button class="button is-link is-outlined">
+            Send Data
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+
+<script>
+  document.getElementById("inputdate").valueAsDate = new Date()
+</script>

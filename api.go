@@ -84,6 +84,9 @@ func (s *Server) Run() {
 
 	app.Get("/login", s.loginGetHandler)
 
+	app.Get("/efficiencyreport", s.efficiencyReportHandler)
+	app.Post("/efficiencyreport", s.efficiencyReportPostHandler)
+
 	app.Get("/prodAdBlueprints/:mo_id", s.prodAdBlueprintsHandler)
 
 	app.Get("/productionadmin", s.productionAdminGetHandler)
@@ -662,4 +665,37 @@ func (s *Server) proccesexcelfileHandler(c *fiber.Ctx) error {
 	return c.Render("test", fiber.Map{
 		"excel": cell,
 	})
+}
+
+func (s *Server) efficiencyReportHandler(c *fiber.Ctx) error {
+	units := map[string]string{
+		"CUTTING":           "CBM",
+		"LAMINATION":        "M2",
+		"REEDED LINE":       "M2",
+		"VENEER LAMINATION": "M2",
+		"PANEL CNC":         "SHEET",
+		"ASSEMBLY":          "$",
+		"WOOD FINISHING":    "$",
+		"PACKING":           "$",
+	}
+
+	return c.Render("efficiency/report", fiber.Map{
+		"units": units,
+	}, "layout")
+}
+
+func (s *Server) efficiencyReportPostHandler(c *fiber.Ctx) error {
+	workcenter := c.FormValue("workcenter")
+	inputdate := c.FormValue("inputdate")
+	qty := c.FormValue("qty")
+	manhr := c.FormValue("manhr")
+
+	sql := `insert into efficienct_reports(work_center, date, qty, manhr) values ($1, $2, $3, $4)`
+
+	_, err := s.db.Exec(sql, workcenter, inputdate, qty, manhr)
+	if err != nil {
+		panic(err)
+	}
+
+	return c.Redirect("/efficiencyreport", fiber.StatusFound)
 }
