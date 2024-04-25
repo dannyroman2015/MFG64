@@ -7,7 +7,7 @@
           <p class="card-header-title">Efficiency</p>
           <label for="" class="card-header-icon">
             From: 
-            <input type="date" value="2024-04-01" class="card-header-icon">
+            <input id="fromdate" name="fromdate" type="date" value="2024-04-01" class="card-header-icon">
           </label>     
         </header>
         
@@ -21,8 +21,8 @@
         
         <div class="card-content">
           <nav class="pagination is-centered is-rounded is-small" role="navigation" aria-label="pagination">      
-            <ul class="pagination-list is-small">
-              <li><a hx-trigger="load once" hx-get="/efficientChart/cutting" hx-target="#efficiency" class="pagination-link" aria-label="Goto page 1">1</a></li>
+            <ul hx-include="[name='fromdate']" class="pagination-list is-small">
+              <li><a hx-get="/efficientChart/cutting" hx-target="#efficiency" class="pagination-link" aria-label="Goto page 1">1</a></li>
               <li><a hx-get="/efficientChart/lamination" hx-target="#efficiency" class="pagination-link" aria-label="Goto page 2">2</a></li>
               <li><a hx-get="/efficientChart/reededline" hx-target="#efficiency" class="pagination-link" aria-label="Goto page 3">3</a></li>
               <li><a hx-get="/efficientChart/veneerlamination" hx-target="#efficiency" class="pagination-link" aria-label="Goto page 4">4</a></li>
@@ -30,7 +30,6 @@
               <li><a hx-get="/efficientChart/assembly" hx-target="#efficiency" class="pagination-link" aria-label="Goto page 6">6</a></li>
               <li><a hx-get="/efficientChart/woodfinishing" hx-target="#efficiency" class="pagination-link" aria-label="Goto page 7">7</a></li>
               <li><a hx-get="/efficientChart/packing" hx-target="#efficiency" class="pagination-link" aria-label="Goto page 8">8</a></li>
-              <li><a hx-get="/efficientChart/reededline" hx-target="#efficiency" class="pagination-link" aria-label="Goto page 9">9</a></li>
             </ul>
           </nav>
         </div>

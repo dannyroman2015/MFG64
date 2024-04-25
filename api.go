@@ -748,8 +748,8 @@ func (s *Server) efficiencyReportPostHandler(c *fiber.Ctx) error {
 
 func (s *Server) efficientChartHandler(c *fiber.Ctx) error {
 	workcenter := strings.ToUpper(c.Params("workcenter"))
+	fromdate := c.Query("fromdate")
 
-	// data for efficient chart
 	var labels []string
 	var quanity []float64
 	var efficiency []float64
@@ -768,7 +768,7 @@ func (s *Server) efficientChartHandler(c *fiber.Ctx) error {
 
 	rows, err = s.db.Query(`SELECT date, work_center, sum(qty), sum(manhr) from 
 		efficienct_reports group by date, work_center having work_center = '` + workcenter + `' 
-		order by date`)
+		and date >= '` + fromdate + `' order by date`)
 	if err != nil {
 		panic(err)
 	}
@@ -785,7 +785,6 @@ func (s *Server) efficientChartHandler(c *fiber.Ctx) error {
 		quanity = append(quanity, c)
 		targets = append(targets, target)
 	}
-	// end data for efficient charts
 
 	return c.Render("efficiency/chart", fiber.Map{
 		"workcenter": workcenter,
