@@ -83,6 +83,8 @@ func (s *Server) Run() {
 
 	app.Get("/", s.indexGetHandler)
 
+	app.Get("/dashboard", s.dashboardHandler)
+
 	app.Get("/login", s.loginGetHandler)
 
 	app.Get("/efficiencyreport", s.efficiencyReportHandler)
