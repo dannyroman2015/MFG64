@@ -1,0 +1,74 @@
+<div>
+  <canvas id="{{.workcenter}}"></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+
+<script>
+  new Chart(document.getElementById({{.workcenter}}), {
+    plugins: [ChartDataLabels],
+    type: 'bar',
+    data: {
+      labels: {{.labels}},
+      datasets: [
+      {
+        datalabels: {
+          labels: {
+            title: null
+          }
+        },
+        label: 'Quanity(cbm)',
+        data: {{.quanity}},
+        yAxisID: 'y',
+      },
+      {
+        datalabels: {
+          labels: {
+            value: {
+              color: 'green'
+            }
+          }
+        },
+        label: 'Efficiency(%)',
+        data: {{.efficiency}},
+        yAxisID: 'y1',
+        type: "line"
+      },
+      {
+        datalabels: {
+          labels: {
+            title: null
+          }
+        },
+        label: 'Target(cbm)',
+        data: {{.targets}},
+        yAxisID: 'y',
+        type: "line"
+      },
+    ]
+    },
+    options: {
+      plugins: {
+        legend: {
+          labels: {
+            usePointStyle: true,
+          },
+        }
+      },
+      responsive: true,
+      scales: {
+        y: {
+          beginAtZero: true,
+        },
+        y1: {
+          type: 'linear',
+          display: false,
+          position: 'right',
+          grid: {
+            drawOnChartArea: false,
+          },
+        },
+      },
+    },
+  });
+</script>

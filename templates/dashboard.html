@@ -21,19 +21,17 @@
         
         <div class="card-content">
           <nav class="pagination is-centered is-rounded is-small" role="navigation" aria-label="pagination">      
-            <a href="#" class="pagination-previous"><</a>
             <ul class="pagination-list is-small">
-              <li><a href="#" class="pagination-link" aria-label="Goto page 1">1</a></li>
-              <li><a href="#" class="pagination-link" aria-label="Goto page 2">2</a></li>
-              <li><a href="#" class="pagination-link" aria-label="Goto page 3">3</a></li>
-              <li><a href="#" class="pagination-link" aria-label="Goto page 4">4</a></li>
-              <li><a class="pagination-link is-current" aria-label="Page 5" aria-current="page">5</a></li>
-              <li><a href="#" class="pagination-link" aria-label="Goto page 6">6</a></li>
-              <li><a href="#" class="pagination-link" aria-label="Goto page 7">7</a></li>
-              <li><a href="#" class="pagination-link" aria-label="Goto page 8">8</a></li>
-              <li><a href="#" class="pagination-link" aria-label="Goto page 9">9</a></li>
+              <li><a hx-trigger="load once" hx-get="/efficientChart/cutting" hx-target="#efficiency" class="pagination-link" aria-label="Goto page 1">1</a></li>
+              <li><a hx-get="/efficientChart/lamination" hx-target="#efficiency" class="pagination-link" aria-label="Goto page 2">2</a></li>
+              <li><a hx-get="/efficientChart/reededline" hx-target="#efficiency" class="pagination-link" aria-label="Goto page 3">3</a></li>
+              <li><a hx-get="/efficientChart/veneerlamination" hx-target="#efficiency" class="pagination-link" aria-label="Goto page 4">4</a></li>
+              <li><a hx-get="/efficientChart/panelcnc" hx-target="#efficiency" class="pagination-link" aria-label="Goto page 5">5</a></li>
+              <li><a hx-get="/efficientChart/assembly" hx-target="#efficiency" class="pagination-link" aria-label="Goto page 6">6</a></li>
+              <li><a hx-get="/efficientChart/woodfinishing" hx-target="#efficiency" class="pagination-link" aria-label="Goto page 7">7</a></li>
+              <li><a hx-get="/efficientChart/packing" hx-target="#efficiency" class="pagination-link" aria-label="Goto page 8">8</a></li>
+              <li><a hx-get="/efficientChart/reededline" hx-target="#efficiency" class="pagination-link" aria-label="Goto page 9">9</a></li>
             </ul>
-            <a href="#" class="pagination-next">></a>
           </nav>
         </div>
 
@@ -212,22 +210,66 @@
   const efficientChartCtx = document.getElementById('efficientChart');
   new Chart(efficientChartCtx, {
     plugins: [ChartDataLabels],
-    type: 'line',
+    type: 'bar',
     data: {
-      labels: ['LY', 'YTD', 'MTD', '1', '2', '3', '4'],
-      datasets: [{
-        label: 'Efficiency',
-        data: [94, 96, 90, 81, 92, 93, 96],
-        fill: false,
-        borderColor: 'rgb(75, 192, 192)',
-        tension: 0.1
-      }]
+      labels: {{.efficient_cutting_dates}},
+      datasets: [
+      {
+        datalabels: {
+          labels: {
+            title: null
+          }
+        },
+        label: 'Quanity(cbm)',
+        data: {{.efficient_cutting_data}},
+        yAxisID: 'y',
+      },
+      {
+        datalabels: {
+          labels: {
+            value: {
+              color: 'green'
+            }
+          }
+        },
+        label: 'Efficiency(%)',
+        data: {{.cutting_efficiencies}},
+        yAxisID: 'y1',
+        type: "line"
+      },
+      {
+        datalabels: {
+          labels: {
+            title: null
+          }
+        },
+        label: 'Target(cbm)',
+        data: {{.cutting_targets}},
+        yAxisID: 'y',
+        type: "line"
+      },
+    ]
     },
     options: {
+      plugins: {
+        legend: {
+          labels: {
+            usePointStyle: true,
+          },
+        }
+      },
+      responsive: true,
       scales: {
         y: {
           beginAtZero: true,
-          max: 120
+        },
+        y1: {
+          type: 'linear',
+          display: false,
+          position: 'right',
+          grid: {
+            drawOnChartArea: false,
+          },
         },
       },
     },

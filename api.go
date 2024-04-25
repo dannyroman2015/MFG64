@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"math"
 	"os"
 	"strconv"
 	"strings"
@@ -101,6 +102,8 @@ func (s *Server) Run() {
 	app.Get("/sections/productIds", s.getProductIdsHandler)
 	app.Post("/section/checkremains", s.checkremainsHandler)
 
+	app.Get("/efficientChart/:workcenter", s.efficientChartHandler)
+
 	app.Get("/importexcelfile", s.importexcelfileHandler)
 	app.Post("/proccesexcelfile", s.proccesexcelfileHandler)
 
@@ -196,13 +199,51 @@ func (s *Server) shippedPostHandler(c *fiber.Ctx) error {
 }
 
 func (s *Server) dashboardGetHandler(c *fiber.Ctx) error {
+	// data for efficient chart
+	var efficient_cutting_dates []string
+	var efficient_cutting_data []float64
+	var cutting_efficiencies []float64
+	var actual_target float64
+	var cutting_targets []float64
+	var target float64
+
+	rows, err := s.db.Query(`select actual_target, target from efficienct_workcenter 
+		where workcenter = 'CUTTING'`)
+	if err != nil {
+		panic(err)
+	}
+	for rows.Next() {
+		rows.Scan(&actual_target, &target)
+	}
+
+	rows, err = s.db.Query(`SELECT date, work_center, sum(qty), sum(manhr) 
+		from efficienct_reports group by date, work_center having work_center = 'CUTTING' 
+		order by date`)
+	if err != nil {
+		panic(err)
+	}
+	for rows.Next() {
+		var a, b string
+		var c, d float64
+		rows.Scan(&a, &b, &c, &d)
+		a = strings.Split(a, "T")[0]
+		t, _ := time.Parse("2006-01-02", a)
+		a = t.Format("Jan 2")
+
+		cutting_efficiencies = append(cutting_efficiencies, math.Round((c/d)*100/actual_target))
+		efficient_cutting_dates = append(efficient_cutting_dates, a)
+		efficient_cutting_data = append(efficient_cutting_data, c)
+		cutting_targets = append(cutting_targets, target)
+	}
+	// end data for efficient charts
+
 	dtype := c.Params("dtype")
 	var whichToDate string
 
 	days := int(time.Since(time.Date(2024, 1, 1, 0, 0, 0, 0, time.Local)).Hours() / 24)
 	var accidents int
 
-	rows, err := s.db.Query("SELECT shipdate, money FROM ship order by shipdate")
+	rows, err = s.db.Query("SELECT shipdate, money FROM ship order by shipdate")
 	if err != nil {
 		panic(err)
 	}
@@ -282,17 +323,21 @@ func (s *Server) dashboardGetHandler(c *fiber.Ctx) error {
 	defer rows.Close()
 
 	return c.Render("dashboard", fiber.Map{
-		"shipdate":  shipdate,
-		"money":     money,
-		"days":      days,
-		"accidents": accidents,
-		"sumOEM":    sumOEM,
-		"sumBRAND":  sumBRAND,
-		"factory_1": factory_1,
-		"factory_2": factory_2,
-		"dateissue": dateissue,
-		"proValue":  moneys,
-		"dtype":     dtype,
+		"shipdate":                shipdate,
+		"money":                   money,
+		"days":                    days,
+		"accidents":               accidents,
+		"sumOEM":                  sumOEM,
+		"sumBRAND":                sumBRAND,
+		"factory_1":               factory_1,
+		"factory_2":               factory_2,
+		"dateissue":               dateissue,
+		"proValue":                moneys,
+		"dtype":                   dtype,
+		"efficient_cutting_dates": efficient_cutting_dates,
+		"efficient_cutting_data":  efficient_cutting_data,
+		"cutting_efficiencies":    cutting_efficiencies,
+		"cutting_targets":         cutting_targets,
 	}, "layout")
 }
 
@@ -687,8 +732,9 @@ func (s *Server) efficiencyReportHandler(c *fiber.Ctx) error {
 func (s *Server) efficiencyReportPostHandler(c *fiber.Ctx) error {
 	workcenter := c.FormValue("workcenter")
 	inputdate := c.FormValue("inputdate")
-	qty := c.FormValue("qty")
-	manhr := c.FormValue("manhr")
+	var qty, manhr int
+	qty, _ = strconv.Atoi(c.FormValue("qty"))
+	manhr, _ = strconv.Atoi(c.FormValue("manhr"))
 
 	sql := `insert into efficienct_reports(work_center, date, qty, manhr) values ($1, $2, $3, $4)`
 
@@ -698,4 +744,54 @@ func (s *Server) efficiencyReportPostHandler(c *fiber.Ctx) error {
 	}
 
 	return c.Redirect("/efficiencyreport", fiber.StatusFound)
+}
+
+func (s *Server) efficientChartHandler(c *fiber.Ctx) error {
+	workcenter := strings.ToUpper(c.Params("workcenter"))
+
+	// data for efficient chart
+	var labels []string
+	var quanity []float64
+	var efficiency []float64
+	var actual_target float64
+	var targets []float64
+	var target float64
+
+	rows, err := s.db.Query(`select actual_target, target from efficienct_workcenter 
+		where workcenter = '` + workcenter + `'`)
+	if err != nil {
+		panic(err)
+	}
+	for rows.Next() {
+		rows.Scan(&actual_target, &target)
+	}
+
+	rows, err = s.db.Query(`SELECT date, work_center, sum(qty), sum(manhr) from 
+		efficienct_reports group by date, work_center having work_center = '` + workcenter + `' 
+		order by date`)
+	if err != nil {
+		panic(err)
+	}
+	for rows.Next() {
+		var a, b string
+		var c, d float64
+		rows.Scan(&a, &b, &c, &d)
+		a = strings.Split(a, "T")[0]
+		t, _ := time.Parse("2006-01-02", a)
+		a = t.Format("Jan 2")
+
+		efficiency = append(efficiency, math.Round((c/d)*100/actual_target))
+		labels = append(labels, a)
+		quanity = append(quanity, c)
+		targets = append(targets, target)
+	}
+	// end data for efficient charts
+
+	return c.Render("efficiency/chart", fiber.Map{
+		"workcenter": workcenter,
+		"labels":     labels,
+		"quanity":    quanity,
+		"efficiency": efficiency,
+		"targets":    targets,
+	})
 }
