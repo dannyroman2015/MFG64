@@ -107,6 +107,8 @@ func (s *Server) Run() {
 
 	app.Get("/efficientChart/:workcenter", s.efficientChartHandler)
 
+	app.Get("/prodvalueChart", s.prodvalueChartHandler)
+
 	app.Get("/importexcelfile", s.importexcelfileHandler)
 	app.Post("/proccesexcelfile", s.proccesexcelfileHandler)
 
