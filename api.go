@@ -83,7 +83,7 @@ func (s *Server) Run() {
 
 	app.Get("/", s.indexGetHandler)
 
-	app.Get("/dashboard", s.dashboardHandler)
+	app.Get("/efficiency", s.efficiencyHandler)
 
 	app.Get("/login", s.loginGetHandler)
 
@@ -734,9 +734,9 @@ func (s *Server) efficiencyReportHandler(c *fiber.Ctx) error {
 func (s *Server) efficiencyReportPostHandler(c *fiber.Ctx) error {
 	workcenter := c.FormValue("workcenter")
 	inputdate := c.FormValue("inputdate")
-	var qty, manhr int
-	qty, _ = strconv.Atoi(c.FormValue("qty"))
-	manhr, _ = strconv.Atoi(c.FormValue("manhr"))
+	var qty, manhr float64
+	qty, _ = strconv.ParseFloat(c.FormValue("qty"), 64)
+	manhr, _ = strconv.ParseFloat(c.FormValue("manhr"), 64)
 
 	sql := `insert into efficienct_reports(work_center, date, qty, manhr) values ($1, $2, $3, $4)`
 

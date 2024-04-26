@@ -17,7 +17,7 @@
             title: null
           },
         },
-        label: 'Quanity',
+        label: {{.workcenter}},
         data: {{.quanity}},
         yAxisID: 'y',
       },
@@ -33,7 +33,9 @@
         label: 'Efficiency(%)',
         data: {{.efficiency}},
         yAxisID: 'y1',
-        type: "line"
+        type: "line",
+        pointStyle: 'circle',
+        pointRadius: 0,
       },
       {
         datalabels: {
@@ -44,7 +46,10 @@
         label: 'Target',
         data: {{.targets}},
         yAxisID: 'y',
-        type: "line"
+        type: "line",
+        pointStyle: 'circle',
+        pointRadius: 0,
+        tension: 0.5,
       },
     ]
     },
@@ -58,8 +63,12 @@
       },
       responsive: true,
       scales: {
+        x: {
+          grid: { display: false, },
+        },
         y: {
           beginAtZero: true,
+          grid: { display: false, },
         },
         y1: {
           type: 'linear',
@@ -67,6 +76,7 @@
           position: 'right',
           grid: {
             drawOnChartArea: false,
+            display: false,
           },
         },
       },
