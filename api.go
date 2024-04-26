@@ -84,6 +84,7 @@ func (s *Server) Run() {
 	app.Get("/", s.indexGetHandler)
 
 	app.Get("/efficiency", s.efficiencyHandler)
+	app.Get("/efficiencywithdate", s.efficiencyWithdateHandler)
 
 	app.Get("/login", s.loginGetHandler)
 

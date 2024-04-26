@@ -1,9 +1,10 @@
-<div class="card">
+<div id="efficient-container" class="card">
   <header class="card-header">
     <p class="card-header-title">Efficiency</p>
     <label for="" class="card-header-icon">
       From: 
       <input  id="fromdate" name="fromdate" type="date" value={{.fromdate}} 
+              hx-get="/efficiencywithdate" hx-target="#efficient-container" hx-swap="outerHTML"
               class="card-header-icon">
     </label>     
   </header>

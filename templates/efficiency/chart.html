@@ -20,6 +20,9 @@
         label: {{.workcenter}},
         data: {{.quanity}},
         yAxisID: 'y',
+        pointStyle: 'rect',
+        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        borderColor: 'rgb(75, 192, 192)',
       },
       {
         datalabels: {
@@ -34,8 +37,11 @@
         data: {{.efficiency}},
         yAxisID: 'y1',
         type: "line",
-        pointStyle: 'circle',
+        pointStyle: 'line',
         pointRadius: 0,
+        borderWidth: 1,
+        backgroundColor: 'red',
+        borderColor: 'red',
       },
       {
         datalabels: {
@@ -47,14 +53,18 @@
         data: {{.targets}},
         yAxisID: 'y',
         type: "line",
-        pointStyle: 'circle',
+        pointStyle: 'line',
         pointRadius: 0,
-        tension: 0.5,
+        tension: 0.1,
+        borderWidth: 1,
+        backgroundColor: 'blue',
+        borderColor: 'blue',
       },
     ]
     },
     options: {
       plugins: {
+        title: {text: {{.workcenter}}, display: true},
         legend: {
           labels: {
             usePointStyle: true,

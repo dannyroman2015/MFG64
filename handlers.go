@@ -12,3 +12,10 @@ func (s *Server) efficiencyHandler(c *fiber.Ctx) error {
 		"fromdate": fromdate,
 	}, "layout")
 }
+
+func (s *Server) efficiencyWithdateHandler(c *fiber.Ctx) error {
+	fromdate := c.Query("fromdate")
+	return c.Render("efficiency/main", fiber.Map{
+		"fromdate": fromdate,
+	})
+}
