@@ -1,11 +1,13 @@
 package main
 
 import (
+	"log"
 	"math"
 	"strings"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/xuri/excelize/v2"
 )
 
 func (s *Server) efficiencyHandler(c *fiber.Ctx) error {
@@ -23,7 +25,7 @@ func (s *Server) efficiencyWithdateHandler(c *fiber.Ctx) error {
 }
 
 func (s *Server) prodvalueChartHandler(c *fiber.Ctx) error {
-	fromdate := c.Query("pfromdate")
+	fromdate := c.Query("fromdate")
 
 	var labels []string
 	var quanity []float64
@@ -76,10 +78,87 @@ func (s *Server) prodvalueChartHandler(c *fiber.Ctx) error {
 	}
 
 	return c.Render("efficiency/chart", fiber.Map{
-		"workcenter": "prodvalue",
-		"labels":     labels,
-		"quanity":    quanity,
-		"efficiency": laborrate,
-		"targets":    targets,
+		"workcenter":  "Production Value",
+		"labels":      labels,
+		"quanity":     quanity,
+		"efficiency":  laborrate,
+		"targets":     targets,
+		"chartLabels": []string{"Quanity", "labor rate($/manhr)", "Target"},
+	})
+}
+
+func (s *Server) importreededfHangler(c *fiber.Ctx) error {
+
+	return c.Render("efficiency/import_reeded_file", fiber.Map{}, "layout")
+}
+
+func (s *Server) proccess_reeded_excelfilePostHandler(c *fiber.Ctx) error {
+	file, err := c.FormFile("file")
+	if err != nil {
+		panic(err)
+	}
+	fi, err := file.Open()
+	if err != nil {
+		panic(err)
+	}
+	defer fi.Close()
+
+	f, err := excelize.OpenReader(fi)
+	if err != nil {
+		panic(err)
+	}
+
+	rows, err := f.GetRows("Sheet1")
+	if err != nil {
+		log.Println(err)
+	}
+
+	sql := `insert into reeded_reports(date, area, qty) values `
+
+	for i := 3; i < len(rows); i++ {
+		for j := 1; j < len(rows[i]); j++ {
+			sql += `('` + rows[i][0] + `', '` + rows[1][j] + `', ` + rows[i][j] + `),`
+		}
+	}
+	sql = sql[:len(sql)-1] + ` ON CONFLICT (date, area) DO UPDATE SET qty = EXCLUDED.qty;`
+	_, err = s.db.Exec(sql)
+	if err != nil {
+		panic(err)
+	}
+
+	return c.Redirect("/efficiency", fiber.StatusFound)
+}
+
+func (s *Server) reededcahrtHandler(c *fiber.Ctx) error {
+	log.Println("reeded chart")
+	log.Println(c.Query("fromdate"))
+	fromdate := c.Query("fromdate")
+
+	sql := `select area, sum(qty), avg(qty)	from reeded_reports where date >= '` + fromdate + `' 
+		group by area having area in ('SLICE', 'SELECTION', 'LAMINATION', 'DRYING', 'REEDING' ,
+		'SELECTION-2' , 'TUBI' ,'VENEER', '', 'Used')`
+
+	rows, err := s.db.Query(sql)
+	if err != nil {
+		panic(err)
+	}
+
+	var labels []string
+	var totals []float64
+	var avgs []float64
+	for rows.Next() {
+		var a string
+		var sumqty, avgaty float64
+		rows.Scan(&a, &sumqty, &avgaty)
+		labels = append(labels, a)
+		totals = append(totals, math.Round(sumqty))
+		avgs = append(avgs, math.Round(avgaty))
+	}
+	log.Println(labels, totals, avgs)
+
+	return c.Render("efficiency/reeded_chart", fiber.Map{
+		"labels": labels,
+		"totals": totals,
+		"avgs":   avgs,
 	})
 }

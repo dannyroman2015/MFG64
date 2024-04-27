@@ -1,11 +1,11 @@
 <div>
-  <canvas id="{{.workcenter}}"></canvas>
+  <canvas id="reededchart"></canvas>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
 
 <script>
-  new Chart(document.getElementById({{.workcenter}}), {
+  new Chart(document.getElementById("reededchart"), {
     plugins: [ChartDataLabels],
     type: 'bar',
     data: {
@@ -14,11 +14,11 @@
       {
         datalabels: {
           labels: {
-            title: null
+            title: true
           },
         },
-        label: {{.workcenter}},
-        data: {{.quanity}},
+        label: "Total",
+        data: {{.totals}},
         yAxisID: 'y',
         pointStyle: 'rect',
         backgroundColor: 'rgba(75, 192, 192, 0.2)',
@@ -33,9 +33,9 @@
             }
           }
         },
-        label: {{index .chartLabels 1}},
-        data: {{.efficiency}},
-        yAxisID: 'y1',
+        label: "AVG",
+        data: {{.avgs}},
+        yAxisID: 'y',
         type: "line",
         pointStyle: 'line',
         pointRadius: 0,
@@ -43,28 +43,11 @@
         backgroundColor: 'red',
         borderColor: 'red',
       },
-      {
-        datalabels: {
-          labels: {
-            title: null
-          }
-        },
-        label: 'Target',
-        data: {{.targets}},
-        yAxisID: 'y',
-        type: "line",
-        pointStyle: 'line',
-        pointRadius: 0,
-        tension: 0.1,
-        borderWidth: 1,
-        backgroundColor: 'blue',
-        borderColor: 'blue',
-      },
     ]
     },
     options: {
       plugins: {
-        title: {text: {{.workcenter}}, display: true},
+        title: "Reeded",
         legend: {
           labels: {
             usePointStyle: true,

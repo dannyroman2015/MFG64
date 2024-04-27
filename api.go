@@ -106,6 +106,9 @@ func (s *Server) Run() {
 	app.Post("/section/checkremains", s.checkremainsHandler)
 
 	app.Get("/efficientChart/:workcenter", s.efficientChartHandler)
+	app.Get("/importreededf", s.importreededfHangler)
+	app.Post("/proccess_reeded_excelfile", s.proccess_reeded_excelfilePostHandler)
+	app.Get("/reededchart", s.reededcahrtHandler)
 
 	app.Get("/prodvalueChart", s.prodvalueChartHandler)
 
@@ -792,10 +795,11 @@ func (s *Server) efficientChartHandler(c *fiber.Ctx) error {
 	}
 
 	return c.Render("efficiency/chart", fiber.Map{
-		"workcenter": workcenter,
-		"labels":     labels,
-		"quanity":    quanity,
-		"efficiency": efficiency,
-		"targets":    targets,
+		"workcenter":  workcenter,
+		"labels":      labels,
+		"quanity":     quanity,
+		"efficiency":  efficiency,
+		"targets":     targets,
+		"chartLabels": []string{"Quanity", "Efficiency(%)", "Target"},
 	})
 }

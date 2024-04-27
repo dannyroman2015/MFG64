@@ -1,44 +1,42 @@
-<div id="production-container" class="card">
-  
-  <header class="card-header">
-    <p class="card-header-title">Production Value</p>
-    <label for="" class="card-header-icon">
-      From: 
-      <input  id="pfromdate" name="pfromdate" type="date" value={{.fromdate}} 
-              hx-get="/" hx-target="#production-container" hx-swap="outerHTML"
-              class="card-header-icon">
-    </label>     
-  </header>
-
-  <div id="production-value" class="card-content">
-    <div  hx-get="/prodvalueChart" 
-          hx-target="#production-value" 
-          hx-trigger="load" 
-          hx-include="[name='pfromdate']">
-      <div class="cssload-loader">
-        <div class="cssload-inner cssload-one"></div>
-        <div class="cssload-inner cssload-two"></div>
-        <div class="cssload-inner cssload-three"></div>
-      </div>
-    </div>
-  </div>
-
-</div>
-
 <div id="efficient-container" class="card">
   <header class="card-header">
     <p class="card-header-title">Efficiency</p>
     <label for="" class="card-header-icon">
       From: 
-      <input  id="fromdate" name="fromdate" type="date" value={{.fromdate}} 
-              hx-get="/efficiencywithdate" hx-target="#efficient-container" hx-swap="outerHTML"
-              class="card-header-icon">
+      <input  id="fromdate" name="fromdate" type="date" value={{.fromdate}} class="card-header-icon"
+              hx-get="/efficiencywithdate" hx-target="#efficient-container" hx-swap="outerHTML">
     </label>     
   </header>
 
   <div class="card-content">
     <div class="fixed-grid has-1-cols-mobile">
       <div class="grid is-gap-3">
+
+        <div id="production-value" class="cell">
+          <div  hx-get="/prodvalueChart" 
+                hx-target="#production-value" 
+                hx-trigger="load" 
+                hx-include="[name='fromdate']">
+            <div class="cssload-loader">
+              <div class="cssload-inner cssload-one"></div>
+              <div class="cssload-inner cssload-two"></div>
+              <div class="cssload-inner cssload-three"></div>
+            </div>
+          </div>
+        </div>
+
+        <div id="reeded-container" class="cell">
+          <div  hx-get="/reededchart" 
+                hx-target="#reeded-container" 
+                hx-trigger="load" 
+                hx-include="[name='fromdate']">
+            <div class="cssload-loader">
+              <div class="cssload-inner cssload-one"></div>
+              <div class="cssload-inner cssload-two"></div>
+              <div class="cssload-inner cssload-three"></div>
+            </div>
+          </div>
+        </div>
 
         <div id="efficiency" class="cell">
           <div  hx-get="/efficientChart/cutting" 
