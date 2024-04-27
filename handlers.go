@@ -1,8 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"math"
+	"math/rand"
 	"strings"
 	"time"
 
@@ -33,6 +35,19 @@ func (s *Server) prodvalueChartHandler(c *fiber.Ctx) error {
 	var actual_target float64
 	var targets []float64
 	var target float64
+
+	// bg_colors := []string{
+	// 	"rgba(255, 99, 132, 0.4)",
+	// 	"rgba(255, 159, 64, 0.4)",
+	// 	"rgba(255, 205, 86, 0.4)",
+	// 	"rgba(75, 192, 192, 0.4)",
+	// 	"rgba(54, 162, 235, 0.4)",
+	// 	"rgba(153, 102, 255, 0.4)",
+	// 	"rgba(201, 203, 207, 0.4)",
+	// 	"rgba(163, 255, 214, 0.4)",
+	// 	"rgba(123, 201, 255, 0.4)",
+	// 	"rgba(239, 64, 64, 0.4)",
+	// }
 
 	rows, err := s.db.Query(`select actual_target, target from efficienct_workcenter 
 		where workcenter = 'PACKING'`)
@@ -76,6 +91,7 @@ func (s *Server) prodvalueChartHandler(c *fiber.Ctx) error {
 		quanity = append(quanity, c)
 		targets = append(targets, target)
 	}
+	randColor := fmt.Sprintf("rgba(%d, %d, %d, 0.4)", rand.Intn(255), rand.Intn(255), rand.Intn(255))
 
 	return c.Render("efficiency/chart", fiber.Map{
 		"workcenter":  "Production Value",
@@ -84,6 +100,7 @@ func (s *Server) prodvalueChartHandler(c *fiber.Ctx) error {
 		"efficiency":  laborrate,
 		"targets":     targets,
 		"chartLabels": []string{"Quanity", "labor rate($/manhr)", "Target"},
+		"bg_color":    randColor,
 	})
 }
 
@@ -130,8 +147,18 @@ func (s *Server) proccess_reeded_excelfilePostHandler(c *fiber.Ctx) error {
 }
 
 func (s *Server) reededcahrtHandler(c *fiber.Ctx) error {
-	log.Println("reeded chart")
-	log.Println(c.Query("fromdate"))
+	// bg_colors := []string{
+	// 	"rgba(255, 99, 132, 0.4)",
+	// 	"rgba(255, 159, 64, 0.4)",
+	// 	"rgba(255, 205, 86, 0.4)",
+	// 	"rgba(75, 192, 192, 0.4)",
+	// 	"rgba(54, 162, 235, 0.4)",
+	// 	"rgba(153, 102, 255, 0.4)",
+	// 	"rgba(201, 203, 207, 0.4)",
+	// 	"rgba(163, 255, 214, 0.4)",
+	// 	"rgba(123, 201, 255, 0.4)",
+	// 	"rgba(239, 64, 64, 0.4)",
+	// }
 	fromdate := c.Query("fromdate")
 
 	sql := `select area, sum(qty), avg(qty)	from reeded_reports where date >= '` + fromdate + `' 
@@ -154,11 +181,11 @@ func (s *Server) reededcahrtHandler(c *fiber.Ctx) error {
 		totals = append(totals, math.Round(sumqty))
 		avgs = append(avgs, math.Round(avgaty))
 	}
-	log.Println(labels, totals, avgs)
-
+	randColor := fmt.Sprintf("rgba(%d, %d, %d, 0.4)", rand.Intn(255), rand.Intn(255), rand.Intn(255))
 	return c.Render("efficiency/reeded_chart", fiber.Map{
-		"labels": labels,
-		"totals": totals,
-		"avgs":   avgs,
+		"labels":   labels,
+		"totals":   totals,
+		"avgs":     avgs,
+		"bg_color": randColor,
 	})
 }

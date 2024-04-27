@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"math"
+	"math/rand"
 	"os"
 	"strconv"
 	"strings"
@@ -757,6 +758,18 @@ func (s *Server) efficiencyReportPostHandler(c *fiber.Ctx) error {
 func (s *Server) efficientChartHandler(c *fiber.Ctx) error {
 	workcenter := strings.ToUpper(c.Params("workcenter"))
 	fromdate := c.Query("fromdate")
+	// bg_colors := []string{
+	// 	"rgba(255, 99, 132, 0.4)",
+	// 	"rgba(255, 159, 64, 0.4)",
+	// 	"rgba(255, 205, 86, 0.4)",
+	// 	"rgba(75, 192, 192, 0.4)",
+	// 	"rgba(54, 162, 235, 0.4)",
+	// 	"rgba(153, 102, 255, 0.4)",
+	// 	"rgba(201, 203, 207, 0.4)",
+	// 	"rgba(163, 255, 214, 0.4)",
+	// 	"rgba(123, 201, 255, 0.4)",
+	// 	"rgba(239, 64, 64, 0.4)",
+	// }
 
 	var labels []string
 	var quanity []float64
@@ -793,6 +806,7 @@ func (s *Server) efficientChartHandler(c *fiber.Ctx) error {
 		quanity = append(quanity, c)
 		targets = append(targets, target)
 	}
+	randColor := fmt.Sprintf("rgba(%d, %d, %d, 0.4)", rand.Intn(255), rand.Intn(255), rand.Intn(255))
 
 	return c.Render("efficiency/chart", fiber.Map{
 		"workcenter":  workcenter,
@@ -801,5 +815,6 @@ func (s *Server) efficientChartHandler(c *fiber.Ctx) error {
 		"efficiency":  efficiency,
 		"targets":     targets,
 		"chartLabels": []string{"Quanity", "Efficiency(%)", "Target"},
+		"bg_color":    randColor,
 	})
 }
