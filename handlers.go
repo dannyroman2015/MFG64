@@ -189,3 +189,22 @@ func (s *Server) reededcahrtHandler(c *fiber.Ctx) error {
 		"bg_color": randColor,
 	})
 }
+
+func (s *Server) evaluateHandler(c *fiber.Ctx) error {
+
+	return c.Render("worker_quality/evaluate", fiber.Map{}, "layout")
+}
+
+func (s *Server) workerbypwHandler(c *fiber.Ctx) error {
+	pw_department := map[string]string{
+		"pw1": "Mechanical",
+		"pw2": "Welding",
+	}
+	department, ok := pw_department[c.FormValue("pw")]
+	if !ok {
+		return c.SendString("department not found")
+	}
+	log.Println(department)
+
+	return c.Render("worker_quality/workers_by_pw", fiber.Map{})
+}
