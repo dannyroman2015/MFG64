@@ -762,7 +762,7 @@ func (s *Server) efficiencyReportPostHandler(c *fiber.Ctx) error {
 func (s *Server) efficientChartHandler(c *fiber.Ctx) error {
 	workcenter := strings.ToUpper(c.Params("workcenter"))
 	fromdate := c.Query("fromdate")
-
+	log.Println()
 	var labels []string
 	var quanity []float64
 	var efficiency []float64
@@ -770,7 +770,7 @@ func (s *Server) efficientChartHandler(c *fiber.Ctx) error {
 	var targets []float64
 	var target float64
 	var units = map[string]string{
-		"Production Value": "Amount($)", "CUTTING": "Quanity(cmb)", "LAMINATION": "Quanity(m2", "REEDEDLINE": "Quanity(m2", "VENEERLAMINATION": "Quanity(m2", "PANELCNC": "Quanity(sheet", "ASSEMBLY": "Amount($)", "WOODFINISHING": "Amount($)", "PACKING": "Amount($)",
+		"Production Value": "Amount($)", "CUTTING": "Quanity(cmb)", "LAMINATION": "Quanity(m2)", "REEDEDLINE": "Quanity(m2)", "VENEERLAMINATION": "Quanity(m2)", "PANELCNC": "Quanity(sheet)", "ASSEMBLY": "Amount($)", "WOODFINISHING": "Amount($)", "PACKING": "Amount($)",
 	}
 
 	rows, err := s.db.Query(`select actual_target, target from efficienct_workcenter 

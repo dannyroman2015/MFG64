@@ -1,0 +1,17 @@
+<input class="input" type="search" 
+       name="search" placeholder="Nhận mã hoặc tên nhân viên..." 
+       hx-post="/searchstaff" 
+       hx-trigger="input changed delay:500ms, search" 
+       hx-target="#search-results" 
+       hx-indicator=".htmx-indicator">
+
+<table class="table">
+    <thead>
+    <tr>
+      <th>Mã Nhân Viên</th>
+      <th>Tên Nhân Viên</th>
+    </tr>
+    </thead>
+    <tbody id="search-results">
+    </tbody>
+</table>
