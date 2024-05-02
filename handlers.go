@@ -83,7 +83,7 @@ func (s *Server) prodvalueChartHandler(c *fiber.Ctx) error {
 		a = strings.Split(a, "T")[0]
 		laborrate = append(laborrate, math.Round(c/totalManhrBydate[a]))
 		t, _ := time.Parse("2006-01-02", a)
-		a = t.Format("Jan 2")
+		a = t.Format("2 Jan")
 
 		labels = append(labels, a)
 		quanity = append(quanity, c)

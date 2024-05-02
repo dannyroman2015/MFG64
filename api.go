@@ -762,7 +762,7 @@ func (s *Server) efficiencyReportPostHandler(c *fiber.Ctx) error {
 func (s *Server) efficientChartHandler(c *fiber.Ctx) error {
 	workcenter := strings.ToUpper(c.Params("workcenter"))
 	fromdate := c.Query("fromdate")
-	log.Println()
+
 	var labels []string
 	var quanity []float64
 	var efficiency []float64
@@ -794,7 +794,7 @@ func (s *Server) efficientChartHandler(c *fiber.Ctx) error {
 		rows.Scan(&a, &b, &c, &d)
 		a = strings.Split(a, "T")[0]
 		t, _ := time.Parse("2006-01-02", a)
-		a = t.Format("Jan 2")
+		a = t.Format("2 Jan")
 
 		efficiency = append(efficiency, math.Round((c/d)*100/actual_target))
 		labels = append(labels, a)

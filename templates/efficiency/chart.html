@@ -1,8 +1,13 @@
-<div>
+<div class="chart-container">
   <canvas id="{{.workcenter}}"></canvas>
 </div>
 
-<!-- <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script> -->
+<style>
+  .chart-container {
+    border-bottom: 1px solid black;
+    padding-bottom: 20px;
+  }
+</style>
 
 <script>
   new Chart(document.getElementById({{.workcenter}}), {
@@ -13,6 +18,7 @@
       datasets: [
       {
         datalabels: {
+          rotation: -90,
           labels: {
             title: true
           },
@@ -21,14 +27,13 @@
         data: {{.quanity}},
         yAxisID: 'y',
         pointStyle: 'rect',
-        backgroundColor: {{.bg_color}},
+        backgroundColor: 'rgba(54, 162, 235, 0.6)',
       },
       {
         datalabels: {
-          anchor: 'end',
           labels: {
             value: {
-              color: 'green'
+              color: 'red'
             }
           }
         },
@@ -63,6 +68,12 @@
     },
     options: {
       plugins: {
+        datalabels: {
+          color: 'black', align: 'top', anchor: 'center', offset: 0,
+          formatter: function(value, context) {
+            return value.toLocaleString()
+          },
+        },
         title: {text: {{.workcenter}}, display: true},
         legend: {
           labels: {
@@ -76,6 +87,7 @@
           grid: { display: false, },
         },
         y: {
+          display: false,
           beginAtZero: true,
           grid: { display: false, },
         },

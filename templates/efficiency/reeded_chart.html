@@ -1,8 +1,13 @@
-<div>
+<div class="chart-container">
   <canvas id="reededchart"></canvas>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+<style>
+  .chart-container {
+    border-bottom: 1px solid black;
+    padding-bottom: 20px;
+  }
+</style>
 
 <script>
   new Chart(document.getElementById("reededchart"), {
@@ -14,22 +19,22 @@
       {
         datalabels: {
           labels: {
-            title: true
+            title: true,
           },
+          rotation: -90,
         },
         label: "Total(m2)",
         data: {{.totals}},
         yAxisID: 'y',
         pointStyle: 'rect',
-        backgroundColor: {{.bg_color}},
-        borderColor: 'rgb(75, 192, 192)',
+        backgroundColor: 'rgba(54, 162, 235, 0.6)',
       },
       {
         datalabels: {
           anchor: 'end',
           labels: {
             value: {
-              color: 'green'
+              color: 'red'
             }
           }
         },
@@ -47,6 +52,12 @@
     },
     options: {
       plugins: {
+        datalabels: {
+          color: 'black', align: 'top', anchor: 'center', offset: 0,
+          formatter: function(value, context) {
+            return value.toLocaleString()
+          },   
+        },
         title: {text: 'Reeded Output', display: true},
         legend: {
           labels: {
@@ -60,7 +71,7 @@
           grid: { display: false, },
         },
         y: {
-          beginAtZero: true,
+          display: false,
           grid: { display: false, },
         },
         y1: {
