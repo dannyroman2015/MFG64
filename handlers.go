@@ -35,6 +35,9 @@ func (s *Server) prodvalueChartHandler(c *fiber.Ctx) error {
 	var actual_target float64
 	var targets []float64
 	var target float64
+	var units = map[string]string{
+		"Production Value": "Amount($)", "CUTTING": "Quanity(cmb)", "LAMINATION": "Quanity(m2", "REEDEDLINE": "Quanity(m2", "VENEERLAMINATION": "Quanity(m2", "PANELCNC": "Quanity(sheet", "ASSEMBLY": "Amount($)", "WOODFINISHING": "Amount($)", "PACKING": "Amount($)",
+	}
 
 	rows, err := s.db.Query(`select actual_target, target from efficienct_workcenter 
 		where workcenter = 'PACKING'`)
@@ -88,6 +91,7 @@ func (s *Server) prodvalueChartHandler(c *fiber.Ctx) error {
 		"targets":     targets,
 		"chartLabels": []string{"Quanity", "labor rate($/manhr)", "Target"},
 		"bg_color":    randColor,
+		"units":       units,
 	})
 }
 

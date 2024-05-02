@@ -762,18 +762,6 @@ func (s *Server) efficiencyReportPostHandler(c *fiber.Ctx) error {
 func (s *Server) efficientChartHandler(c *fiber.Ctx) error {
 	workcenter := strings.ToUpper(c.Params("workcenter"))
 	fromdate := c.Query("fromdate")
-	// bg_colors := []string{
-	// 	"rgba(255, 99, 132, 0.4)",
-	// 	"rgba(255, 159, 64, 0.4)",
-	// 	"rgba(255, 205, 86, 0.4)",
-	// 	"rgba(75, 192, 192, 0.4)",
-	// 	"rgba(54, 162, 235, 0.4)",
-	// 	"rgba(153, 102, 255, 0.4)",
-	// 	"rgba(201, 203, 207, 0.4)",
-	// 	"rgba(163, 255, 214, 0.4)",
-	// 	"rgba(123, 201, 255, 0.4)",
-	// 	"rgba(239, 64, 64, 0.4)",
-	// }
 
 	var labels []string
 	var quanity []float64
@@ -781,6 +769,9 @@ func (s *Server) efficientChartHandler(c *fiber.Ctx) error {
 	var actual_target float64
 	var targets []float64
 	var target float64
+	var units = map[string]string{
+		"Production Value": "Amount($)", "CUTTING": "Quanity(cmb)", "LAMINATION": "Quanity(m2", "REEDEDLINE": "Quanity(m2", "VENEERLAMINATION": "Quanity(m2", "PANELCNC": "Quanity(sheet", "ASSEMBLY": "Amount($)", "WOODFINISHING": "Amount($)", "PACKING": "Amount($)",
+	}
 
 	rows, err := s.db.Query(`select actual_target, target from efficienct_workcenter 
 		where workcenter = '` + workcenter + `'`)
@@ -820,5 +811,6 @@ func (s *Server) efficientChartHandler(c *fiber.Ctx) error {
 		"targets":     targets,
 		"chartLabels": []string{"Quanity", "Efficiency(%)", "Target"},
 		"bg_color":    randColor,
+		"units":       units,
 	})
 }
