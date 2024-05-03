@@ -151,7 +151,7 @@ func (s *Server) reededcahrtHandler(c *fiber.Ctx) error {
 
 	sql := `select area, sum(qty), avg(qty)	from reeded_reports where date >= '` + fromdate + `' 
 		group by area having area in ('1.SLICE', '2.SELECTION', '3.LAMINATION', '4.DRYING', '5.REEDING' ,
-		'6.SELECTION-2' , '7.TUBI' ,'9.VENEER', '', 'Used') order by area`
+		'6.SELECTION-2' , '7.TUBI' ,'9.VENEER') order by area`
 
 	rows, err := s.db.Query(sql)
 	if err != nil {
@@ -165,6 +165,7 @@ func (s *Server) reededcahrtHandler(c *fiber.Ctx) error {
 		var a string
 		var sumqty, avgaty float64
 		rows.Scan(&a, &sumqty, &avgaty)
+		a = strings.SplitAfter(a, ".")[1]
 		labels = append(labels, a)
 		totals = append(totals, math.Round(sumqty))
 		avgs = append(avgs, math.Round(avgaty))
