@@ -150,8 +150,8 @@ func (s *Server) reededcahrtHandler(c *fiber.Ctx) error {
 	fromdate := c.Query("fromdate")
 
 	sql := `select area, sum(qty), avg(qty)	from reeded_reports where date >= '` + fromdate + `' 
-		group by area having area in ('SLICE', 'SELECTION', 'LAMINATION', 'DRYING', 'REEDING' ,
-		'SELECTION-2' , 'TUBI' ,'VENEER', '', 'Used')`
+		group by area having area in ('1.SLICE', '2.SELECTION', '3.LAMINATION', '4.DRYING', '5.REEDING' ,
+		'6.SELECTION-2' , '7.TUBI' ,'9.VENEER', '', 'Used') order by area`
 
 	rows, err := s.db.Query(sql)
 	if err != nil {
