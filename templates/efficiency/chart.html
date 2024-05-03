@@ -27,13 +27,13 @@
         data: {{.quanity}},
         yAxisID: 'y',
         pointStyle: 'rect',
-        backgroundColor: 'rgba(54, 162, 235, 0.6)',
+        backgroundColor: 'rgba(163, 85, 85, 0.8)',
       },
       {
         datalabels: {
           labels: {
             value: {
-              color: 'red'
+              color: '#433F45',
             }
           }
         },
@@ -44,8 +44,8 @@
         pointStyle: 'line',
         pointRadius: 0,
         borderWidth: 1,
-        backgroundColor: 'red',
-        borderColor: 'red',
+        backgroundColor: '#433F45',
+        borderColor: '#433F45',
       },
       {
         datalabels: {
@@ -69,7 +69,7 @@
     options: {
       plugins: {
         datalabels: {
-          color: 'black', align: 'top', anchor: 'center', offset: 0,
+          color: 'white', align: 'top', anchor: 'start', offset: 0,
           formatter: function(value, context) {
             return value.toLocaleString()
           },
