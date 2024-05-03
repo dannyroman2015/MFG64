@@ -1,0 +1,84 @@
+<div class="chart-container">
+  <canvas id="woodrecovery"></canvas>
+</div>
+
+<style>
+  .chart-container {
+    border-bottom: 1px solid black;
+    padding-bottom: 20px;
+  }
+</style>
+
+<script>
+  new Chart(document.getElementById("woodrecovery"), {
+    plugins: [ChartDataLabels],
+    type: 'bar',
+    data: {
+      labels: {{.dates}},
+      datasets: [
+      {
+        datalabels: {
+          labels: {
+            title: true
+          },
+        },
+        label: "Wood Recovery(%)",
+        data: {{.recoveries}},
+        yAxisID: 'y',
+        pointStyle: 'rect',
+        backgroundColor: 'rgba(163, 85, 85, 0.8)',
+      },
+      {
+        datalabels: {
+          labels: {
+            title: null
+          }
+        },
+        label: 'Target(%)',
+        data: {{.targets}},
+        yAxisID: 'y',
+        type: "line",
+        pointStyle: 'line',
+        pointRadius: 0,
+        tension: 0.1,
+        borderWidth: 1,
+        backgroundColor: 'blue',
+        borderColor: 'blue',
+      },
+    ]
+    },
+    options: {
+      plugins: {
+        datalabels: {
+          color: 'black', align: 'top', anchor: 'end', offset: 0,
+        },
+        title: {text: "Wood Recovery", display: true},
+        legend: {
+          labels: {
+            usePointStyle: true,
+          },
+        }
+      },
+      responsive: true,
+      scales: {
+        x: {
+          grid: { display: false, },
+        },
+        y: {
+          display: false,
+          beginAtZero: true,
+          grid: { display: false, },
+        },
+        y1: {
+          type: 'linear',
+          display: false,
+          position: 'right',
+          grid: {
+            drawOnChartArea: false,
+            display: false,
+          },
+        },
+      },
+    },
+  });
+</script>

@@ -114,6 +114,10 @@ func (s *Server) Run() {
 	app.Get("/importreededf", s.importreededfHangler)
 	app.Post("/proccess_reeded_excelfile", s.proccess_reeded_excelfilePostHandler)
 	app.Get("/reededchart", s.reededcahrtHandler)
+	app.Get("/woodrecover", s.woodrecoveryHandler)
+	app.Get("/inputwoodrecovery", s.inputputwoodrecoveryHandler)
+	app.Post("/inputwoodrecovery", s.inputwoodrecoveryPostHandler)
+	app.Get("/cutting_wh", s.cuttingwhHandler)
 
 	app.Get("/prodvalueChart", s.prodvalueChartHandler)
 

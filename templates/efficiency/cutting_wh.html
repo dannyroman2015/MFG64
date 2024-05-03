@@ -1,0 +1,101 @@
+<div class="chart-container">
+  <canvas id="cutting_whissue"></canvas>
+</div>
+
+<style>
+  .chart-container {
+    border-bottom: 1px solid black;
+    padding-bottom: 20px;
+  }
+</style>
+
+<script>
+  new Chart(document.getElementById("cutting_whissue"), {
+    plugins: [ChartDataLabels],
+    type: 'bar',
+    data: {
+      labels: {{.dates}},
+      datasets: [
+      {
+        datalabels: {
+          rotation: -90,
+          labels: {
+            title: true
+          },
+        },
+        label: "CUTTING",
+        data: {{.qty}},
+        yAxisID: 'y',
+        pointStyle: 'rect',
+        backgroundColor: 'rgba(163, 85, 85, 0.8)',
+      },
+      {
+        datalabels: {
+          labels: {
+            value: {
+              color: '#433F45',
+            }
+          }
+        },
+        label: "WH ISSUE",
+        data: {{.wh_issue}},
+        yAxisID: 'y',
+        type: "bar",
+        pointStyle: 'bar',
+        pointRadius: 1,
+        borderWidth: 1,
+      },
+      {
+        datalabels: {
+          labels: {
+            title: null
+          }
+        },
+        label: 'Target',
+        data: {{.targets}},
+        yAxisID: 'y',
+        type: "line",
+        pointStyle: 'line',
+        pointRadius: 0,
+        tension: 0.1,
+        borderWidth: 1,
+        backgroundColor: 'blue',
+        borderColor: 'blue',
+      },
+    ]
+    },
+    options: {
+      plugins: {
+        datalabels: {
+          color: 'white', align: 'top', anchor: 'start', offset: 0,
+        },
+        title: {text: "CUTTING-WH ISSUE", display: true},
+        legend: {
+          labels: {
+            usePointStyle: true,
+          },
+        }
+      },
+      responsive: true,
+      scales: {
+        x: {
+          grid: { display: false, },
+        },
+        y: {
+          display: false,
+          beginAtZero: true,
+          grid: { display: false, },
+        },
+        y1: {
+          type: 'linear',
+          display: false,
+          position: 'right',
+          grid: {
+            drawOnChartArea: false,
+            display: false,
+          },
+        },
+      },
+    },
+  });
+</script>

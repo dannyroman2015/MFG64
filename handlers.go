@@ -179,6 +179,95 @@ func (s *Server) reededcahrtHandler(c *fiber.Ctx) error {
 	})
 }
 
+func (s *Server) woodrecoveryHandler(c *fiber.Ctx) error {
+	var dates []string
+	var recoveries []float64
+	var targets []float64
+
+	sql := `select date, recovery, target from wood_recovery where date >= '` + c.FormValue("fromdate") + `' order by date`
+
+	rows, err := s.db.Query(sql)
+	if err != nil {
+		log.Println("fail to get data from wood_recovery")
+		panic(err)
+	}
+
+	for rows.Next() {
+		var a string
+		var b, c float64
+		rows.Scan(&a, &b, &c)
+		a = strings.Split(a, "T")[0]
+		t, _ := time.Parse("2006-01-02", a)
+		a = t.Format("2 Jan")
+		dates = append(dates, a)
+		recoveries = append(recoveries, b)
+		targets = append(targets, c)
+	}
+
+	return c.Render("efficiency/wood_recover", fiber.Map{
+		"dates":      dates,
+		"recoveries": recoveries,
+		"targets":    targets,
+	})
+}
+
+func (s *Server) inputputwoodrecoveryHandler(c *fiber.Ctx) error {
+
+	return c.Render("efficiency/input_wood_recovery", fiber.Map{}, "layout")
+}
+
+func (s *Server) inputwoodrecoveryPostHandler(c *fiber.Ctx) error {
+	date := c.FormValue("inputdate")
+	recovery := c.FormValue("recovery")
+	target := c.FormValue("wrtarget")
+	log.Println(date, recovery, target)
+
+	sql := `insert into wood_recovery(date, recovery, target) values ($1, $2, $3)`
+	_, err := s.db.Exec(sql, date, recovery, target)
+	if err != nil {
+		log.Println("fail to insert data into wood_recovery")
+		panic(err)
+	}
+
+	return c.Redirect("/inputwoodrecovery", fiber.StatusFound)
+}
+
+func (s *Server) cuttingwhHandler(c *fiber.Ctx) error {
+	date := c.FormValue("fromdate")
+	var dates []string
+	var qty []float64
+	var wh_issue []float64
+	var targets []float64
+
+	sql := `select date, work_center, sum(qty), sum(wh_issue) from efficienct_reports group by date, work_center
+		having date >= '` + date + `' and work_center = 'CUTTING' order by date`
+
+	rows, err := s.db.Query(sql)
+	if err != nil {
+		log.Println("fail to get data from efficienct_reports")
+		panic(err)
+	}
+	for rows.Next() {
+		var a string
+		var b string
+		var c, d float64
+		rows.Scan(&a, &b, &c, &d)
+		a = strings.Split(a, "T")[0]
+		t, _ := time.Parse("2006-01-02", a)
+		a = t.Format("2 Jan")
+		dates = append(dates, a)
+		qty = append(qty, c)
+		wh_issue = append(wh_issue, d)
+		targets = append(targets, 28)
+	}
+
+	return c.Render("efficiency/cutting_wh", fiber.Map{
+		"dates":    dates,
+		"qty":      qty,
+		"wh_issue": wh_issue,
+		"targets":  targets,
+	})
+}
 func (s *Server) evaluateHandler(c *fiber.Ctx) error {
 
 	return c.Render("worker_quality/evaluate", fiber.Map{}, "layout")
