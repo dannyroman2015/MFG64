@@ -23,7 +23,7 @@
             title: true
           },
         },
-        label: "CUTTING",
+        label: "CUTTING(cbm)",
         data: {{.qty}},
         yAxisID: 'y',
         pointStyle: 'rect',
@@ -37,7 +37,7 @@
             }
           }
         },
-        label: "WH ISSUE",
+        label: "WH ISSUE(cbm)",
         data: {{.wh_issue}},
         yAxisID: 'y',
         type: "bar",
@@ -51,7 +51,7 @@
             title: null
           }
         },
-        label: 'Target',
+        label: 'Target(cbm)',
         data: {{.targets}},
         yAxisID: 'y',
         type: "line",
@@ -67,7 +67,7 @@
     options: {
       plugins: {
         datalabels: {
-          color: 'white', align: 'top', anchor: 'start', offset: 0,
+          color: 'white', align: 'top', anchor: 'center', offset: 0,
         },
         title: {text: "CUTTING-WH ISSUE", display: true},
         legend: {

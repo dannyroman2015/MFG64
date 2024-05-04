@@ -118,6 +118,11 @@ func (s *Server) Run() {
 	app.Get("/inputwoodrecovery", s.inputputwoodrecoveryHandler)
 	app.Post("/inputwoodrecovery", s.inputwoodrecoveryPostHandler)
 	app.Get("/cutting_wh", s.cuttingwhHandler)
+	app.Get("/inputwhissue", s.inputwhissueHandler)
+	app.Post("/inputwhissue", s.inputwhissuePostHandler)
+	app.Get("/summarytable", s.summarytableHandler)
+	app.Get("/inputsummary", s.inputsummaryHandler)
+	app.Post("/proccessforsummary", s.proccessforsummaryHandler)
 
 	app.Get("/prodvalueChart", s.prodvalueChartHandler)
 
@@ -691,7 +696,6 @@ func (s *Server) importexcelfileHandler(c *fiber.Ctx) error {
 }
 
 func (s *Server) proccesexcelfileHandler(c *fiber.Ctx) error {
-	log.Println("exceltest")
 	file, err := c.FormFile("file")
 	if err != nil {
 		panic(err)

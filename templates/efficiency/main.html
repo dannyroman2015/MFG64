@@ -1,3 +1,30 @@
+<div class="card">
+  <header class="card-header">
+    <p class="card-header-title">Daily Packing Plan & Output Sumary</p>
+  </header>
+
+  <div class="card-content">
+    <div class="table-container">
+      <table class="table has-text-right is-striped is-bordered">
+        <thead class="is-bordered">
+          <tr>
+            <th></th>
+            <th>Plan($)</th>
+            <th>Actual($)</th>
+            <th> RH-Act(pcs) </th>
+            <th>RH-Act($)</th>
+            <th>M64-Act(pcs)</th>
+            <th>M64-Act($)</th>
+          </tr>
+        </thead>
+        <tbody hx-get="/summarytable" hx-target=this hx-trigger="load" hx-swap="outerHTML">
+          
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
 <div id="efficient-container" class="card">
   <header class="card-header">
     <p class="card-header-title">Efficiency</p>

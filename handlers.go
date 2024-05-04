@@ -10,6 +10,8 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/xuri/excelize/v2"
+	"golang.org/x/text/language"
+	"golang.org/x/text/message"
 )
 
 func (s *Server) efficiencyHandler(c *fiber.Ctx) error {
@@ -239,7 +241,7 @@ func (s *Server) cuttingwhHandler(c *fiber.Ctx) error {
 	var wh_issue []float64
 	var targets []float64
 
-	sql := `select date, work_center, sum(qty), sum(wh_issue) from efficienct_reports group by date, work_center
+	sql := `select date, work_center, sum(qty), avg(wh_issue) from efficienct_reports group by date, work_center
 		having date >= '` + date + `' and work_center = 'CUTTING' order by date`
 
 	rows, err := s.db.Query(sql)
@@ -268,6 +270,98 @@ func (s *Server) cuttingwhHandler(c *fiber.Ctx) error {
 		"targets":  targets,
 	})
 }
+
+func (s *Server) inputwhissueHandler(c *fiber.Ctx) error {
+
+	return c.Render("efficiency/inputwhissue", fiber.Map{}, "layout")
+}
+
+func (s *Server) inputwhissuePostHandler(c *fiber.Ctx) error {
+	date := c.FormValue("inputdate")
+	whissue := c.FormValue("whissue")
+
+	sql := `update efficienct_reports set wh_issue = ` + whissue + ` where work_center = 'CUTTING' 
+		and date = '` + date + `'`
+	_, err := s.db.Exec(sql)
+	if err != nil {
+		log.Println("fail to update wh_issue to efficienct_report")
+		panic(err)
+	}
+
+	return c.Redirect("inputwhissue", fiber.StatusFound)
+}
+
+func (s *Server) summarytableHandler(c *fiber.Ctx) error {
+	var arr [][]string
+
+	sql := `select plan, actual, rh_act_pcs, rh_act_money, m64_act_pcs, m64_act_money 
+			from packing_summary order by stt`
+	rows, err := s.db.Query(sql)
+	if err != nil {
+		panic(err)
+	}
+
+	p := message.NewPrinter(language.English)
+	for rows.Next() {
+		var a = []float64{0, 0, 0, 0, 0, 0}
+		var as = []string{"", "", "", "", "", ""}
+		rows.Scan(&a[0], &a[1], &a[2], &a[3], &a[4], &a[5])
+		for i := range a {
+			if a[i] != 0 {
+				as[i] = p.Sprint(a[i])
+			}
+		}
+		arr = append(arr, as)
+	}
+
+	return c.Render("efficiency/summary_body", fiber.Map{
+		"arr":   arr,
+		"today": time.Now().Format("02/01"),
+		"nd":    time.Now().AddDate(0, 0, 1).Format("02/01"),
+		"rd":    time.Now().AddDate(0, 0, 2).Format("02/01"),
+	})
+}
+
+func (s *Server) inputsummaryHandler(c *fiber.Ctx) error {
+
+	return c.Render("efficiency/inputsummary", fiber.Map{}, "layout")
+}
+
+func (s *Server) proccessforsummaryHandler(c *fiber.Ctx) error {
+	file, err := c.FormFile("file")
+	if err != nil {
+		panic(err)
+	}
+	fi, err := file.Open()
+	if err != nil {
+		panic(err)
+	}
+	defer fi.Close()
+
+	f, err := excelize.OpenReader(fi)
+	if err != nil {
+		panic(err)
+	}
+
+	rows, err := f.GetRows("Sheet1")
+	if err != nil {
+		log.Println(err)
+	}
+
+	for i := 1; i < len(rows); i++ {
+		sql := `update packing_summary set plan =` + rows[i][1] + `, 
+			actual = ` + rows[i][2] + `, rh_act_pcs = ` + rows[i][3] + `, 
+			rh_act_money =` + rows[i][4] + `, m64_act_pcs = ` + rows[i][5] + `, 
+			m64_act_money =` + rows[i][6] + ` where type = '` + rows[i][0] + `'`
+		_, err = s.db.Exec(sql)
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	return c.Redirect("/efficiency", fiber.StatusFound)
+}
+
 func (s *Server) evaluateHandler(c *fiber.Ctx) error {
 
 	return c.Render("worker_quality/evaluate", fiber.Map{}, "layout")
