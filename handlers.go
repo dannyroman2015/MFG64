@@ -10,8 +10,6 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/xuri/excelize/v2"
-	"golang.org/x/text/language"
-	"golang.org/x/text/message"
 )
 
 func (s *Server) efficiencyHandler(c *fiber.Ctx) error {
@@ -301,16 +299,9 @@ func (s *Server) summarytableHandler(c *fiber.Ctx) error {
 		panic(err)
 	}
 
-	p := message.NewPrinter(language.English)
 	for rows.Next() {
-		var a = []float64{0, 0, 0, 0, 0, 0}
 		var as = []string{"", "", "", "", "", ""}
-		rows.Scan(&a[0], &a[1], &a[2], &a[3], &a[4], &a[5])
-		for i := range a {
-			if a[i] != 0 {
-				as[i] = p.Sprint(a[i])
-			}
-		}
+		rows.Scan(&as[0], &as[1], &as[2], &as[3], &as[4], &as[5])
 		arr = append(arr, as)
 	}
 
@@ -349,10 +340,10 @@ func (s *Server) proccessforsummaryHandler(c *fiber.Ctx) error {
 	}
 
 	for i := 1; i < len(rows); i++ {
-		sql := `update packing_summary set plan =` + rows[i][1] + `, 
-			actual = ` + rows[i][2] + `, rh_act_pcs = ` + rows[i][3] + `, 
-			rh_act_money =` + rows[i][4] + `, m64_act_pcs = ` + rows[i][5] + `, 
-			m64_act_money =` + rows[i][6] + ` where type = '` + rows[i][0] + `'`
+		sql := `update packing_summary set plan ='` + rows[i][1] + `', 
+			actual = '` + rows[i][2] + `', rh_act_pcs = '` + rows[i][3] + `', 
+			rh_act_money ='` + rows[i][4] + `', m64_act_pcs = '` + rows[i][5] + `', 
+			m64_act_money ='` + rows[i][6] + `' where type = '` + rows[i][0] + `'`
 		_, err = s.db.Exec(sql)
 		if err != nil {
 			panic(err)
