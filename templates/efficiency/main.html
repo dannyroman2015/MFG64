@@ -1,206 +1,212 @@
-<div class="card">
-  <header class="card-header">
-    <p class="card-header-title">Daily Packing Plan & Output Summary</p>
-  </header>
+<div id="efficient-container" class="container">
 
-  <div class="card-content">
-    <div class="table-container">
-      <table class="table has-text-right is-striped is-bordered">
-        <thead class="is-bordered">
-          <tr>
-            <th></th>
-            <th>Plan($)</th>
-            <th>Actual($)</th>
-            <th> RH-Act(pcs) </th>
-            <th>RH-Act($)</th>
-            <th>M64-Act(pcs)</th>
-            <th>M64-Act($)</th>
-          </tr>
-        </thead>
-        <tbody hx-get="/summarytable" hx-target=this hx-trigger="load" hx-swap="outerHTML">
-          
-        </tbody>
-      </table>
+  <div class="card">
+    <header class="card-header">
+      <p class="card-header-title">Daily Packing Plan & Output Summary</p>
+    </header>
+  
+    <div class="card-content">
+      <div class="table-container">
+        <table class="table has-text-right is-striped is-bordered">
+          <thead class="is-bordered">
+            <tr>
+              <th></th>
+              <th>Plan($)</th>
+              <th>Actual($)</th>
+              <th>RH-Act(pcs)</th>
+              <th>RH-Act($)</th>
+              <th>M64-Act(pcs)</th>
+              <th>M64-Act($)</th>
+            </tr>
+          </thead>
+          <tbody hx-get="/summarytable" hx-target=this hx-trigger="load" hx-swap="outerHTML">
+            
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
-</div>
-
-<div id="efficient-container" class="card">
-  <header class="card-header">
-    <p class="card-header-title">Efficiency</p>
-    <label for="" class="card-header-icon">
-      From: 
-      <input  id="fromdate" name="fromdate" type="date" value={{.fromdate}} class="card-header-icon"
-              hx-get="/efficiencywithdate" hx-target="#efficient-container" hx-swap="outerHTML">
-    </label>     
-  </header>
-
-  <div class="card-content">
-    <div class="fixed-grid has-1-cols-mobile">
-      <div class="grid is-gap-5">
-
-        <div id="production-value" class="cell">
-          <div  hx-get="/prodvalueChart" 
-                hx-target="#production-value" 
-                hx-trigger="load" 
-                hx-include="[name='fromdate']">
-            <div class="cssload-loader">
-              <div class="cssload-inner cssload-one"></div>
-              <div class="cssload-inner cssload-two"></div>
-              <div class="cssload-inner cssload-three"></div>
+  
+  <div class="card">
+    <header class="card-header">
+      <p class="card-header-title">Efficiency</p>
+      <label for="" class="card-header-icon">
+        From: 
+        <input  id="fromdate" name="fromdate" type="date" value={{.fromdate}} class="card-header-icon"
+                hx-get="/efficiencywithdate" hx-target="#efficient-container" hx-swap="outerHTML">
+      </label>     
+    </header>
+  
+    <div class="card-content">
+      <div class="fixed-grid has-1-cols-mobile">
+        <div class="grid is-gap-5">
+  
+          <div id="production-value" class="cell">
+            <div  hx-get="/prodvalueChart" 
+                  hx-target="#production-value" 
+                  hx-trigger="load" 
+                  hx-include="[name='fromdate']">
+              <div class="cssload-loader">
+                <div class="cssload-inner cssload-one"></div>
+                <div class="cssload-inner cssload-two"></div>
+                <div class="cssload-inner cssload-three"></div>
+              </div>
             </div>
           </div>
-        </div>
-
-        <div id="reeded-container" class="cell">
-          <div  hx-get="/reededchart" 
-                hx-target="#reeded-container" 
-                hx-trigger="load" 
-                hx-include="[name='fromdate']">
-            <div class="cssload-loader">
-              <div class="cssload-inner cssload-one"></div>
-              <div class="cssload-inner cssload-two"></div>
-              <div class="cssload-inner cssload-three"></div>
+  
+          <div id="reeded-container" class="cell">
+            <div  hx-get="/reededchart" 
+                  hx-target="#reeded-container" 
+                  hx-trigger="load" 
+                  hx-include="[name='fromdate']">
+              <div class="cssload-loader">
+                <div class="cssload-inner cssload-one"></div>
+                <div class="cssload-inner cssload-two"></div>
+                <div class="cssload-inner cssload-three"></div>
+              </div>
             </div>
           </div>
-        </div>
-
-        <div id="efficiency" class="cell">
-          <div  hx-get="/efficientChart/cutting" 
-                hx-target="#efficiency" 
-                hx-trigger="load" 
-                hx-include="[name='fromdate']">
-                <div class="cssload-loader">
-                  <div class="cssload-inner cssload-one"></div>
-                  <div class="cssload-inner cssload-two"></div>
-                  <div class="cssload-inner cssload-three"></div>
-                </div>
+  
+          <div id="efficiency" class="cell">
+            <div  hx-get="/efficientChart/cutting" 
+                  hx-target="#efficiency" 
+                  hx-trigger="load" 
+                  hx-include="[name='fromdate']">
+                  <div class="cssload-loader">
+                    <div class="cssload-inner cssload-one"></div>
+                    <div class="cssload-inner cssload-two"></div>
+                    <div class="cssload-inner cssload-three"></div>
+                  </div>
+            </div>
           </div>
-        </div>
-
-        <div id="efficiency1" class="cell">
-          <div  hx-get="/efficientChart/lamination" 
-                hx-target="#efficiency1" 
-                hx-trigger="load" 
-                hx-include="[name='fromdate']">
-                <div class="cssload-loader">
-                  <div class="cssload-inner cssload-one"></div>
-                  <div class="cssload-inner cssload-two"></div>
-                  <div class="cssload-inner cssload-three"></div>
-                </div>
+  
+          <div id="efficiency1" class="cell">
+            <div  hx-get="/efficientChart/lamination" 
+                  hx-target="#efficiency1" 
+                  hx-trigger="load" 
+                  hx-include="[name='fromdate']">
+                  <div class="cssload-loader">
+                    <div class="cssload-inner cssload-one"></div>
+                    <div class="cssload-inner cssload-two"></div>
+                    <div class="cssload-inner cssload-three"></div>
+                  </div>
+            </div>
           </div>
-        </div>
-
-        <div id="efficiency2" class="cell">
-          <div  hx-get="/efficientChart/reededline" 
-                hx-target="#efficiency2" 
-                hx-trigger="load" 
-                hx-include="[name='fromdate']">
-                <div class="cssload-loader">
-                  <div class="cssload-inner cssload-one"></div>
-                  <div class="cssload-inner cssload-two"></div>
-                  <div class="cssload-inner cssload-three"></div>
-                </div>
+  
+          <div id="efficiency2" class="cell">
+            <div  hx-get="/efficientChart/reededline" 
+                  hx-target="#efficiency2" 
+                  hx-trigger="load" 
+                  hx-include="[name='fromdate']">
+                  <div class="cssload-loader">
+                    <div class="cssload-inner cssload-one"></div>
+                    <div class="cssload-inner cssload-two"></div>
+                    <div class="cssload-inner cssload-three"></div>
+                  </div>
+            </div>
           </div>
-        </div>
-
-        <div id="efficiency3" class="cell">
-          <div  hx-get="/efficientChart/veneerlamination" 
-                hx-target="#efficiency3" 
-                hx-trigger="load" 
-                hx-include="[name='fromdate']">
-                <div class="cssload-loader">
-                  <div class="cssload-inner cssload-one"></div>
-                  <div class="cssload-inner cssload-two"></div>
-                  <div class="cssload-inner cssload-three"></div>
-                </div>
+  
+          <div id="efficiency3" class="cell">
+            <div  hx-get="/efficientChart/veneerlamination" 
+                  hx-target="#efficiency3" 
+                  hx-trigger="load" 
+                  hx-include="[name='fromdate']">
+                  <div class="cssload-loader">
+                    <div class="cssload-inner cssload-one"></div>
+                    <div class="cssload-inner cssload-two"></div>
+                    <div class="cssload-inner cssload-three"></div>
+                  </div>
+            </div>
           </div>
-        </div>
-
-        <div id="efficiency4" class="cell">
-          <div  hx-get="/efficientChart/panelcnc" 
-                hx-target="#efficiency4" 
-                hx-trigger="load" 
-                hx-include="[name='fromdate']">
-                <div class="cssload-loader">
-                  <div class="cssload-inner cssload-one"></div>
-                  <div class="cssload-inner cssload-two"></div>
-                  <div class="cssload-inner cssload-three"></div>
-                </div>
+  
+          <div id="efficiency4" class="cell">
+            <div  hx-get="/efficientChart/panelcnc" 
+                  hx-target="#efficiency4" 
+                  hx-trigger="load" 
+                  hx-include="[name='fromdate']">
+                  <div class="cssload-loader">
+                    <div class="cssload-inner cssload-one"></div>
+                    <div class="cssload-inner cssload-two"></div>
+                    <div class="cssload-inner cssload-three"></div>
+                  </div>
+            </div>
           </div>
-        </div>
-
-        <div id="efficiency5" class="cell">
-          <div  hx-get="/efficientChart/assembly" 
-                hx-target="#efficiency5" 
-                hx-trigger="load" 
-                hx-include="[name='fromdate']">
-                <div class="cssload-loader">
-                  <div class="cssload-inner cssload-one"></div>
-                  <div class="cssload-inner cssload-two"></div>
-                  <div class="cssload-inner cssload-three"></div>
-                </div>
+  
+          <div id="efficiency5" class="cell">
+            <div  hx-get="/efficientChart/assembly" 
+                  hx-target="#efficiency5" 
+                  hx-trigger="load" 
+                  hx-include="[name='fromdate']">
+                  <div class="cssload-loader">
+                    <div class="cssload-inner cssload-one"></div>
+                    <div class="cssload-inner cssload-two"></div>
+                    <div class="cssload-inner cssload-three"></div>
+                  </div>
+            </div>
           </div>
-        </div>
-
-        <div id="efficiency6" class="cell">
-          <div  hx-get="/efficientChart/woodfinishing" 
-                hx-target="#efficiency6" 
-                hx-trigger="load" 
-                hx-include="[name='fromdate']">
-                <div class="cssload-loader">
-                  <div class="cssload-inner cssload-one"></div>
-                  <div class="cssload-inner cssload-two"></div>
-                  <div class="cssload-inner cssload-three"></div>
-                </div>
+  
+          <div id="efficiency6" class="cell">
+            <div  hx-get="/efficientChart/woodfinishing" 
+                  hx-target="#efficiency6" 
+                  hx-trigger="load" 
+                  hx-include="[name='fromdate']">
+                  <div class="cssload-loader">
+                    <div class="cssload-inner cssload-one"></div>
+                    <div class="cssload-inner cssload-two"></div>
+                    <div class="cssload-inner cssload-three"></div>
+                  </div>
+            </div>
           </div>
-        </div>
-
-        <div id="efficiency7" class="cell">
-          <div  hx-get="/efficientChart/packing" 
-                hx-target="#efficiency7" 
-                hx-trigger="load" 
-                hx-include="[name='fromdate']">
-                <div class="cssload-loader">
-                  <div class="cssload-inner cssload-one"></div>
-                  <div class="cssload-inner cssload-two"></div>
-                  <div class="cssload-inner cssload-three"></div>
-                </div>
+  
+          <div id="efficiency7" class="cell">
+            <div  hx-get="/efficientChart/packing" 
+                  hx-target="#efficiency7" 
+                  hx-trigger="load" 
+                  hx-include="[name='fromdate']">
+                  <div class="cssload-loader">
+                    <div class="cssload-inner cssload-one"></div>
+                    <div class="cssload-inner cssload-two"></div>
+                    <div class="cssload-inner cssload-three"></div>
+                  </div>
+            </div>
           </div>
-        </div>
-
-        <div id="efficiency8" class="cell">
-          <div  hx-get="/woodrecover"
-                hx-target="#efficiency8" 
-                hx-trigger="load" 
-                hx-include="[name='fromdate']">
-                <div class="cssload-loader">
-                  <div class="cssload-inner cssload-one"></div>
-                  <div class="cssload-inner cssload-two"></div>
-                  <div class="cssload-inner cssload-three"></div>
-                </div>
+  
+          <div id="efficiency8" class="cell">
+            <div  hx-get="/woodrecover"
+                  hx-target="#efficiency8" 
+                  hx-trigger="load" 
+                  hx-include="[name='fromdate']">
+                  <div class="cssload-loader">
+                    <div class="cssload-inner cssload-one"></div>
+                    <div class="cssload-inner cssload-two"></div>
+                    <div class="cssload-inner cssload-three"></div>
+                  </div>
+            </div>
           </div>
-        </div>
-
-        <div id="efficiency9" class="cell">
-          <div  hx-get="/cutting_wh"
-                hx-target="#efficiency9" 
-                hx-trigger="load" 
-                hx-include="[name='fromdate']">
-                <div class="cssload-loader">
-                  <div class="cssload-inner cssload-one"></div>
-                  <div class="cssload-inner cssload-two"></div>
-                  <div class="cssload-inner cssload-three"></div>
-                </div>
+  
+          <div id="efficiency9" class="cell">
+            <div  hx-get="/cutting_wh"
+                  hx-target="#efficiency9" 
+                  hx-trigger="load" 
+                  hx-include="[name='fromdate']">
+                  <div class="cssload-loader">
+                    <div class="cssload-inner cssload-one"></div>
+                    <div class="cssload-inner cssload-two"></div>
+                    <div class="cssload-inner cssload-three"></div>
+                  </div>
+            </div>
           </div>
+  
+  
         </div>
-
-
-      </div>
-    </div>  
-  </div> 
+      </div>  
+    </div> 
+  
+  </div>
 
 </div>
+
+
 
 
 <style>

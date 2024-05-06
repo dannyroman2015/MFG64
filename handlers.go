@@ -257,6 +257,7 @@ func (s *Server) cuttingwhHandler(c *fiber.Ctx) error {
 		a = t.Format("2 Jan")
 		dates = append(dates, a)
 		qty = append(qty, c)
+		d = math.Round(d*100) / 100
 		wh_issue = append(wh_issue, d)
 		targets = append(targets, 28)
 	}

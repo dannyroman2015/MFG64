@@ -807,6 +807,7 @@ func (s *Server) efficientChartHandler(c *fiber.Ctx) error {
 
 		efficiency = append(efficiency, math.Round((c/d)*100/actual_target))
 		labels = append(labels, a)
+		c = math.Round(c)
 		quanity = append(quanity, c)
 		targets = append(targets, target)
 	}
