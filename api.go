@@ -82,7 +82,8 @@ func (s *Server) Run() {
 
 	app.Static("/static", "./static")
 
-	app.Get("/", s.indexGetHandler)
+	// app.Get("/", s.indexGetHandler)
+	app.Get("/", s.efficiencyHandler)
 
 	app.Get("/evaluate", s.evaluateHandler)
 	app.Post("/workerbypw", s.workerbypwPostHandler)
