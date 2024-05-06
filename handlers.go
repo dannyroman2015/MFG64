@@ -170,12 +170,21 @@ func (s *Server) reededcahrtHandler(c *fiber.Ctx) error {
 		totals = append(totals, math.Round(sumqty))
 		avgs = append(avgs, math.Round(avgaty))
 	}
+
+	sql = `select date from reeded_reports order by date desc limit 1`
+	row := s.db.QueryRow(sql)
+	var latestDate string
+
+	row.Scan(&latestDate)
+	latestDate = strings.Split(latestDate, "T")[0]
+
 	randColor := fmt.Sprintf("rgba(%d, %d, %d, 0.4)", rand.Intn(255), rand.Intn(255), rand.Intn(255))
 	return c.Render("efficiency/reeded_chart", fiber.Map{
-		"labels":   labels,
-		"totals":   totals,
-		"avgs":     avgs,
-		"bg_color": randColor,
+		"labels":     labels,
+		"totals":     totals,
+		"avgs":       avgs,
+		"bg_color":   randColor,
+		"latestDate": latestDate,
 	})
 }
 

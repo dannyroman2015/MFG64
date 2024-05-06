@@ -53,12 +53,12 @@
     options: {
       plugins: {
         datalabels: {
-          color: 'white', align: 'top', anchor: 'center', offset: 0,
+          color: 'black', align: 'top', anchor: 'center', offset: 0,
           formatter: function(value, context) {
             return value.toLocaleString()
           },   
         },
-        title: {text: 'Reeded Output', display: true},
+        title: {text: 'Reeded Output (dự liệu đến ngày {{.latestDate}})', display: true},
         legend: {
           labels: {
             usePointStyle: true,
