@@ -302,6 +302,11 @@ func (s *Server) summarytableHandler(c *fiber.Ctx) error {
 	for rows.Next() {
 		var as = []string{"", "", "", "", "", ""}
 		rows.Scan(&as[0], &as[1], &as[2], &as[3], &as[4], &as[5])
+		for i := 0; i < len(as); i++ {
+			if as[i] == "0" {
+				as[i] = ""
+			}
+		}
 		arr = append(arr, as)
 	}
 
