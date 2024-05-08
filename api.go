@@ -85,7 +85,7 @@ func (s *Server) Run() {
 
 	app.Use("/efficiencyreport", basicauth.New(basicauth.Config{
 		Users: map[string]string{
-			"niem":       "2511",
+			"assembly":   "2511",
 			"cutting":    "456",
 			"lamination": "123",
 			"reeded":     "456",
@@ -766,7 +766,7 @@ func (s *Server) efficiencyReportHandler(c *fiber.Ctx) error {
 		"reeded":     "REEDEDLINE",
 		"veneer":     "VENEERLAMINATION",
 		"panel":      "PANELCNC",
-		"niem":       "ASSEMBLY",
+		"assembly":   "ASSEMBLY",
 		"wood":       "WOODFINISHING",
 		"packing":    "PACKING",
 	}
