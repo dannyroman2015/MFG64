@@ -144,18 +144,32 @@
   </div>
 </form>
 
-<div id="table-container" class="table-container">
+<div class="notification has-text-centered is-light">
+  Lịch sử nhập gần đây
+</div>
+<div class="table-container is-centered">
   <table class="table">
     <thead>
       <tr>
         <th>Ngày Nhập</th>
         <th>Sản Lượng</th>
         <th>Giờ Công</th>
+        <th>Loại Hàng</th>
+        <th>Xưởng</th>
+        {{if eq .workcenter  "PANELCNC"}}<th>Máy</th>{{end}}
       </tr>
     </thead>
-    <tbody>  
-      <tr>
-      </tr>
+    <tbody>
+      {{ range .list }}
+        <tr>
+          <td>{{ index . 0}}</td>
+          <td>{{ index . 1}}</td>
+          <td>{{ index . 2}}</td>
+          <td>{{ index . 3}}</td>
+          <td>{{ index . 4}}</td>
+          <td>{{ index . 5}}</td>
+        </tr>
+      {{ end }}
     </tbody>
   </table>
 </div>

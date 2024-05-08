@@ -771,23 +771,27 @@ func (s *Server) efficiencyReportHandler(c *fiber.Ctx) error {
 		"packing":    "PACKING",
 	}
 	wc := workcenters[user]
-	log.Println("dang lam bang cho input workcenter: ", wc)
-	sql := `select date, qty, manhr from efficienct_reports where work_center ='` + wc + `'`
+	sql := `select date, qty, manhr, type, factory_no, cnc_machine from efficienct_reports where work_center ='` + wc + `'
+				order by date desc limit 10`
 
 	rows, err := s.db.Query(sql)
 	if err != nil {
 		panic(err)
 	}
+	var list [][]string
 	for rows.Next() {
-		var a, b, c string
-		rows.Scan(&a, &b, &c)
-		log.Println(a, b, c)
+		var a, b, c, d, e, f string
+		rows.Scan(&a, &b, &c, &d, &e, &f)
+		a = strings.Split(a, "T")[0]
+		ar := []string{a, b, c, d, e, f}
+		list = append(list, ar)
 	}
 
 	return c.Render("efficiency/report", fiber.Map{
 		"units":      units,
 		"unit":       units[wc],
 		"workcenter": workcenters[user],
+		"list":       list,
 	}, "layout")
 }
 
