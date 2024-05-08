@@ -5,11 +5,11 @@
 <form id="inputForm" action="/efficiencyreport" method="post" class="box">
   <div class="field is-horizontal">
     <div class="field-label is-normal">
-      <label class="label">WORK CENTER</label>
+      <label class="label">Work Center</label>
     </div>
 
     <div class="field-body">
-      <div class="field">
+      <div class="field is-narrow">
         <div class="control">
           <div class="select">
             <select id="mo" name="workcenter">
@@ -18,12 +18,76 @@
           </div>
         </div>
       </div>
+
+      {{ if eq .workcenter  "PANELCNC" }}
+        <div class="field is-narrow">
+          <div class="control">
+            <div class="select">
+              <select name="cncmachine">
+                <option value="NESTING NEW">NESTING MỚI</option>
+                <option value="PANEL SAW_NEW">PANEL SAW NEW</option>
+                <option value="PANEL SAW">PANEL SAW</option>
+                <option value="ROVER B">ROVER B</option>
+                <option value="ROVER C">ROVER C</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      {{ end }}
     </div>
   </div>
   
   <div class="field is-horizontal">
+    <div class="field-label">
+      <label class="label">Nhà Máy</label>
+    </div>
+
+    <div class="field-body">
+      <div class="field">
+          <div class="control">
+            <label class="radio">
+              <input value="1" type="radio" name="factory" checked/>
+              Xưởng 1
+            </label>
+            <label class="radio">
+              <input value="2" type="radio" name="factory" />
+              Xưởng 2
+            </label>
+          </div>
+      </div>
+    </div>
+  
+  </div>
+
+  <div class="field is-horizontal">
+    <div class="field-label">
+      <label class="label">Loại Hàng</label>
+    </div>
+
+    <div class="field-body">
+      <div class="field">
+          <div class="control">
+            <label class="radio">
+              <input value="BRAND" type="radio" name="typeofproduct"/>
+              BRAND
+            </label>
+            <label class="radio">
+              <input value="RH" type="radio" name="typeofproduct" />
+              RH
+            </label>
+            <label class="radio">
+              <input value="" type="radio" name="typeofproduct" checked/>
+              Không phân loại
+            </label>
+          </div>
+      </div>
+    </div>
+  
+  </div>
+
+  <div class="field is-horizontal">
     <div class="field-label is-normal">
-      <label class="label">DATE</label>
+      <label class="label">Ngày</label>
     </div>
 
     <div class="field-body">
@@ -31,14 +95,14 @@
         <p class="control">
           <input id="inputdate" name="inputdate" class="input" type="date">
         </p>
-        <p class="help is-link">Default is current time. Change only needed</p>
+        <p class="help is-link">Mặc định là ngày hôm nay.</p>
       </div>
     </div>
   </div>
   
   <div class="field is-horizontal">
     <div class="field-label is-normal">
-      <label class="label">QUANITY</label>
+      <label class="label">Sản Lượng</label>
     </div>
 
     <div class="field-body">
@@ -54,11 +118,11 @@
 
   <div class="field is-horizontal">
     <div class="field-label is-normal">
-      <label class="label">MANHR</label>
+      <label class="label">Tổng giờ công</label>
     </div>
 
     <div class="field-body">
-      <div class="field">
+      <div class="field is-narrow">
         <p class="control">
           <input  name="manhr" class="input" step="any" min="0" type="number" placeholder="Enter quanity">
         </p>
@@ -72,7 +136,7 @@
       <div class="field">
         <div class="control">
           <button class="button is-link is-outlined">
-            Send Data
+            Gửi
           </button>
         </div>
       </div>

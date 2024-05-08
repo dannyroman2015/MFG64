@@ -87,10 +87,10 @@ func (s *Server) Run() {
 		Users: map[string]string{
 			"assembly":   "2511",
 			"cutting":    "456",
-			"lamination": "123",
+			"lamination": "12",
 			"reeded":     "456",
 			"veneer":     "123",
-			"panel":      "456",
+			"panel":      "45",
 			"wood":       "1302",
 			"packing":    "456",
 		},
@@ -771,7 +771,7 @@ func (s *Server) efficiencyReportHandler(c *fiber.Ctx) error {
 		"packing":    "PACKING",
 	}
 	wc := workcenters[user]
-	log.Println(wc)
+	log.Println("dang lam bang cho input workcenter: ", wc)
 	sql := `select date, qty, manhr from efficienct_reports where work_center ='` + wc + `'`
 
 	rows, err := s.db.Query(sql)
@@ -792,15 +792,21 @@ func (s *Server) efficiencyReportHandler(c *fiber.Ctx) error {
 }
 
 func (s *Server) efficiencyReportPostHandler(c *fiber.Ctx) error {
+	var factory string
+	var typeofproduct string
+	var cncmachine string
+	cncmachine = c.FormValue("cncmachine")
 	workcenter := c.FormValue("workcenter")
 	inputdate := c.FormValue("inputdate")
+	factory = c.FormValue("factory")
+	typeofproduct = c.FormValue("typeofproduct")
 	var qty, manhr float64
 	qty, _ = strconv.ParseFloat(c.FormValue("qty"), 64)
 	manhr, _ = strconv.ParseFloat(c.FormValue("manhr"), 64)
 
-	sql := `insert into efficienct_reports(work_center, date, qty, manhr) values ($1, $2, $3, $4)`
+	sql := `insert into efficienct_reports(work_center, date, qty, manhr, type, factory_no, cnc_machine) values ($1, $2, $3, $4, $5, $6, $7)`
 
-	_, err := s.db.Exec(sql, workcenter, inputdate, qty, manhr)
+	_, err := s.db.Exec(sql, workcenter, inputdate, qty, manhr, typeofproduct, factory, cncmachine)
 	if err != nil {
 		panic(err)
 	}

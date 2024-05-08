@@ -89,7 +89,6 @@ func (s *Server) prodvalueChartHandler(c *fiber.Ctx) error {
 		quanity = append(quanity, c)
 		targets = append(targets, target)
 	}
-	randColor := fmt.Sprintf("rgba(%d, %d, %d, 0.4)", rand.Intn(255), rand.Intn(255), rand.Intn(255))
 
 	return c.Render("efficiency/chart", fiber.Map{
 		"workcenter":  "Production Value",
@@ -98,7 +97,6 @@ func (s *Server) prodvalueChartHandler(c *fiber.Ctx) error {
 		"efficiency":  laborrate,
 		"targets":     targets,
 		"chartLabels": []string{"Quanity", "labor rate($/manhr)", "Target"},
-		"bg_color":    randColor,
 		"units":       units,
 	})
 }
