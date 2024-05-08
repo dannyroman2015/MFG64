@@ -85,12 +85,14 @@ func (s *Server) Run() {
 
 	app.Use("/efficiencyreport", basicauth.New(basicauth.Config{
 		Users: map[string]string{
-			"niem":  "2511",
-			"hai":   "456",
-			"nha":   "123",
-			"tam":   "456",
-			"tuan":  "123",
-			"thanh": "456",
+			"niem":       "2511",
+			"cutting":    "456",
+			"lamination": "123",
+			"reeded":     "456",
+			"veneer":     "123",
+			"panel":      "456",
+			"wood":       "1302",
+			"packing":    "456",
 		},
 	}))
 
@@ -759,14 +761,14 @@ func (s *Server) efficiencyReportHandler(c *fiber.Ctx) error {
 	}
 	user := c.Locals("username").(string)
 	workcenters := map[string]string{
-		"nam":   "CUTTING",
-		"hai":   "LAMINATION",
-		"tuan":  "REEDEDLINE",
-		"thanh": "VENEERLAMINATION",
-		"trieu": "PANELCNC",
-		"niem":  "ASSEMBLY",
-		"nha":   "WOODFINISHING",
-		"tam":   "PACKING",
+		"cutting":    "CUTTING",
+		"lamination": "LAMINATION",
+		"reeded":     "REEDEDLINE",
+		"veneer":     "VENEERLAMINATION",
+		"panel":      "PANELCNC",
+		"niem":       "ASSEMBLY",
+		"wood":       "WOODFINISHING",
+		"packing":    "PACKING",
 	}
 	wc := workcenters[user]
 
