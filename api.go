@@ -85,7 +85,7 @@ func (s *Server) Run() {
 
 	app.Use("/efficiencyreport", basicauth.New(basicauth.Config{
 		Users: map[string]string{
-			"nam":   "123",
+			"niem":  "2511",
 			"hai":   "456",
 			"nha":   "123",
 			"tam":   "456",
