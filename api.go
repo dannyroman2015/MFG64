@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/basicauth"
 	"github.com/gofiber/template/html/v2"
 	"github.com/xuri/excelize/v2"
 )
@@ -81,6 +82,17 @@ func (s *Server) Run() {
 	//end just for test
 
 	app.Static("/static", "./static")
+
+	app.Use("/efficiencyreport", basicauth.New(basicauth.Config{
+		Users: map[string]string{
+			"nam":   "123",
+			"hai":   "456",
+			"nha":   "123",
+			"tam":   "456",
+			"tuan":  "123",
+			"thanh": "456",
+		},
+	}))
 
 	// app.Get("/", s.indexGetHandler)
 	app.Get("/", s.efficiencyHandler)
@@ -745,9 +757,23 @@ func (s *Server) efficiencyReportHandler(c *fiber.Ctx) error {
 		"WOOD FINISHING":    "$",
 		"PACKING":           "$",
 	}
+	user := c.Locals("username").(string)
+	workcenters := map[string]string{
+		"nam":   "CUTTING",
+		"hai":   "LAMINATION",
+		"tuan":  "REEDEDLINE",
+		"thanh": "VENEERLAMINATION",
+		"trieu": "PANELCNC",
+		"ha":    "ASSEMBLY",
+		"nha":   "WOODFINISHING",
+		"tam":   "PACKING",
+	}
+	wc := workcenters[user]
+	log.Println(wc)
 
 	return c.Render("efficiency/report", fiber.Map{
-		"units": units,
+		"units":      units,
+		"workcenter": workcenters[user],
 	}, "layout")
 }
 
