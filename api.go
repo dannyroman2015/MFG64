@@ -771,6 +771,18 @@ func (s *Server) efficiencyReportHandler(c *fiber.Ctx) error {
 		"packing":    "PACKING",
 	}
 	wc := workcenters[user]
+	log.Println(wc)
+	sql := `select date, qty, manhr from efficienct_reports where work_center ='` + wc + `'`
+
+	rows, err := s.db.Query(sql)
+	if err != nil {
+		panic(err)
+	}
+	for rows.Next() {
+		var a, b, c string
+		rows.Scan(&a, &b, &c)
+		log.Println(a, b, c)
+	}
 
 	return c.Render("efficiency/report", fiber.Map{
 		"units":      units,

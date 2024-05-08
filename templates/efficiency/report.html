@@ -14,15 +14,6 @@
           <div class="select">
             <select id="mo" name="workcenter">
               <option value="{{.workcenter}}">{{.workcenter}}</option>
-              <!-- <option disabled selected>Select Work Center</option>
-              <option value="CUTTING">CUTTING</option>
-              <option value="LAMINATION">LAMINATION</option>
-              <option value="REEDEDLINE">REEDED LINE</option>
-              <option value="VENEERLAMINATION">VENEER LAMINATION</option>
-              <option value="PANELCNC">PANEL CNC</option>
-              <option value="ASSEMBLY">ASSEMBLY</option>
-              <option value="WOODFINISHING">WOOD FINISHING </option>
-              <option value="PACKING">PACKING</option> -->
             </select>
           </div>
         </div>
@@ -88,6 +79,23 @@
     </div>
   </div>
 </form>
+
+<div id="table-container" class="table-container">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Ngày Nhập</th>
+        <th>Sản Lượng</th>
+        <th>Giờ Công</th>
+      </tr>
+    </thead>
+    <tbody>  
+      <tr>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
 
 <script>
   document.getElementById("inputdate").valueAsDate = new Date()
