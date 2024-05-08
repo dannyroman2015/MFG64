@@ -748,14 +748,14 @@ func (s *Server) proccesexcelfileHandler(c *fiber.Ctx) error {
 
 func (s *Server) efficiencyReportHandler(c *fiber.Ctx) error {
 	units := map[string]string{
-		"CUTTING":           "CBM",
-		"LAMINATION":        "M2",
-		"REEDED LINE":       "M2",
-		"VENEER LAMINATION": "M2",
-		"PANEL CNC":         "SHEET",
-		"ASSEMBLY":          "$",
-		"WOOD FINISHING":    "$",
-		"PACKING":           "$",
+		"CUTTING":          "CBM",
+		"LAMINATION":       "M2",
+		"REEDEDLINE":       "M2",
+		"VENEERLAMINATION": "M2",
+		"PANELCNC":         "SHEET",
+		"ASSEMBLY":         "$",
+		"WOODFINISHING":    "$",
+		"PACKING":          "$",
 	}
 	user := c.Locals("username").(string)
 	workcenters := map[string]string{
@@ -769,10 +769,10 @@ func (s *Server) efficiencyReportHandler(c *fiber.Ctx) error {
 		"tam":   "PACKING",
 	}
 	wc := workcenters[user]
-	log.Println(wc)
 
 	return c.Render("efficiency/report", fiber.Map{
 		"units":      units,
+		"unit":       units[wc],
 		"workcenter": workcenters[user],
 	}, "layout")
 }
