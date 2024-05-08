@@ -764,7 +764,7 @@ func (s *Server) efficiencyReportHandler(c *fiber.Ctx) error {
 		"tuan":  "REEDEDLINE",
 		"thanh": "VENEERLAMINATION",
 		"trieu": "PANELCNC",
-		"ha":    "ASSEMBLY",
+		"niem":  "ASSEMBLY",
 		"nha":   "WOODFINISHING",
 		"tam":   "PACKING",
 	}
