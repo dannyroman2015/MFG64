@@ -423,13 +423,13 @@ func (s *Server) qulityChartHandler(c *fiber.Ctx) error {
 		panic(err)
 	}
 	var dates = map[string]bool{}
-	var t = map[string][]int{
-		"FIN-1":  []int{},
-		"FIN-2":  []int{},
-		"M-FIN":  []int{},
-		"M-WELD": []int{},
-		"UPH":    []int{},
-	}
+	// var t = map[string][]int{
+	// 	"FIN-1":  []int{},
+	// 	"FIN-2":  []int{},
+	// 	"M-FIN":  []int{},
+	// 	"M-WELD": []int{},
+	// 	"UPH":    []int{},
+	// }
 
 	for rows.Next() {
 		var a, b string
