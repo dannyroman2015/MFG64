@@ -86,13 +86,13 @@ func (s *Server) Run() {
 	app.Use("/efficiencyreport", basicauth.New(basicauth.Config{
 		Users: map[string]string{
 			"assembly":   "2511",
-			"cutting":    "456",
-			"lamination": "12",
-			"reeded":     "456",
-			"veneer":     "123",
-			"panel":      "45",
+			"cutting":    "7526",
+			"lamination": "6824",
+			"reeded":     "2037",
+			"veneer":     "2486",
+			"panel":      "1357",
 			"wood":       "1302",
-			"packing":    "456",
+			"packing":    "9342",
 		},
 	}))
 
