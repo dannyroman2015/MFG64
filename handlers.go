@@ -414,36 +414,56 @@ func (s *Server) qualityInputPostHandler(c *fiber.Ctx) error {
 }
 
 func (s *Server) qulityChartHandler(c *fiber.Ctx) error {
-	log.Println("qualichart")
-	sql := `select date_issue, section_code, sum(qty_check), sum(qty_fail) from quatity_report
-		group by date_issue, section_code order by date_issue`
+	fromdate := c.FormValue("fromdate")
+	sql := `select distinct date_issue from quatity_report group by date_issue having date_issue >= '` + fromdate + `'`
+
+	r, _ := s.db.Exec(sql)
+	numberOfDate, _ := r.RowsAffected()
+
+	sql = `select date_issue, section_code, sum(qty_check), sum(qty_fail) from quatity_report
+		group by date_issue, section_code having date_issue >= '` + fromdate + `' order by date_issue`
 
 	rows, err := s.db.Query(sql)
 	if err != nil {
 		panic(err)
 	}
-	var dates = map[string]bool{}
-	// var t = map[string][]int{
-	// 	"FIN-1":  []int{},
-	// 	"FIN-2":  []int{},
-	// 	"M-FIN":  []int{},
-	// 	"M-WELD": []int{},
-	// 	"UPH":    []int{},
-	// }
-
+	var dates = []string{}
+	var data = map[string][]int{
+		"M-FIN":     make([]int, numberOfDate),
+		"FIN-2":     make([]int, numberOfDate),
+		"FIN-1":     make([]int, numberOfDate),
+		"M-WELD":    make([]int, numberOfDate),
+		"UPH":       make([]int, numberOfDate),
+		"ASS-1":     make([]int, numberOfDate),
+		"FIT-1":     make([]int, numberOfDate),
+		"ASS-2":     make([]int, numberOfDate),
+		"WW-FM":     make([]int, numberOfDate),
+		"PAC-2":     make([]int, numberOfDate),
+		"OBA-1":     make([]int, numberOfDate),
+		"WW-VN":     make([]int, numberOfDate),
+		"WW-RM":     make([]int, numberOfDate),
+		"PAC-1":     make([]int, numberOfDate),
+		"M-MACHINE": make([]int, numberOfDate),
+	}
+	lastdate := ""
+	i := -1
 	for rows.Next() {
 		var a, b string
-		var c, d int
+		var c, d float64
 		rows.Scan(&a, &b, &c, &d)
 		a = strings.Split(a, "T")[0]
-		dates[a] = true
-
-		log.Println(a, b, c, d)
+		t, _ := time.Parse("2006-01-02", a)
+		a = t.Format("2 Jan")
+		if a != lastdate {
+			i++
+			dates = append(dates, a)
+			lastdate = a
+		}
+		data[b][i] = int(math.Round(d * 100 / c))
 	}
 
-	for d := range dates {
-		log.Println("ngay", d)
-	}
-
-	return c.Render("efficiency/quality_chart", fiber.Map{})
+	return c.Render("efficiency/quality_chart", fiber.Map{
+		"dates": dates,
+		"data":  data,
+	})
 }

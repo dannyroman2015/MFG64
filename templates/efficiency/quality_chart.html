@@ -1,32 +1,36 @@
-<div class="quality-container">
-  <canvas id="quality_chart"></canvas>
+<div>
+  <canvas id="qualitychart"></canvas>
 </div>
 
-<style>
-  .chart-container {
-    border-bottom: 1px solid black;
-    padding-bottom: 20px;
-  }
-</style>
 
 <script>
-  new Chart(document.getElementById("quality_chart"), {
+  new Chart(document.getElementById("qualitychart"), {
     plugins: [ChartDataLabels],
     type: 'bar',
     data: {
-      labels: {{.labels}},
+      labels: {{.dates}},
       datasets: [
-      {
-
-      },
-      {
-
-      },
-    ]
+      {{ range $key, $value := .data }}
+        {
+          label: {{ $key }},
+          data: {{ $value }},
+          pointStyle: 'rect',
+        },
+      {{ end }}
+      ]
     },
     options: {
       plugins: {
-        title: {text: "TITLE", display: true},
+        datalabels: {
+          color: 'black', align: 'center', anchor: 'center', offset: 0,
+          formatter: function(value, context) {
+            if (value == "0") {
+              return ""
+            } else {
+              return value + "%"
+            }
+          },
+        },
         legend: {
           labels: {
             usePointStyle: true,
@@ -42,10 +46,8 @@
         y: {
           stacked: true,
           display: false,
-          beginAtZero: true,
-          grid: { display: false, },
-        },
-      },
-    },
+        }
+      }
+    }
   });
 </script>
