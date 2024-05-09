@@ -93,6 +93,7 @@ func (s *Server) Run() {
 			"panel":      "1357",
 			"wood":       "1302",
 			"packing":    "9342",
+			"nguyen":     "4526",
 		},
 	}))
 
@@ -760,19 +761,25 @@ func (s *Server) efficiencyReportHandler(c *fiber.Ctx) error {
 		"PACKING":          "$",
 	}
 	user := c.Locals("username").(string)
-	workcenters := map[string]string{
-		"cutting":    "CUTTING",
-		"lamination": "LAMINATION",
-		"reeded":     "REEDEDLINE",
-		"veneer":     "VENEERLAMINATION",
-		"panel":      "PANELCNC",
-		"assembly":   "ASSEMBLY",
-		"wood":       "WOODFINISHING",
-		"packing":    "PACKING",
+	workcenters := map[string][]string{
+		"cutting":    {"CUTTING"},
+		"lamination": {"LAMINATION"},
+		"reeded":     {"REEDEDLINE"},
+		"veneer":     {"VENEERLAMINATION"},
+		"panel":      {"PANELCNC"},
+		"assembly":   {"ASSEMBLY"},
+		"wood":       {"WOODFINISHING"},
+		"packing":    {"PACKING"},
+		"nguyen":     {"CUTTING", "LAMINATION", "REEDEDLINE", "VENEERLAMINATION"},
 	}
 	wc := workcenters[user]
-	sql := `select date, qty, manhr, type, factory_no, cnc_machine from efficienct_reports where work_center ='` + wc + `'
-				order by date desc limit 10`
+	// sql := `select date, qty, manhr, type, factory_no, cnc_machine from efficienct_reports where work_center in'` + wc + `'
+	// 			order by date desc limit 10`
+	sql := `select date, qty, manhr, type, factory_no, cnc_machine from efficienct_reports where work_center in (`
+	for _, w := range wc {
+		sql += `'` + w + `'`
+	}
+	sql += `) order by date desc limit 10`
 
 	rows, err := s.db.Query(sql)
 	if err != nil {
@@ -788,10 +795,10 @@ func (s *Server) efficiencyReportHandler(c *fiber.Ctx) error {
 	}
 
 	return c.Render("efficiency/report", fiber.Map{
-		"units":      units,
-		"unit":       units[wc],
-		"workcenter": workcenters[user],
-		"list":       list,
+		"units": units,
+		// "unit":       units[wc],
+		"workcenters": workcenters[user],
+		"list":        list,
 	}, "layout")
 }
 

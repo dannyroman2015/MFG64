@@ -13,7 +13,9 @@
         <div class="control">
           <div class="select">
             <select id="mo" name="workcenter">
-              <option value="{{.workcenter}}">{{.workcenter}}</option>
+              {{ range .workcenters }}
+              <option value="{{.}}">{{.}}</option>
+              {{ end }}
             </select>
           </div>
         </div>
@@ -111,7 +113,7 @@
           <input  name="qty" class="input" step="any" min="0" type="number" placeholder="Enter quanity">
         </p>
 
-        <p class="control"><a class="button is-static">{{.unit}}</a></p>
+        <p class="control"><a class="button is-static"></a></p>
       </div>
     </div>
   </div>
