@@ -1,0 +1,51 @@
+<div class="quality-container">
+  <canvas id="quality_chart"></canvas>
+</div>
+
+<style>
+  .chart-container {
+    border-bottom: 1px solid black;
+    padding-bottom: 20px;
+  }
+</style>
+
+<script>
+  new Chart(document.getElementById("quality_chart"), {
+    plugins: [ChartDataLabels],
+    type: 'bar',
+    data: {
+      labels: {{.labels}},
+      datasets: [
+      {
+
+      },
+      {
+
+      },
+    ]
+    },
+    options: {
+      plugins: {
+        title: {text: "TITLE", display: true},
+        legend: {
+          labels: {
+            usePointStyle: true,
+          },
+        }
+      },
+      responsive: true,
+      scales: {
+        x: {
+          stacked: true,
+          grid: { display: false, },
+        },
+        y: {
+          stacked: true,
+          display: false,
+          beginAtZero: true,
+          grid: { display: false, },
+        },
+      },
+    },
+  });
+</script>

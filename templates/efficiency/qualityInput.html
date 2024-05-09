@@ -1,0 +1,117 @@
+<div class="notification has-text-centered is-link is-light">
+  Form nhập báo cáo cho Quality
+</div>
+
+<form id="inputForm" action="/qualityinput" method="post" class="box">
+  <div class="field is-horizontal">
+    <div class="field-label is-normal">
+      <label class="label">Nơi Ghi Nhận Lỗi</label>
+    </div>
+
+    <div class="field-body">
+      <div class="field">
+        <div class="control">
+          <div class="select">
+            <select name="section_code">
+              <option value="" disabled selected>Chọn bộ phận</option>
+              <option value="M-FIN">M-FIN</option>
+              <option value="FIN-1">FIN-1</option>
+              <option value="FIN-2">FIN-2</option>
+              <option value="M-WELD">M-WELD</option>
+              <option value="UPH">UPH</option>
+              <option value="ASS-1">ASS-1</option>
+              <option value="FIT-1">FIT-1</option>
+              <option value="ASS-2">ASS-2</option>
+              <option value="WW-FM">WW-FM</option>
+              <option value="PAC-2">PAC-2</option>
+              <option value="OBA-1">OBA-1</option>
+              <option value="WW-VN">WW-VN</option>
+              <option value="WW-RM">WW-RM</option>
+              <option value="PAC-1">PAC-1</option>
+              <option value="WW-VN">WW-VN</option>
+              <option value="M-MACHINE">M-MACHINE</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="field is-horizontal">
+    <div class="field-label is-normal">
+      <label class="label">Ngày</label>
+    </div>
+
+    <div class="field-body">
+      <div class="field is-narrow">
+        <p class="control">
+          <input id="date_issue" name="date_issue" class="input" type="date">
+        </p>
+        <p class="help is-link">Mặc định là ngày hôm nay.</p>
+      </div>
+    </div>
+  </div>
+  
+  <div class="field is-horizontal">
+    <div class="field-label is-normal">
+      <label class="label">Sản Lượng Lô Hàng</label>
+    </div>
+
+    <div class="field-body">
+      <div class="field is-narrow">
+        <p class="control">
+          <input  name="qty_check" class="input" step="any" min="0" type="number">
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="field is-horizontal">
+    <div class="field-label is-normal">
+      <label class="label">Số Lượng Bị Lỗi</label>
+    </div>
+
+    <div class="field-body">
+      <div class="field is-narrow">
+        <p class="control">
+          <input  name="qty_fail" class="input" step="any" min="0" type="number">
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="field is-horizontal">
+    <div class="field-label is-normal">
+      <label class="label">Ghi Chú Lỗi</label>
+    </div>
+
+    <div class="field-body">
+      <div class="field">
+        <p class="control">
+          <textarea name="error_note"
+            class="textarea is-success"
+            placeholder="Ghi chú nguyên nhân lỗi nếu cần"
+          ></textarea>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="field is-horizontal">
+    <div class="field-label"></div>
+    <div class="field-body">
+      <div class="field">
+        <div class="control">
+          <button class="button is-link is-outlined">
+            Gửi
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+
+
+<script>
+  document.getElementById("date_issue").valueAsDate = new Date()
+</script>

@@ -390,3 +390,60 @@ func (s *Server) searchstaffPostHandler(c *fiber.Ctx) error {
 
 	return c.SendString("ksdfkhsf")
 }
+
+func (s *Server) qualityInputHandler(c *fiber.Ctx) error {
+	return c.Render("efficiency/qualityInput", fiber.Map{}, "layout")
+}
+
+func (s *Server) qualityInputPostHandler(c *fiber.Ctx) error {
+	section := c.FormValue("section_code")
+	date_issue := c.FormValue("date_issue")
+	qty_check := c.FormValue("qty_check")
+	qty_fail := c.FormValue("qty_fail")
+	error_note := c.FormValue("error_note")
+
+	sql := `insert into quatity_report (section_code, date_issue, qty_check, qty_fail, error_notes)
+		values ($1, $2, $3, $4, $5)`
+
+	_, err := s.db.Exec(sql, section, date_issue, qty_check, qty_fail, error_note)
+	if err != nil {
+		panic(err)
+	}
+
+	return c.Redirect("/qualityinput", fiber.StatusSeeOther)
+}
+
+func (s *Server) qulityChartHandler(c *fiber.Ctx) error {
+	log.Println("qualichart")
+	sql := `select date_issue, section_code, sum(qty_check), sum(qty_fail) from quatity_report
+		group by date_issue, section_code order by date_issue`
+
+	rows, err := s.db.Query(sql)
+	if err != nil {
+		panic(err)
+	}
+	var dates = map[string]bool{}
+	var t = map[string][]int{
+		"FIN-1":  []int{},
+		"FIN-2":  []int{},
+		"M-FIN":  []int{},
+		"M-WELD": []int{},
+		"UPH":    []int{},
+	}
+
+	for rows.Next() {
+		var a, b string
+		var c, d int
+		rows.Scan(&a, &b, &c, &d)
+		a = strings.Split(a, "T")[0]
+		dates[a] = true
+
+		log.Println(a, b, c, d)
+	}
+
+	for d := range dates {
+		log.Println("ngay", d)
+	}
+
+	return c.Render("efficiency/quality_chart", fiber.Map{})
+}

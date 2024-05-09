@@ -26,6 +26,27 @@
       </div>
     </div>
   </div>
+
+  <div class="card">
+    <header class="card-header">
+      <p class="card-header-title">Quality</p>
+    </header>
+  
+    <div class="card-content">
+      <div id="quality_chart" class="cell">
+        <div  hx-get="/qualitychart" 
+              hx-target="#quality_chart" 
+              hx-trigger="load" 
+              hx-include="[name='fromdate']">
+          <div class="cssload-loader">
+            <div class="cssload-inner cssload-one"></div>
+            <div class="cssload-inner cssload-two"></div>
+            <div class="cssload-inner cssload-three"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
   
   <div class="card">
     <header class="card-header">
