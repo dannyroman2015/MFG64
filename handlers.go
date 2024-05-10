@@ -468,3 +468,34 @@ func (s *Server) qulityChartHandler(c *fiber.Ctx) error {
 		"data":  data,
 	})
 }
+
+func (s *Server) inputmanhrHandler(c *fiber.Ctx) error {
+
+	return c.Render("efficiency/inputmanhr", fiber.Map{}, "layout")
+}
+
+func (s *Server) inputmanhrPostHandler(c *fiber.Ctx) error {
+	inputdate := c.FormValue("inputdate")
+	manhrRaw := c.FormValue("manhr")
+	manhrs := strings.Split(manhrRaw, " ")
+
+	if len(manhrs) != 8 {
+		return c.SendString("Loi: phải nhập đủ 8 số cho 8 công đoạn")
+	}
+
+	wc := []string{"CUTTING", "LAMINATION", "REEDEDLINE", "VENEERLAMINATION", "PANELCNC",
+		"ASSEMBLY", "WOODFINISHING", "PACKING"}
+
+	sql := `insert into efficienct_reports(work_center, date, qty, manhr) values `
+
+	for i := 0; i < 8; i++ {
+		sql += `('` + wc[i] + `', '` + inputdate + `', 0, ` + manhrs[i] + `),`
+	}
+	sql = sql[:len(sql)-1]
+	_, err := s.db.Exec(sql)
+	if err != nil {
+		panic(err)
+	}
+
+	return c.Redirect("/efficiency", fiber.StatusSeeOther)
+}

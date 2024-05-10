@@ -112,6 +112,9 @@ func (s *Server) Run() {
 	app.Get("/efficiencyreport", s.efficiencyReportHandler)
 	app.Post("/efficiencyreport", s.efficiencyReportPostHandler)
 
+	app.Get("/inputmanhr", s.inputmanhrHandler)
+	app.Post("/inputmanhr", s.inputmanhrPostHandler)
+
 	app.Get("qualityinput", s.qualityInputHandler)
 	app.Post("qualityinput", s.qualityInputPostHandler)
 	app.Get("/qualitychart", s.qulityChartHandler)
