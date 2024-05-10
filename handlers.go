@@ -319,10 +319,10 @@ func (s *Server) summarytableHandler(c *fiber.Ctx) error {
 	}
 
 	return c.Render("efficiency/summary_body", fiber.Map{
-		"arr":   arr,
-		"today": time.Now().Format("02/01"),
-		"nd":    time.Now().AddDate(0, 0, 1).Format("02/01"),
-		"rd":    time.Now().AddDate(0, 0, 2).Format("02/01"),
+		"arr": arr,
+		// "today": time.Now().Format("02/01"),
+		// "nd":    time.Now().AddDate(0, 0, 1).Format("02/01"),
+		// "rd":    time.Now().AddDate(0, 0, 2).Format("02/01"),
 	})
 }
 
@@ -428,6 +428,7 @@ func (s *Server) qulityChartHandler(c *fiber.Ctx) error {
 		panic(err)
 	}
 	var dates = []string{}
+
 	var data = map[string][]int{
 		"M-FIN":     make([]int, numberOfDate),
 		"FIN-2":     make([]int, numberOfDate),
