@@ -869,7 +869,12 @@ func (s *Server) efficientChartHandler(c *fiber.Ctx) error {
 		t, _ := time.Parse("2006-01-02", a)
 		a = t.Format("2 Jan")
 
-		efficiency = append(efficiency, math.Round((c/d)*100/actual_target))
+		if d == 0 {
+			efficiency = append(efficiency, 0)
+		} else {
+			efficiency = append(efficiency, math.Round((c/d)*100/actual_target))
+		}
+
 		labels = append(labels, a)
 		c = math.Round(c)
 		quanity = append(quanity, c)
