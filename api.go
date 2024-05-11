@@ -889,12 +889,15 @@ func (s *Server) efficientChartHandler(c *fiber.Ctx) error {
 		panic(err)
 	}
 	for rows.Next() {
-
 		err := rows.Scan(&latestCreated)
 		if err != nil {
 			latestCreated = ""
 		} else {
-			log.Println(latestCreated)
+			t, err := time.Parse("2006-01-02T15:04:05.999999999Z", latestCreated)
+			if err != nil {
+				panic(err)
+			}
+			latestCreated = t.Add(time.Hour * 7).Format("15:04")
 		}
 	}
 
