@@ -812,8 +812,7 @@ func (s *Server) efficiencyReportHandler(c *fiber.Ctx) error {
 func (s *Server) efficiencyReportPostHandler(c *fiber.Ctx) error {
 	var factory string
 	var typeofproduct string
-	var cncmachine string
-	cncmachine = c.FormValue("cncmachine")
+	cncmachine := c.FormValue("cncmachine")
 	workcenter := c.FormValue("workcenter")
 	inputdate := c.FormValue("inputdate")
 	factory = c.FormValue("factory")
@@ -821,10 +820,11 @@ func (s *Server) efficiencyReportPostHandler(c *fiber.Ctx) error {
 	var qty, manhr float64
 	qty, _ = strconv.ParseFloat(c.FormValue("qty"), 64)
 	manhr, _ = strconv.ParseFloat(c.FormValue("manhr"), 64)
+	created_datetime := time.Now()
 
-	sql := `insert into efficienct_reports(work_center, date, qty, manhr, type, factory_no, cnc_machine) values ($1, $2, $3, $4, $5, $6, $7)`
+	sql := `insert into efficienct_reports(work_center, date, qty, manhr, type, factory_no, cnc_machine, created_datetime) values ($1, $2, $3, $4, $5, $6, $7, $8)`
 
-	_, err := s.db.Exec(sql, workcenter, inputdate, qty, manhr, typeofproduct, factory, cncmachine)
+	_, err := s.db.Exec(sql, workcenter, inputdate, qty, manhr, typeofproduct, factory, cncmachine, created_datetime)
 	if err != nil {
 		panic(err)
 	}
@@ -880,16 +880,27 @@ func (s *Server) efficientChartHandler(c *fiber.Ctx) error {
 		quanity = append(quanity, c)
 		targets = append(targets, target)
 	}
+
+	var latestCreated string
+	err = s.db.QueryRow(`select max(created_datetime) from efficienct_reports where work_center 
+		= '` + workcenter + `' group by work_center`).Scan(&latestCreated)
+	if err != nil {
+		latestCreated = ""
+	} else {
+		latestCreated = strings.Split(latestCreated, "T")[1][:5]
+	}
+
 	randColor := fmt.Sprintf("rgba(%d, %d, %d, 0.4)", rand.Intn(255), rand.Intn(255), rand.Intn(255))
 
 	return c.Render("efficiency/chart", fiber.Map{
-		"workcenter":  workcenter,
-		"labels":      labels,
-		"quanity":     quanity,
-		"efficiency":  efficiency,
-		"targets":     targets,
-		"chartLabels": []string{"Quanity", "Efficiency(%)", "Target"},
-		"bg_color":    randColor,
-		"units":       units,
+		"workcenter":    workcenter,
+		"labels":        labels,
+		"quanity":       quanity,
+		"efficiency":    efficiency,
+		"targets":       targets,
+		"chartLabels":   []string{"Quanity", "Efficiency(%)", "Target"},
+		"bg_color":      randColor,
+		"units":         units,
+		"latestCreated": latestCreated,
 	})
 }
