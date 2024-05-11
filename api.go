@@ -823,7 +823,7 @@ func (s *Server) efficiencyReportPostHandler(c *fiber.Ctx) error {
 	qty, _ = strconv.ParseFloat(c.FormValue("qty"), 64)
 	manhr, _ = strconv.ParseFloat(c.FormValue("manhr"), 64)
 	loc, _ := time.LoadLocation("Asia/Bangkok")
-	created_datetime := time.Now().In(loc)
+	created_datetime := time.Now().In(loc).String()
 
 	sql := `insert into efficienct_reports(work_center, date, qty, manhr, type, factory_no, cnc_machine, created_datetime) values ($1, $2, $3, $4, $5, $6, $7, $8)`
 
