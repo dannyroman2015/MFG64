@@ -823,7 +823,7 @@ func (s *Server) efficiencyReportPostHandler(c *fiber.Ctx) error {
 	qty, _ = strconv.ParseFloat(c.FormValue("qty"), 64)
 	manhr, _ = strconv.ParseFloat(c.FormValue("manhr"), 64)
 	loc, _ := time.LoadLocation("Asia/Bangkok")
-	created_datetime := time.Now().In(loc).String()
+	created_datetime := time.Now().In(loc).Format("15:04:05")
 
 	sql := `insert into efficienct_reports(work_center, date, qty, manhr, type, factory_no, cnc_machine, created_datetime) values ($1, $2, $3, $4, $5, $6, $7, $8)`
 
@@ -885,12 +885,16 @@ func (s *Server) efficientChartHandler(c *fiber.Ctx) error {
 	}
 
 	var latestCreated string
-	err = s.db.QueryRow(`select max(created_datetime) from efficienct_reports where work_center 
-		= '` + workcenter + `' group by work_center`).Scan(&latestCreated)
+	rows, err = s.db.Query(`select created_datetime from efficienct_reports where work_center 
+		= '` + workcenter + `' order by id desc limit 1`)
 	if err != nil {
-		latestCreated = ""
-	} else {
-		latestCreated = strings.Split(latestCreated, " ")[1][:5]
+		panic(err)
+	}
+	for rows.Next() {
+		err := rows.Scan(&latestCreated)
+		if err != nil {
+			latestCreated = ""
+		}
 	}
 
 	randColor := fmt.Sprintf("rgba(%d, %d, %d, 0.4)", rand.Intn(255), rand.Intn(255), rand.Intn(255))
