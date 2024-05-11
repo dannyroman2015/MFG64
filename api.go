@@ -94,6 +94,7 @@ func (s *Server) Run() {
 			"wood":       "1302",
 			"packing":    "9342",
 			"nguyen":     "4526",
+			"admin":      "1011",
 		},
 	}))
 
@@ -778,6 +779,7 @@ func (s *Server) efficiencyReportHandler(c *fiber.Ctx) error {
 		"wood":       {"WOODFINISHING"},
 		"packing":    {"PACKING"},
 		"nguyen":     {"CUTTING", "LAMINATION", "REEDEDLINE", "VENEERLAMINATION"},
+		"admin":      {"CUTTING", "LAMINATION", "REEDEDLINE", "VENEERLAMINATION", "PANELCNC", "ASSEMBLY", "WOODFINISHING", "PACKING"},
 	}
 	wc := workcenters[user]
 	// sql := `select date, qty, manhr, type, factory_no, cnc_machine from efficienct_reports where work_center in'` + wc + `'
