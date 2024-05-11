@@ -822,12 +822,10 @@ func (s *Server) efficiencyReportPostHandler(c *fiber.Ctx) error {
 	var qty, manhr float64
 	qty, _ = strconv.ParseFloat(c.FormValue("qty"), 64)
 	manhr, _ = strconv.ParseFloat(c.FormValue("manhr"), 64)
-	loc, _ := time.LoadLocation("Asia/Bangkok")
-	created_datetime := time.Now().In(loc).Format("2006-01-02 15:04:05")
 
-	sql := `insert into efficienct_reports(work_center, date, qty, manhr, type, factory_no, cnc_machine, created_datetime) values ($1, $2, $3, $4, $5, $6, $7, $8)`
+	sql := `insert into efficienct_reports(work_center, date, qty, manhr, type, factory_no, cnc_machine, created_datetime) values ($1, $2, $3, $4, $5, $6, $7, current_timestamp)`
 
-	_, err := s.db.Exec(sql, workcenter, inputdate, qty, manhr, typeofproduct, factory, cncmachine, created_datetime)
+	_, err := s.db.Exec(sql, workcenter, inputdate, qty, manhr, typeofproduct, factory, cncmachine)
 	if err != nil {
 		panic(err)
 	}
