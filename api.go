@@ -820,8 +820,8 @@ func (s *Server) efficiencyReportPostHandler(c *fiber.Ctx) error {
 	var qty, manhr float64
 	qty, _ = strconv.ParseFloat(c.FormValue("qty"), 64)
 	manhr, _ = strconv.ParseFloat(c.FormValue("manhr"), 64)
-	created_datetime := time.Now().String()
-	log.Println(created_datetime)
+	loc, _ := time.LoadLocation("Asia/Bangkok")
+	created_datetime := time.Now().In(loc)
 
 	sql := `insert into efficienct_reports(work_center, date, qty, manhr, type, factory_no, cnc_machine, created_datetime) values ($1, $2, $3, $4, $5, $6, $7, $8)`
 
@@ -888,7 +888,7 @@ func (s *Server) efficientChartHandler(c *fiber.Ctx) error {
 	if err != nil {
 		latestCreated = ""
 	} else {
-		latestCreated = strings.Split(latestCreated, "T")[1][:5]
+		latestCreated = strings.Split(latestCreated, " ")[1][:5]
 	}
 
 	randColor := fmt.Sprintf("rgba(%d, %d, %d, 0.4)", rand.Intn(255), rand.Intn(255), rand.Intn(255))
