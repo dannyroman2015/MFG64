@@ -486,7 +486,7 @@ func (s *Server) inputmanhrPostHandler(c *fiber.Ctx) error {
 	wc := []string{"CUTTING", "LAMINATION", "REEDEDLINE", "VENEERLAMINATION", "PANELCNC",
 		"ASSEMBLY", "WOODFINISHING", "PACKING"}
 
-	sql := `insert into efficienct_reports(work_center, date, qty, manhr) values `
+	sql := `insert into efficienct_reports(work_center, date, qty, manhr, current_timestamp) values `
 
 	for i := 0; i < 8; i++ {
 		sql += `('` + wc[i] + `', '` + inputdate + `', 0, ` + manhrs[i] + `),`
