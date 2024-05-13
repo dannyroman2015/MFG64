@@ -883,6 +883,7 @@ func (s *Server) efficientChartHandler(c *fiber.Ctx) error {
 	}
 
 	var latestCreated string
+	log.Println(workcenter)
 	rows, err = s.db.Query(`select created_datetime from efficienct_reports where work_center 
 		= '` + workcenter + `' order by id desc limit 1`)
 	if err != nil {
@@ -893,6 +894,7 @@ func (s *Server) efficientChartHandler(c *fiber.Ctx) error {
 		if err != nil {
 			latestCreated = ""
 		} else {
+			log.Println(latestCreated)
 			t, err := time.Parse("2006-01-02T15:04:05.999999999Z", latestCreated)
 			if err != nil {
 				panic(err)
