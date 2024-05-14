@@ -81,7 +81,11 @@ func (s *Server) prodvalueChartHandler(c *fiber.Ctx) error {
 		var c, d float64
 		rows.Scan(&a, &b, &c, &d)
 		a = strings.Split(a, "T")[0]
-		laborrate = append(laborrate, math.Round(c/totalManhrBydate[a]))
+		if d == 0 {
+			laborrate = append(laborrate, 0)
+		} else {
+			laborrate = append(laborrate, math.Round(c/totalManhrBydate[a]))
+		}
 		t, _ := time.Parse("2006-01-02", a)
 		a = t.Format("2 Jan")
 
@@ -90,14 +94,35 @@ func (s *Server) prodvalueChartHandler(c *fiber.Ctx) error {
 		targets = append(targets, target)
 	}
 
+	var latestCreated string
+	rows, err = s.db.Query(`select created_datetime from efficienct_reports where work_center 
+		= 'PACKING' order by id desc limit 1`)
+	if err != nil {
+		panic(err)
+	}
+	for rows.Next() {
+		err := rows.Scan(&latestCreated)
+		if err != nil {
+			latestCreated = ""
+			// panic(err)
+		} else {
+			t, err := time.Parse("2006-01-02T15:04:05.999999999Z", latestCreated)
+			if err != nil {
+				panic(err)
+			}
+			latestCreated = t.Add(time.Hour * 7).Format("15:04")
+		}
+	}
+
 	return c.Render("efficiency/chart", fiber.Map{
-		"workcenter":  "Production Value",
-		"labels":      labels,
-		"quanity":     quanity,
-		"efficiency":  laborrate,
-		"targets":     targets,
-		"chartLabels": []string{"Quanity", "labor rate($/manhr)", "Target"},
-		"units":       units,
+		"workcenter":    "Production Value",
+		"labels":        labels,
+		"quanity":       quanity,
+		"efficiency":    laborrate,
+		"targets":       targets,
+		"chartLabels":   []string{"Quanity", "labor rate($/manhr)", "Target"},
+		"units":         units,
+		"latestCreated": latestCreated,
 	})
 }
 
@@ -486,12 +511,38 @@ func (s *Server) inputmanhrPostHandler(c *fiber.Ctx) error {
 	wc := []string{"CUTTING", "LAMINATION", "REEDEDLINE", "VENEERLAMINATION", "PANELCNC",
 		"ASSEMBLY", "WOODFINISHING", "PACKING"}
 
-	sql := `insert into efficienct_reports(work_center, date, qty, manhr, current_timestamp) values `
+	sql := `insert into efficienct_reports(work_center, date, qty, manhr, created_datetime) values `
 
 	for i := 0; i < 8; i++ {
-		sql += `('` + wc[i] + `', '` + inputdate + `', 0, ` + manhrs[i] + `),`
+		sql += `('` + wc[i] + `', '` + inputdate + `', 0, ` + manhrs[i] + `, current_timestamp),`
 	}
 	sql = sql[:len(sql)-1]
+	_, err := s.db.Exec(sql)
+	if err != nil {
+		panic(err)
+	}
+
+	return c.Redirect("/efficiency", fiber.StatusSeeOther)
+}
+
+func (s *Server) qualityquickinputHandler(c *fiber.Ctx) error {
+	return c.Render("efficiency/quality_quickinput", fiber.Map{}, "layout")
+}
+
+func (s *Server) qualityquickinputPostHandler(c *fiber.Ctx) error {
+	inputdate := c.FormValue("inputdate")
+	raw := c.FormValue("input")
+	arr := strings.Fields(raw)
+	if (len(arr) % 3) != 0 {
+		return c.SendString("Thiếu dữ liệu")
+	}
+	sql := `insert into quatity_report(section_code, date_issue, qty_check, qty_fail) values `
+
+	for i := 0; i < len(arr); i += 3 {
+		sql += `('` + arr[i] + `', '` + inputdate + `', ` + arr[i+1] + `, ` + arr[i+2] + `),`
+	}
+	sql = sql[:len(sql)-1]
+
 	_, err := s.db.Exec(sql)
 	if err != nil {
 		panic(err)

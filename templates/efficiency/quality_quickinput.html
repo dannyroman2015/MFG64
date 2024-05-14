@@ -1,0 +1,30 @@
+<div class="notification has-text-centered is-link is-light">
+  Form copy paste nhanh cho Quality
+</div>
+
+<form id="inputForm" action="/qualityquickinput" method="post" class="box">
+  <div class="field">
+    <p class="control">
+      <input id="inputdate" name="inputdate" class="input" type="date">
+    </p>
+    <p class="help is-link">Mặc định là ngày hôm nay.</p>
+  </div>
+
+  <div class="field">
+    <div class="control">
+      <textarea name="input" class="textarea is-link" placeholder="Textarea"></textarea>
+    </div>
+  </div>
+
+  <div class="field is-expanded">
+    <div class="control is-expanded">
+      <button class="button is-link is-outlined is-fullwidth">
+        Process and Update
+      </button>
+    </div>
+  </div>
+</form>
+
+<script>
+  document.getElementById("inputdate").valueAsDate = new Date()
+</script>

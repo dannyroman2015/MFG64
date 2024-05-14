@@ -119,6 +119,8 @@ func (s *Server) Run() {
 	app.Get("qualityinput", s.qualityInputHandler)
 	app.Post("qualityinput", s.qualityInputPostHandler)
 	app.Get("/qualitychart", s.qulityChartHandler)
+	app.Get("/qualityquickinput", s.qualityquickinputHandler)
+	app.Post("qualityquickinput", s.qualityquickinputPostHandler)
 
 	app.Get("/prodAdBlueprints/:mo_id", s.prodAdBlueprintsHandler)
 
@@ -739,7 +741,7 @@ func (s *Server) proccesexcelfileHandler(c *fiber.Ctx) error {
 		panic(err)
 
 	}
-	log.Println(cell)
+
 	// c.SaveFile(file, "static/public/"+file.Filename)
 
 	// f, err := excelize.OpenFile("static/public/" + file.Filename)
@@ -883,7 +885,6 @@ func (s *Server) efficientChartHandler(c *fiber.Ctx) error {
 	}
 
 	var latestCreated string
-	log.Println(workcenter)
 	rows, err = s.db.Query(`select created_datetime from efficienct_reports where work_center 
 		= '` + workcenter + `' order by id desc limit 1`)
 	if err != nil {
@@ -895,7 +896,6 @@ func (s *Server) efficientChartHandler(c *fiber.Ctx) error {
 			latestCreated = ""
 			// panic(err)
 		} else {
-			log.Println(latestCreated)
 			t, err := time.Parse("2006-01-02T15:04:05.999999999Z", latestCreated)
 			if err != nil {
 				panic(err)
