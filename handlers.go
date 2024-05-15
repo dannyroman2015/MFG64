@@ -417,7 +417,28 @@ func (s *Server) searchstaffPostHandler(c *fiber.Ctx) error {
 }
 
 func (s *Server) qualityInputHandler(c *fiber.Ctx) error {
-	return c.Render("efficiency/qualityInput", fiber.Map{}, "layout")
+	sql := `select date_issue, section_code, qty_check, qty_fail from quatity_report order by
+		date_issue desc, section_code limit 15`
+	rows, err := s.db.Query(sql)
+	if err != nil {
+		panic(err)
+	}
+	var data [][]string
+	for rows.Next() {
+		var a = make([]string, 4)
+		var t string
+		err := rows.Scan(&t, &a[1], &a[2], &a[3])
+		if err != nil {
+			panic(err)
+		}
+		t = strings.Split(t, "T")[0]
+		a[0] = t
+		data = append(data, a)
+	}
+
+	return c.Render("efficiency/qualityInput", fiber.Map{
+		"data": data,
+	}, "layout")
 }
 
 func (s *Server) qualityInputPostHandler(c *fiber.Ctx) error {
@@ -535,15 +556,16 @@ func (s *Server) qualityquickinputHandler(c *fiber.Ctx) error {
 	var data [][]string
 	for rows.Next() {
 		var a = make([]string, 4)
-		err := rows.Scan(&a[0], &a[1], &a[2], &a[3])
+		var t string
+		err := rows.Scan(&t, &a[1], &a[2], &a[3])
 		if err != nil {
 			panic(err)
 		}
-		log.Println(a)
+		t = strings.Split(t, "T")[0]
+		a[0] = t
 		data = append(data, a)
 	}
 
-	log.Println(data)
 	return c.Render("efficiency/quality_quickinput", fiber.Map{"data": data}, "layout")
 }
 
