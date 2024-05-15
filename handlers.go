@@ -46,7 +46,9 @@ func (s *Server) prodvalueChartHandler(c *fiber.Ctx) error {
 		"WOODFINISHING":    "Amount($)",
 		"PACKING":          "Amount($)",
 	}
-
+	var targetUnits = map[string]string{
+		"Production Value": "$", "CUTTING": "cmb", "LAMINATION": "m2", "REEDEDLINE": "m2", "VENEERLAMINATION": "m2", "PANELCNC": "sheet", "ASSEMBLY": "$", "WOODFINISHING": "$", "PACKING": "$",
+	}
 	rows, err := s.db.Query(`select actual_target, target from efficienct_workcenter 
 		where workcenter = 'PACKING'`)
 	if err != nil {
@@ -123,6 +125,7 @@ func (s *Server) prodvalueChartHandler(c *fiber.Ctx) error {
 		"chartLabels":   []string{"Quanity", "labor rate($/manhr)", "Target"},
 		"units":         units,
 		"latestCreated": latestCreated,
+		"targetUnits":   targetUnits,
 	})
 }
 

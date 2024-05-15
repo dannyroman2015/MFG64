@@ -53,7 +53,7 @@
             title: null
           }
         },
-        label: 'Target',
+        label: 'Target ({{ index .targets 0}} {{ index .targetUnits .workcenter}})' ,
         data: {{.targets}},
         yAxisID: 'y',
         type: "line",

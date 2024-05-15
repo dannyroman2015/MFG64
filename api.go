@@ -846,7 +846,10 @@ func (s *Server) efficientChartHandler(c *fiber.Ctx) error {
 	var targets []float64
 	var target float64
 	var units = map[string]string{
-		"Production Value": "Amount($)", "CUTTING": "Quanity(cmb)", "LAMINATION": "Quanity(m2)", "REEDEDLINE": "Quanity(m2)", "VENEERLAMINATION": "Quanity(m2)", "PANELCNC": "Quanity(sheet)", "ASSEMBLY": "Amount($)", "WOODFINISHING": "Amount($)", "PACKING": "Amount($)",
+		"Production Value": "Amount($)", "CUTTING": "Quantity(cmb)", "LAMINATION": "Quantity(m2)", "REEDEDLINE": "Quantity(m2)", "VENEERLAMINATION": "Quantity(m2)", "PANELCNC": "Quantity(sheet)", "ASSEMBLY": "Amount($)", "WOODFINISHING": "Amount($)", "PACKING": "Amount($)",
+	}
+	var targetUnits = map[string]string{
+		"Production Value": "$", "CUTTING": "cmb", "LAMINATION": "m2", "REEDEDLINE": "m2", "VENEERLAMINATION": "m2", "PANELCNC": "sheet", "ASSEMBLY": "$", "WOODFINISHING": "$", "PACKING": "$",
 	}
 
 	rows, err := s.db.Query(`select actual_target, target from efficienct_workcenter 
@@ -912,9 +915,10 @@ func (s *Server) efficientChartHandler(c *fiber.Ctx) error {
 		"quanity":       quanity,
 		"efficiency":    efficiency,
 		"targets":       targets,
-		"chartLabels":   []string{"Quanity", "Efficiency(%)", "Target"},
+		"chartLabels":   []string{"Quantity", "Efficiency(%)", "Target"},
 		"bg_color":      randColor,
 		"units":         units,
 		"latestCreated": latestCreated,
+		"targetUnits":   targetUnits,
 	})
 }
