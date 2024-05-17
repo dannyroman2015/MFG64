@@ -71,12 +71,11 @@ func (s *Server) Run() {
 	//just for test
 	app.Get("/test", func(c *fiber.Ctx) error {
 
-		return c.Render("test", fiber.Map{
-			"status": "waiting",
-		})
+		return c.Render("test", fiber.Map{}, "layout")
 	})
-	app.Get("/fortest", func(c *fiber.Ctx) error {
+	app.Post("/fortest", func(c *fiber.Ctx) error {
 		log.Println("fortest")
+		log.Println(c.FormValue("sss"))
 		return c.Render("fragments/t", nil)
 	})
 	//end just for test
@@ -149,6 +148,8 @@ func (s *Server) Run() {
 	app.Get("/summarytable", s.summarytableHandler)
 	app.Get("/inputsummary", s.inputsummaryHandler)
 	app.Post("/proccessforsummary", s.proccessforsummaryHandler)
+
+	app.Get("/target", s.targetHandler)
 
 	app.Get("/prodvalueChart", s.prodvalueChartHandler)
 

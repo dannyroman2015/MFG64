@@ -593,3 +593,21 @@ func (s *Server) qualityquickinputPostHandler(c *fiber.Ctx) error {
 
 	return c.Redirect("/efficiency", fiber.StatusSeeOther)
 }
+
+func (s *Server) targetHandler(c *fiber.Ctx) error {
+	units := map[string]string{
+		"CUTTING":          "CBM",
+		"LAMINATION":       "M2",
+		"REEDEDLINE":       "M2",
+		"VENEERLAMINATION": "M2",
+		"PANELCNC":         "SHEET",
+		"ASSEMBLY":         "$",
+		"WOODFINISHING":    "$",
+		"PACKING":          "$",
+	}
+
+	return c.Render("efficiency/inputtarget", fiber.Map{
+		"msg":   "Form for setting Targets",
+		"units": units,
+	}, "layout")
+}

@@ -1,0 +1,127 @@
+<div class="notification has-text-centered is-link is-light">
+  {{ .msg }}
+</div>
+
+<form id="inputForm" action="/efficiencyreport" method="post" class="box"
+  x-data="{wc:'', u: {
+                        CUTTING: 'cmb',
+                        ASSEMBLY: '$',
+                      },
+    getv: () => {
+      console.log(u) }
+  }"
+>
+  <div class="field is-horizontal">
+    <div class="field-label is-normal">
+      <label class="label">Work center</label>
+    </div>
+
+    <div class="field-body">
+      <div class="field is-narrow">
+        <div class="control">
+          <div class="select">
+            <select @change="wc = $el.options[$el.selectedIndex].text" id="mo" name="workcenter">
+              {{ range $key, $value := .units }}
+              <option value="{{$key}}">{{$key}}</option>
+              {{ end }}
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="field is-horizontal">
+    <div class="field-label is-normal">
+      <label class="label">Date range</label>
+    </div>
+
+    <div class="field-body">
+      <div class="field is-narrow">
+        <p class="control">
+          <input id="inputdate" name="inputdate" class="input" type="date">
+        </p>
+      </div>
+    </div>
+  </div>
+  
+  <div class="field is-horizontal">
+    <div class="field-label is-normal">
+      <label class="label">Set target</label>
+    </div>
+
+    <div class="field-body">
+      <div class="field has-addons">
+        <p class="control">
+          <input  name="target" class="input" step="any" min="0" type="number" placeholder="Set target">
+        </p>
+
+        <p class="control"><a class="button is-static" x-text="getv()"></a></p>
+      </div>
+    </div>
+  </div>
+
+</form>
+
+<div class="notification has-text-centered is-light">
+  Lịch sử nhập gần đây
+</div>
+<div class="table-container is-centered">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Ngày Nhập</th>
+        <th>Sản Lượng</th>
+        <th>Giờ Công</th>
+        <th>Loại Hàng</th>
+        <th>Xưởng</th>
+      </tr>
+    </thead>
+    <tbody>
+
+    </tbody>
+  </table>
+</div>
+
+<script src="/static/js/bulma-calendar.min.js"></script>
+<script>
+	var defaultOptions = {
+		displayMode: 'dialog',
+    color: 'primary',
+    isRange: true,
+    allowSameDayRange: true,
+    lang: 'en-US',
+    startDate: undefined,
+    endDate: undefined,
+    minDate: null,
+    maxDate: null,
+    disabledDates: [],
+    disabledWeekDays: undefined,
+    highlightedDates: [],
+    weekStart: 0,
+    dateFormat: 'MM/dd/yyyy',
+    enableMonthSwitch: true,
+    enableYearSwitch: true,
+    displayYearsCount: 50,
+};
+// Initialize all input of date type.
+const calendars = bulmaCalendar.attach('[type="date"]', defaultOptions);
+
+// Loop on each calendar initialized
+calendars.forEach(calendar => {
+	// Add listener to select event
+	calendar.on('select', date => {
+		console.log(date);
+	});
+});
+
+// To access to bulmaCalendar instance of an element
+const element = document.querySelector('#my-element');
+if (element) {
+	// bulmaCalendar instance is available as element.bulmaCalendar
+	element.bulmaCalendar.on('select', datepicker => {
+		console.log(datepicker.data.value());
+	});
+}
+
+</script>

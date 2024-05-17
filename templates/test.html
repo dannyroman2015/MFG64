@@ -1,26 +1,54 @@
-<!DOCTYPE html>
-<html lang="en">
-	<head>
-		<meta charset="utf-8">
-		<title>My first three.js app</title>
-    <script type="importmap">
-      {
-        "imports": {
-          "three": "https://cdn.jsdelivr.net/npm/three@v0.164.1/build/three.module.js",
-          "three/addons/": "https://cdn.jsdelivr.net/npm/three@v0.164.1/examples/jsm/"
-        }
-      }
-    </script>
-		<style>
-			body { margin: 0; }
-		</style>
-	</head>
-	<body>
+<h1>Test page</h1>
+<form action="/fortest" method="post">
+	<div class="field is-narrow">
+		<p class="control">
+			<input name="sss" class="input" type="date">
+		</p>
+		<button class="button">ksdf</button>
+	</div>
+</form>
 
 
-    
-		<script type="module" src="/static/js/main.js"></script>
-	</body>
-</html>
+<script src="/static/js/bulma-calendar.min.js"></script>
 
+<script>
+	var opts = {
+    color: 'primary',
+    isRange: true,
+    allowSameDayRange: true,
+    lang: 'en-US',
+    startDate: undefined,
+    endDate: undefined,
+    minDate: null,
+    maxDate: null,
+    disabledDates: [],
+    disabledWeekDays: undefined,
+    highlightedDates: [],
+    weekStart: 0,
+    dateFormat: 'MM/dd/yyyy',
+    enableMonthSwitch: true,
+    enableYearSwitch: true,
+    displayYearsCount: 50,
+		labelFrom: "From",
+		labelTo: "To",
+};
+// Initialize all input of date type.
+const calendars = bulmaCalendar.attach('[type="date"]', opts);
 
+// Loop on each calendar initialized
+calendars.forEach(calendar => {
+	// Add listener to select event
+	calendar.on('select', date => {
+		console.log(date);
+	});
+});
+
+// To access to bulmaCalendar instance of an element
+const element = document.querySelector('#my-element');
+if (element) {
+	// bulmaCalendar instance is available as element.bulmaCalendar
+	element.bulmaCalendar.on('select', datepicker => {
+		console.log(datepicker.data.value());
+	});
+}
+</script>
