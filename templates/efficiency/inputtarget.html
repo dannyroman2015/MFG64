@@ -3,12 +3,12 @@
 </div>
 
 <form id="inputForm" action="/efficiencyreport" method="post" class="box"
-  x-data="{wc:'', u: {
-                        CUTTING: 'cmb',
-                        ASSEMBLY: '$',
-                      },
-    getv: () => {
-      console.log(u) }
+  x-data="{
+    wc: '',
+    targetUnits: {'CUTTING': 'm³/h', 'LAMINATION': 'm²/h', 'REEDEDLINE': 'm²/h', 'VENEERLAMINATION': 'm²/h', 'PANELCNC': 'sheets/h', 'ASSEMBLY': '$/h', 'WOODFINISHING': '$/h', 'PACKING': '$/h'},
+    getunit() {
+      return this.targetUnits[this.wc]
+    }
   }"
 >
   <div class="field is-horizontal">
@@ -21,6 +21,7 @@
         <div class="control">
           <div class="select">
             <select @change="wc = $el.options[$el.selectedIndex].text" id="mo" name="workcenter">
+              <option disabled selected>Select work center</option>
               {{ range $key, $value := .units }}
               <option value="{{$key}}">{{$key}}</option>
               {{ end }}
@@ -56,25 +57,24 @@
           <input  name="target" class="input" step="any" min="0" type="number" placeholder="Set target">
         </p>
 
-        <p class="control"><a class="button is-static" x-text="getv()"></a></p>
+        <p class="control"><a class="button is-static" x-show="wc != ''" x-text="getunit"></a></p>
       </div>
     </div>
   </div>
 
 </form>
 
-<div class="notification has-text-centered is-light">
-  Lịch sử nhập gần đây
+<div class="notification is-light">
+  <p class="subtitle is-5">History</p>
 </div>
-<div class="table-container is-centered">
+<div class="table-container">
   <table class="table">
     <thead>
       <tr>
-        <th>Ngày Nhập</th>
-        <th>Sản Lượng</th>
-        <th>Giờ Công</th>
-        <th>Loại Hàng</th>
-        <th>Xưởng</th>
+        <th>Ngày</th>
+        <th>Work Center</th>
+        <th>Target</th>
+        <th>Unit</th>
       </tr>
     </thead>
     <tbody>
@@ -99,14 +99,14 @@
     disabledWeekDays: undefined,
     highlightedDates: [],
     weekStart: 0,
-    dateFormat: 'MM/dd/yyyy',
+    dateFormat: 'dd/MM/yyyy',
     enableMonthSwitch: true,
     enableYearSwitch: true,
     displayYearsCount: 50,
 };
 // Initialize all input of date type.
 const calendars = bulmaCalendar.attach('[type="date"]', defaultOptions);
-
+/*
 // Loop on each calendar initialized
 calendars.forEach(calendar => {
 	// Add listener to select event
@@ -123,5 +123,5 @@ if (element) {
 		console.log(datepicker.data.value());
 	});
 }
-
+*/
 </script>
