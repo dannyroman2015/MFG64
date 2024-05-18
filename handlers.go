@@ -607,7 +607,76 @@ func (s *Server) targetHandler(c *fiber.Ctx) error {
 	}
 
 	return c.Render("efficiency/inputtarget", fiber.Map{
-		"msg":   "Form for setting Targets",
+		"msg":   "Form for setting Targets, choose dates to review updating history",
 		"units": units,
 	}, "layout")
+}
+
+func (s *Server) targetPostHandler(c *fiber.Ctx) error {
+	wc := c.FormValue("workcenter")
+	dateRange := strings.Split(c.FormValue("dateRange"), " - ")
+	target := c.FormValue("target")
+	units := map[string]string{
+		"CUTTING":          "m³/h",
+		"LAMINATION":       "m²/h",
+		"REEDEDLINE":       "m²/h",
+		"VENEERLAMINATION": "m²/h",
+		"PANELCNC":         "sheets/h",
+		"ASSEMBLY":         "$/h",
+		"WOODFINISHING":    "$/h",
+		"PACKING":          "$/h",
+	}
+	unit := units[wc]
+
+	startDate, _ := time.Parse("2006-01-02", dateRange[0])
+	endDate, _ := time.Parse("2006-01-02", dateRange[1])
+
+	sql := `insert into targets(workcenter, date, target, unit) values `
+	for i := startDate; endDate.Sub(i) >= 0; i = i.AddDate(0, 0, 1) {
+		sql += `('` + wc + `', '` + i.Format("2006-01-02") + `', ` + target + `, '` + unit + `'),`
+	}
+	sql = sql[:len(sql)-1] + ` on conflict(workcenter, date) do update set target = EXCLUDED.target `
+	_, err := s.db.Exec(sql)
+	if err != nil {
+		log.Println(err)
+		return c.SendString("Fail to update!")
+	}
+
+	return c.SendString("Updates successful! ")
+}
+
+func (s *Server) getTargetsHistory(c *fiber.Ctx) error {
+	rawDates := c.FormValue("dateRange")
+	if rawDates == "" {
+		return c.SendString("Choose dates to view history")
+	}
+	dateRange := strings.Split(rawDates, " - ")
+	startDate, _ := time.Parse("2006-01-02", dateRange[0])
+	endDate, _ := time.Parse("2006-01-02", dateRange[1])
+	start := startDate.Format("2006-01-02")
+	end := endDate.Format("2006-01-02")
+	wc := c.FormValue("workcenter")
+	var sql string
+	if wc == "" {
+		sql = `select date, workcenter, target, unit from targets where date >= '` + start + `' and date <= '` + end + `' order by date desc, workcenter`
+	} else {
+
+		sql = `select date, workcenter, target, unit from targets where date >= '` + start + `' and date <= '` + end + `' and workcenter = '` + wc + `' order by date desc`
+	}
+	rows, err := s.db.Query(sql)
+	if err != nil {
+		log.Println(err)
+		return c.SendString("")
+	}
+	var list = [][]string{}
+	for rows.Next() {
+		var a = make([]string, 4)
+		rows.Scan(&a[0], &a[1], &a[2], &a[3])
+		a[0] = strings.Split(a[0], "T")[0]
+		list = append(list, a)
+	}
+
+	return c.Render("efficiency/targethistory", fiber.Map{
+		"list": list,
+	})
 }

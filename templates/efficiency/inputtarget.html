@@ -1,8 +1,8 @@
-<div class="notification has-text-centered is-link is-light">
+<div id="msg" class="notification has-text-centered is-link is-light">
   {{ .msg }}
 </div>
 
-<form id="inputForm" action="/efficiencyreport" method="post" class="box"
+<form id="inputForm" class="box"
   x-data="{
     wc: '',
     targetUnits: {'CUTTING': 'm³/h', 'LAMINATION': 'm²/h', 'REEDEDLINE': 'm²/h', 'VENEERLAMINATION': 'm²/h', 'PANELCNC': 'sheets/h', 'ASSEMBLY': '$/h', 'WOODFINISHING': '$/h', 'PACKING': '$/h'},
@@ -20,8 +20,8 @@
       <div class="field is-narrow">
         <div class="control">
           <div class="select">
-            <select @change="wc = $el.options[$el.selectedIndex].text" id="mo" name="workcenter">
-              <option disabled selected>Select work center</option>
+            <select @change="wc = $el.options[$el.selectedIndex].text" id="workcenter" name="workcenter">
+              <option value="" disabled selected>Select work center</option>
               {{ range $key, $value := .units }}
               <option value="{{$key}}">{{$key}}</option>
               {{ end }}
@@ -38,9 +38,9 @@
     </div>
 
     <div class="field-body">
-      <div class="field is-narrow">
-        <p class="control">
-          <input id="inputdate" name="inputdate" class="input" type="date">
+      <div class="field has-addons is-narrow">
+        <p  class="control">
+          <input hx-post="/targethistory" hx-target="#list" hx-trigger="change" id="dateRange" name="dateRange" class="input" type="date">
         </p>
       </div>
     </div>
@@ -62,6 +62,22 @@
     </div>
   </div>
 
+  <div class="field is-horizontal">
+    <div class="field-label"></div>
+    <div class="field-body">
+      <div class="field">
+        <div class="control">
+          <button hx-post="/target" hx-target="#msg" class="button is-link is-outlined">
+            Update
+          </button>
+          <button hx-post="/targethistory" hx-target="#list" class="button is-link is-outlined">
+            View History
+        </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </form>
 
 <div class="notification is-light">
@@ -71,14 +87,14 @@
   <table class="table">
     <thead>
       <tr>
-        <th>Ngày</th>
+        <th>Date</th>
         <th>Work Center</th>
         <th>Target</th>
         <th>Unit</th>
       </tr>
     </thead>
-    <tbody>
-
+    <tbody id="list">
+      
     </tbody>
   </table>
 </div>
@@ -99,7 +115,7 @@
     disabledWeekDays: undefined,
     highlightedDates: [],
     weekStart: 0,
-    dateFormat: 'dd/MM/yyyy',
+    dateFormat: 'yyyy-MM-dd',
     enableMonthSwitch: true,
     enableYearSwitch: true,
     displayYearsCount: 50,
@@ -111,7 +127,6 @@ const calendars = bulmaCalendar.attach('[type="date"]', defaultOptions);
 calendars.forEach(calendar => {
 	// Add listener to select event
 	calendar.on('select', date => {
-		console.log(date);
 	});
 });
 

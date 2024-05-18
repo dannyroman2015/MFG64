@@ -150,6 +150,8 @@ func (s *Server) Run() {
 	app.Post("/proccessforsummary", s.proccessforsummaryHandler)
 
 	app.Get("/target", s.targetHandler)
+	app.Post("target", s.targetPostHandler)
+	app.Post("/targethistory", s.getTargetsHistory)
 
 	app.Get("/prodvalueChart", s.prodvalueChartHandler)
 
