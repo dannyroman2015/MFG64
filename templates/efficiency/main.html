@@ -229,13 +229,52 @@
   
   </div> 
 
+  <div class="card">
+    <header class="card-header">
+      <p class="card-header-title">Safety & 6S</p>
+      <label for="" class="card-header-icon">
+        <input  id="safefromdate" name="safefromdate" type="date" class="card-header-icon"
+                hx-get="/ef" hx-target="#ef" hx-swap="outerHTML">
+      </label>  
+    </header>
+
+    <div class="card-content">
+      <div class="fixed-grid has-4-cols has-1-cols-mobile">
+        <div class="grid">
+          <div id="safety" class="cell">
+            <div  hx-get="/safety"
+                  hx-target="#safety" 
+                  hx-trigger="load"
+                  hx-include="#safefromdate">
+                  <div class="cssload-loader">
+                    <div class="cssload-inner cssload-one"></div>
+                    <div class="cssload-inner cssload-two"></div>
+                    <div class="cssload-inner cssload-three"></div>
+                  </div>
+            </div>
+          </div>
+  
+          <div class="cell is-cols-span-3">
+
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 
 
 
+
 <style>
-  
+  .center {
+    justify-content: center;
+  }
+
   /*#region loading icon*/
   .cssload-loader {
     position: relative;
@@ -435,3 +474,49 @@
 
 
 </style>
+
+
+<script src="/static/js/bulma-calendar.min.js"></script>
+<script>
+	var defaultOptions = {
+		displayMode: 'dialog',
+    color: 'primary',
+    isRange: true,
+    allowSameDayRange: true,
+    lang: 'en-US',
+    startDate: '2024-01-01',
+    endDate: new Date(),
+    minDate: null,
+    maxDate: null,
+    disabledDates: [],
+    disabledWeekDays: undefined,
+    highlightedDates: [],
+    weekStart: 0,
+    dateFormat: 'yyyy-MM-dd',
+    enableMonthSwitch: true,
+    enableYearSwitch: true,
+    displayYearsCount: 50,
+    labelFrom: "From",
+    labelTo: "To",
+};
+// Initialize all input of date type.
+//const calendars = bulmaCalendar.attach('[type="date"]', defaultOptions);
+const calendars = bulmaCalendar.attach('#safefromdate', defaultOptions);
+/*
+// Loop on each calendar initialized
+calendars.forEach(calendar => {
+	// Add listener to select event
+	calendar.on('select', date => {
+	});
+});
+
+// To access to bulmaCalendar instance of an element
+const element = document.querySelector('#my-element');
+if (element) {
+	// bulmaCalendar instance is available as element.bulmaCalendar
+	element.bulmaCalendar.on('select', datepicker => {
+		console.log(datepicker.data.value());
+	});
+}
+*/
+</script>

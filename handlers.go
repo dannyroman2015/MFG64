@@ -693,3 +693,8 @@ func (s *Server) getTargetsHistory(c *fiber.Ctx) error {
 		"list": list,
 	})
 }
+
+func (s *Server) safetyHandler(c *fiber.Ctx) error {
+	
+	return c.Render("efficiency/safety", fiber.Map{})
+}

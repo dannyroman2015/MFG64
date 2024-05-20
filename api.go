@@ -122,6 +122,8 @@ func (s *Server) Run() {
 	app.Get("/qualityquickinput", s.qualityquickinputHandler)
 	app.Post("qualityquickinput", s.qualityquickinputPostHandler)
 
+	app.Get("/safety", s.safetyHandler)
+
 	app.Get("/prodAdBlueprints/:mo_id", s.prodAdBlueprintsHandler)
 
 	app.Get("/productionadmin", s.productionAdminGetHandler)
