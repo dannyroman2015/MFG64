@@ -614,8 +614,24 @@ func (s *Server) targetHandler(c *fiber.Ctx) error {
 
 func (s *Server) targetPostHandler(c *fiber.Ctx) error {
 	wc := c.FormValue("workcenter")
-	dateRange := strings.Split(c.FormValue("dateRange"), " - ")
+	if wc == "" {
+		return c.SendString("Please choose workcenter!")
+	}
+
+	rawDate := c.FormValue("dateRange")
+	if rawDate == "" {
+		return c.SendString("Please choose date range")
+	}
+	dateRange := strings.Split(rawDate, " - ")
+	startDate, _ := time.Parse("2006-01-02", dateRange[0])
+	endDate, _ := time.Parse("2006-01-02", dateRange[1])
+
 	target := c.FormValue("target")
+	if target == "" {
+		return c.SendString("Please choose target")
+
+	}
+
 	units := map[string]string{
 		"CUTTING":          "m³/h",
 		"LAMINATION":       "m²/h",
@@ -627,9 +643,6 @@ func (s *Server) targetPostHandler(c *fiber.Ctx) error {
 		"PACKING":          "$/h",
 	}
 	unit := units[wc]
-
-	startDate, _ := time.Parse("2006-01-02", dateRange[0])
-	endDate, _ := time.Parse("2006-01-02", dateRange[1])
 
 	sql := `insert into targets(workcenter, date, target, unit) values `
 	for i := startDate; endDate.Sub(i) >= 0; i = i.AddDate(0, 0, 1) {
