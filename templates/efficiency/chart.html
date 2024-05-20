@@ -50,7 +50,7 @@
       {
         datalabels: {
           labels: {
-            title: null
+            title: null,
           }
         },
         label: 'Target ({{ index .targets 0}} {{ index .targetUnits .workcenter}})' ,
@@ -69,6 +69,7 @@
     options: {
       plugins: {
         datalabels: {
+          font: {size: 10},
           color: 'black', align: 'top', anchor: 'start', offset: 0,
           formatter: function(value, context) {
             return value.toLocaleString()

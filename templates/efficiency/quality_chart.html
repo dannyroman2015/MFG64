@@ -43,7 +43,7 @@
         datalabels: {
           color: 'black', align: 'center', anchor: 'center', offset: 0,
           formatter: function(value, context) {
-            if (value == "0") {
+            if (value < "5") {
               return ""
             } else {
               return value + "%"
