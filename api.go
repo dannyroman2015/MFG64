@@ -217,21 +217,20 @@ func (s *Server) provalueGetHandler(c *fiber.Ctx) error {
 }
 
 func (s *Server) accidentGetHandler(c *fiber.Ctx) error {
-	log.Println("enter accident")
-
-	return c.Render("accident", fiber.Map{}, "layout")
+	return c.Render("efficiency/accident", fiber.Map{}, "layout")
 }
 
 func (s *Server) accidentPostHandler(c *fiber.Ctx) error {
-	log.Println("post accident")
 	accdate := c.FormValue("accdate")
+	person := c.FormValue("person")
+	description := c.FormValue("description")
 
-	sqlStatement := `INSERT INTO accidents (accdate) VALUES ($1)`
-	_, err := s.db.Exec(sqlStatement, accdate)
+	sqlStatement := `INSERT INTO accidents (accdate, name, description) VALUES ($1, $2, $3)`
+	_, err := s.db.Exec(sqlStatement, accdate, person, description)
 	if err != nil {
 		panic(err)
 	}
-	return c.Redirect("/accident", fiber.StatusFound)
+	return c.Redirect("/accident", fiber.StatusSeeOther)
 }
 
 func (s *Server) shippedGetHandler(c *fiber.Ctx) error {

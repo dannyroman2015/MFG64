@@ -1,0 +1,65 @@
+<div class="notification has-text-centered is-link is-light">
+  Form nhập báo cáo tai nạn
+</div>
+
+<form id="inputForm" action="/accident" method="post" class="box">
+  <div class="field is-horizontal">
+    <div class="field-label is-normal">
+      <label class="label">Ngày</label>
+    </div>
+
+    <div class="field-body">
+      <div class="field is-narrow">
+        <p class="control">
+          <input id="accdate" name="accdate" class="input" type="date">
+        </p>
+        <p class="help is-link">Mặc định là ngày hôm nay.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="field is-horizontal">
+    <div class="field-label is-normal">
+      <label class="label">Người bị tai nạn</label>
+    </div>
+
+    <div class="field-body">
+      <div class="field is-expanded">
+        <p class="control">
+          <input name="person" class="input" type="text">
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="field is-horizontal">
+    <div class="field-label is-normal">
+      <label class="label">Mô tả</label>
+    </div>
+
+    <div class="field-body">
+      <div class="field is-expanded">
+        <p class="control">
+          <textarea class="textarea" name="description" rows="3"></textarea>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="field is-horizontal">
+    <div class="field-label"></div>
+    <div class="field-body">
+      <div class="field">
+        <div class="control">
+          <button class="button is-link is-outlined">
+            Gửi
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+
+<script>
+  document.getElementById("accdate").valueAsDate = new Date()
+</script>

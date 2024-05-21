@@ -233,12 +233,14 @@
     <header class="card-header">
       <p class="card-header-title">Safety & 6S</p>
       <label for="" class="card-header-icon">
-        <input  id="safefromdate" name="safefromdate" type="date" class="card-header-icon"
-                hx-get="/safety" hx-target="#safety">
-        <span class="icon">
-          <i class="fa-solid fa-arrows-rotate"></i>
-        </span>
-      </label>  
+        <input  id="safefromdate" name="safefromdate" type="date" class="card-header-icon">
+        <button hx-get="/safety" hx-target="#safety" hx-include="#safefromdate" class="button" style="border: none;">
+          <span class="icon">
+            <i class="fa-solid fa-arrows-rotate"></i>
+          </span>
+        </button>
+        
+      </label>
     </header>
 
     <div class="card-content">
