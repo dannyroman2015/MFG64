@@ -4,38 +4,102 @@
 
 
 <script>
-  const colors = {
-		"M-FIN":     "#54bebe",
-		"FIN-2":     "#A0DEFF",
-		"FIN-1":     "#8E3E63",
-		"M-WELD":    "#badbdb",
-		"UPH":       "#dedad2",
-		"ASS-1":     "#e4bcad",
-		"FIT-1":     "#df979e",
-		"ASS-2":     "#d7658b",
-		"WW-FM":     "#c80064",
-		"PAC-2":     "#ffb400",
-		"OBA-1":     "#527853",
-		"WW-VN":     "#e1a692",
-		"WW-RM":     "#9CAFAA",
-		"PAC-1":     "#9080ff",
-		"M-MACHINE": "#22a7f0",
-	}
-
   new Chart(document.getElementById("qualitychart"), {
     plugins: [ChartDataLabels],
     type: 'bar',
     data: {
       labels: {{.dates}},
       datasets: [
-      {{ range $key, $value := .data }}
         {
-          label: {{ $key }},
-          data: {{ $value }},
-          backgroundColor: colors[{{$key}}],
+          label: "M-FIN",
+          data: {{ index .data "M-FIN"}},
+          backgroundColor: "#54bebe",
           pointStyle: 'rect',
         },
-      {{ end }}
+        {
+          label: "FIN-2",
+          data: {{ index .data "FIN-2"}},
+          backgroundColor: "#A0DEFF",
+          pointStyle: 'rect',
+        },
+        {
+          label: "FIN-1",
+          data: {{ index .data "FIN-1"}},
+          backgroundColor: "#8E3E63",
+          pointStyle: 'rect',
+        },
+        {
+          label: "M-WELD",
+          data: {{ index .data "M-WELD"}},
+          backgroundColor: "#badbdb",
+          pointStyle: 'rect',
+        },
+        {
+          label: "UPH",
+          data: {{ index .data "UPH"}},
+          backgroundColor: "#dedad2",
+          pointStyle: 'rect',
+        },
+        {
+          label: "ASS-1",
+          data: {{ index .data "ASS-1"}},
+          backgroundColor: "#e4bcad",
+          pointStyle: 'rect',
+        },
+        {
+          label: "FIT-1",
+          data: {{ index .data "FIT-1"}},
+          backgroundColor: "#df979e",
+          pointStyle: 'rect',
+        },
+        {
+          label: "ASS-2",
+          data: {{ index .data "ASS-2"}},
+          backgroundColor: "#d7658b",
+          pointStyle: 'rect',
+        },
+        {
+          label: "WW-FM",
+          data: {{ index .data "WW-FM"}},
+          backgroundColor: "#c80064",
+          pointStyle: 'rect',
+        },
+        {
+          label: "PAC-2",
+          data: {{ index .data "PAC-2"}},
+          backgroundColor: "#ffb400",
+          pointStyle: 'rect',
+        },
+        {
+          label: "OBA-1",
+          data: {{ index .data "OBA-1"}},
+          backgroundColor: "#527853",
+          pointStyle: 'rect',
+        },
+        {
+          label: "WW-VN",
+          data: {{ index .data "WW-VN"}},
+          backgroundColor: "#e1a692",
+          pointStyle: 'rect',
+        },
+        {
+          label: "WW-RM",
+          data: {{ index .data "WW-RM"}},
+          backgroundColor: "#9CAFAA",
+          pointStyle: 'rect',
+        },
+        {
+          label: "PAC-1",
+          data: {{ index .data "PAC-1"}},
+          backgroundColor: "#9080ff",
+          pointStyle: 'rect',
+        },
+        {
+          label: "M-MACHINE",
+          data: {{ index .data "M-MACHINE"}},
+          backgroundColor: "#22a7f0",
+          pointStyle: 'rect',
+        },
       ]
     },
     options: {
@@ -69,4 +133,5 @@
       }
     }
   });
+  
 </script>

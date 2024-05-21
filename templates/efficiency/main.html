@@ -3,6 +3,11 @@
   <div class="card">
     <header class="card-header">
       <p class="card-header-title">Daily Packing Plan & Output Summary</p>
+      <label for="" class="card-header-icon">    
+        From 
+        <input  id="fromdate" name="fromdate" type="date" value={{.fromdate}} class="card-header-icon"
+                hx-get="/efficiencywithdate" hx-target="#efficient-container" hx-swap="outerHTML">
+      </label>  
     </header>
   
     <div class="card-content">
@@ -51,16 +56,13 @@
   <div class="card">
     <header class="card-header">
       <p class="card-header-title">Efficiency</p>
-      <label for="" class="card-header-icon">     
-        
-      </label>   
+       
       <!-- <label for="" class="card-header-icon">
         To: 
         <input  id="todate" name="todate" type="date" value={{.todate}} class="card-header-icon"
                 hx-get="/efficiencywithdate" hx-target="#efficient-container" hx-swap="outerHTML">
       </label>    -->
-      <input  id="fromdate" name="fromdate" type="date" value={{.fromdate}} class="card-header-icon"
-                hx-get="/efficiencywithdate" hx-target="#efficient-container" hx-swap="outerHTML">
+      
     </header>
   
     <div class="card-content">
@@ -229,7 +231,7 @@
   
   </div> 
 
-  <div class="card" x-data="{open: false}">
+  <div class="card">
     <header class="card-header">
       <input id="safefromdate" name="safefromdate" type="date" class="card-header-icon">
       <button hx-get="/safety" hx-target="#safety" hx-include="#safefromdate" class="button" style="border: none;">
@@ -502,7 +504,7 @@
 };
 // Initialize all input of date type.
 //const calendars = bulmaCalendar.attach('[type="date"]', defaultOptions);
-const calendars = bulmaCalendar.attach('#safefromdate', defaultOptions);
+bulmaCalendar.attach('#safefromdate', defaultOptions);
 /*
 // Loop on each calendar initialized
 calendars.forEach(calendar => {

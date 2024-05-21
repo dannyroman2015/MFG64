@@ -513,10 +513,27 @@ func (s *Server) qulityChartHandler(c *fiber.Ctx) error {
 		}
 		data[b][i] = int(math.Round(d * 100 / c))
 	}
-
+	var colors = map[string]string{
+		"M-FIN":     "#54bebe",
+		"FIN-2":     "#A0DEFF",
+		"FIN-1":     "#8E3E63",
+		"M-WELD":    "#badbdb",
+		"UPH":       "#dedad2",
+		"ASS-1":     "#e4bcad",
+		"FIT-1":     "#df979e",
+		"ASS-2":     "#d7658b",
+		"WW-FM":     "#c80064",
+		"PAC-2":     "#ffb400",
+		"OBA-1":     "#527853",
+		"WW-VN":     "#e1a692",
+		"WW-RM":     "#9CAFAA",
+		"PAC-1":     "#9080ff",
+		"M-MACHINE": "#22a7f0",
+	}
 	return c.Render("efficiency/quality_chart", fiber.Map{
-		"dates": dates,
-		"data":  data,
+		"dates":  dates,
+		"data":   data,
+		"colors": colors,
 	})
 }
 
