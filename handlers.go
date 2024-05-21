@@ -696,9 +696,13 @@ func (s *Server) getTargetsHistory(c *fiber.Ctx) error {
 
 func (s *Server) safetyHandler(c *fiber.Ctx) error {
 	rawDates := c.FormValue("safefromdate")
-	dateRange := strings.Split(rawDates, " - ")
-	start := dateRange[0]
-	end := dateRange[1]
+	start := "2024-01-01"
+	end := time.Now().Format("2006-01-02")
+	if rawDates != "" {
+		dateRange := strings.Split(rawDates, " - ")
+		start = dateRange[0]
+		end = dateRange[1]
+	}
 
 	sql := `select count(id), max(accdate) from accidents where accdate >= '` + start + `' and accdate <= '` + end + `'`
 	numberOfAccidents := 0
