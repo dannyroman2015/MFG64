@@ -695,6 +695,26 @@ func (s *Server) getTargetsHistory(c *fiber.Ctx) error {
 }
 
 func (s *Server) safetyHandler(c *fiber.Ctx) error {
-	
-	return c.Render("efficiency/safety", fiber.Map{})
+	rawDates := c.FormValue("safefromdate")
+	dateRange := strings.Split(rawDates, " - ")
+	startDate, _ := time.Parse("2006-01-02", dateRange[0])
+	endDate, _ := time.Parse("2006-01-02", dateRange[1])
+	start := startDate.Format("2006-01-02")
+	end := endDate.Format("2006-01-02")
+
+	sql := `select count(id), max(accdate) from accidents where accdate >= '` + start + `' and accdate <= '` + end + `'`
+	numberOfAccidents := 0
+	var latestAccidentDate string
+	if err := s.db.QueryRow(sql).Scan(&numberOfAccidents, &latestAccidentDate); err != nil {
+		log.Println("fail to get numbers of accidents")
+	}
+	latestAccidentDate = strings.Split(latestAccidentDate, "T")[0]
+	tmp, _ := time.Parse("2006-01-02", latestAccidentDate)
+	latestAccidentDate = tmp.Format("02 Jan 2006")
+	daysNoAcc := int(time.Since(tmp).Hours() / 24)
+	return c.Render("efficiency/safety", fiber.Map{
+		"numberOfAccidents":   numberOfAccidents,
+		"lastestAccidentDate": latestAccidentDate,
+		"daysNoAcc":           daysNoAcc,
+	})
 }

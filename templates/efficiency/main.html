@@ -234,12 +234,15 @@
       <p class="card-header-title">Safety & 6S</p>
       <label for="" class="card-header-icon">
         <input  id="safefromdate" name="safefromdate" type="date" class="card-header-icon"
-                hx-get="/ef" hx-target="#ef" hx-swap="outerHTML">
+                hx-get="/safety" hx-target="#safety">
+        <span class="icon">
+          <i class="fa-solid fa-arrows-rotate"></i>
+        </span>
       </label>  
     </header>
 
     <div class="card-content">
-      <div class="fixed-grid has-4-cols has-1-cols-mobile">
+      <div class="fixed-grid has-3-cols has-1-cols-mobile">
         <div class="grid">
           <div id="safety" class="cell">
             <div  hx-get="/safety"
@@ -254,7 +257,7 @@
             </div>
           </div>
   
-          <div class="cell is-cols-span-3">
+          <div class="cell is-cols-span-2">
 
 
           </div>
