@@ -464,9 +464,11 @@ func (s *Server) qualityInputPostHandler(c *fiber.Ctx) error {
 
 func (s *Server) qulityChartHandler(c *fiber.Ctx) error {
 	fromdate := c.FormValue("fromdate")
+
 	sql := `select distinct date_issue from quatity_report group by date_issue having date_issue >= '` + fromdate + `'`
 
 	r, _ := s.db.Exec(sql)
+
 	numberOfDate, _ := r.RowsAffected()
 
 	sql = `select date_issue, section_code, sum(qty_check), sum(qty_fail) from quatity_report
