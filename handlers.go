@@ -5,6 +5,7 @@ import (
 	"log"
 	"math"
 	"math/rand"
+	"slices"
 	"strings"
 	"time"
 
@@ -798,11 +799,126 @@ func (s *Server) viewreportPostHandler(c *fiber.Ctx) error {
 }
 
 func (s *Server) score6sHandler(c *fiber.Ctx) error {
+	areas := []string{"CUTTING", "WOOD LAMINATION", "CURVE VENEER LAMINATION", "FLAT VENEER LAMINATION",
+		"COMPONENT CNC", "COMPONENT FINEMILL", "PANEL CNC", "ASSEMBLY", "OEM ASSEMBLY", "WOOD FINISHING",
+		"OEM WOOD FINISHING", "MECHANIC CAST IRON", "MECHANIC METAL", "WELDING", "METAL FINISHING", "CONCRETE",
+		"UPHOLSTERY", "PACKING", "OEM PACKING", "QUALITY", "WH", "TECH", "MAINT", "PROCESS", "HR", "EHS",
+	}
+	numberOfareas := len(areas)
 
-	return c.Render("efficiency/score6s", fiber.Map{})
+	sql := `select distinct date from score6s where date >= '2024-05-01' and date <= '2024-05-31' order by date`
+
+	rows, _ := s.db.Query(sql)
+	var data = [][]int{}
+	var dates = []string{}
+	var n = 0
+	for rows.Next() {
+		var a string
+		rows.Scan(&a)
+		dates = append(dates, a)
+		var b = make([]int, numberOfareas)
+		data = append(data, b)
+		n++
+	}
+
+	sql = `select area, date, score from score6s where date >= '2024-05-01' and date <= '2024-05-31' order by date`
+
+	rows, err := s.db.Query(sql)
+	if err != nil {
+		panic(err)
+	}
+
+	// var data = map[string][]int{
+	// 	"CUTTING":                 make([]int, numberOfDate),
+	// 	"WOOD LAMINATION":         make([]int, numberOfDate),
+	// 	"CURVE VENEER LAMINATION": make([]int, numberOfDate),
+	// 	"FLAT VENEER LAMINATION":  make([]int, numberOfDate),
+	// 	"COMPONENT CNC":           make([]int, numberOfDate),
+	// 	"COMPONENT FINEMILL":      make([]int, numberOfDate),
+	// 	"PANEL CNC":               make([]int, numberOfDate),
+	// 	"ASSEMBLY":                make([]int, numberOfDate),
+	// 	"OEM ASSEMBLY":            make([]int, numberOfDate),
+	// 	"WOOD FINISHING":          make([]int, numberOfDate),
+	// 	"OEM WOOD FINISHING":      make([]int, numberOfDate),
+	// 	"MECHANIC CAST IRON":      make([]int, numberOfDate),
+	// 	"MECHANIC METAL":          make([]int, numberOfDate),
+	// 	"WELDING":                 make([]int, numberOfDate),
+	// 	"METAL FINISHING":         make([]int, numberOfDate),
+	// 	"CONCRETE":                make([]int, numberOfDate),
+	// 	"UPHOLSTERY":              make([]int, numberOfDate),
+	// 	"PACKING":                 make([]int, numberOfDate),
+	// 	"OEM PACKING":             make([]int, numberOfDate),
+	// 	"QUALITY":                 make([]int, numberOfDate),
+	// 	"WH":                      make([]int, numberOfDate),
+	// 	"TECH":                    make([]int, numberOfDate),
+	// 	"MAINT":                   make([]int, numberOfDate),
+	// 	"PROCESS":                 make([]int, numberOfDate),
+	// 	"HR":                      make([]int, numberOfDate),
+	// 	"EHS":                     make([]int, numberOfDate),
+	// }
+
+	for rows.Next() {
+		var a, b string
+		var c int
+		rows.Scan(&a, &b, &c)
+		i := slices.Index(areas, a)
+		j := slices.Index(dates, b)
+		data[j][i] = c
+	}
+
+	return c.Render("efficiency/score6s", fiber.Map{
+		"areas": areas,
+		"dates": dates,
+		"data":  data,
+		"n":     n,
+	})
 }
 
 func (s *Server) input6sHandler(c *fiber.Ctx) error {
 
-	return c.Render("efficiency/input6s", fiber.Map{}, "layout")
+	return c.Render("efficiency/input6s", fiber.Map{"msg": "Form chấm điểm 6S"}, "layout")
+}
+
+func (s *Server) input6sPostHandler(c *fiber.Ctx) error {
+	area := c.FormValue("area")
+	if area == "" {
+		return c.SendString("Vui lòng chọn khu vực.")
+	}
+	date := c.FormValue("date")
+	score := c.FormValue("score")
+
+	_, err := s.db.Exec(`insert into score6s(area, date, score) values ($1, $2, $3)`, area, date, score)
+	if err != nil {
+		log.Println(err)
+		return c.SendString("Cập nhật thất bại, vui lòng kiểm tra lại dữ liệu nhập.")
+	}
+
+	return c.SendString("Cập nhật thành công")
+}
+
+func (s *Server) getlist6sPostHandler(c *fiber.Ctx) error {
+	area := c.FormValue("area")
+	date := c.FormValue("date")
+	var sql string
+	if area == "" {
+		sql = `select * from score6s where date ='` + date + `'`
+	} else {
+		sql = `select * from score6s where area = '` + area + `' and date ='` + date + `'`
+	}
+
+	rows, err := s.db.Query(sql)
+	if err != nil {
+		log.Println(err)
+		return c.SendString("Fail to load data")
+	}
+	var list = [][]string{}
+	for rows.Next() {
+		var a = make([]string, 3)
+		rows.Scan(&a[0], &a[1], &a[2])
+		list = append(list, a)
+	}
+
+	return c.Render("efficiency/list6s", fiber.Map{
+		"list": list,
+	})
 }

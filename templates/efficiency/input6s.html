@@ -1,8 +1,8 @@
-<div class="notification has-text-centered is-link is-light">
-  Form chấm điểm 6S
+<div id="msg" class="notification has-text-centered is-link is-light">
+  {{.msg}}
 </div>
 
-<form id="inputForm" action="/input6s" method="post" class="box">
+<form id="inputForm" class="box">
   <div class="field is-horizontal">
     <div class="field-label is-normal">
       <label class="label">Area</label>
@@ -13,8 +13,9 @@
         <div class="control">
           <div class="select">
             <select name="area">
+              <option value="">Chọn khu vưc</option>
               <option value="CUTTING">CUTTING</option>
-              <option value="WOODLAMINATION">WOOD LAMINATION</option>
+              <option value="WOOD LAMINATION">WOOD LAMINATION</option>
               <option value="CURVE VENEER LAMINATION">CURVE VENEER LAMINATION</option>
               <option value="FLAT VENEER LAMINATION">FLAT VENEER LAMINATION</option>
               <option value="COMPONENT CNC">COMPONENT CNC</option>
@@ -56,7 +57,7 @@
     <div class="field-body">
       <div class="field is-narrow">
         <p class="control">
-          <input id="fromdate" name="fromdate" class="input" type="date">
+          <input hx-post="/getlist6s" hx-target="#list" id="date" name="date" class="input" type="date">
         </p>
       </div>
     </div>
@@ -81,7 +82,7 @@
     <div class="field-body">
       <div class="field">
         <div class="control">
-          <button class="button is-link is-outlined">
+          <button hx-post="/input6s" hx-target="#msg" class="button is-link is-outlined">
             Gửi
           </button>
         </div>
@@ -89,3 +90,21 @@
     </div>
   </div>
 </form>
+
+<div class="notification is-light">
+  <p class="subtitle is-5">History</p>
+</div>
+<div class="table-container">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Khu vực</th>
+        <th>Ngày</th>
+        <th>Điểm</th>
+      </tr>
+    </thead>
+    <tbody id="list">
+      
+    </tbody>
+  </table>
+</div>

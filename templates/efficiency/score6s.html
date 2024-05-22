@@ -1,1 +1,79 @@
-<h1>6Sscore</h1>
+<div>
+  <canvas id="6schart"></canvas>
+</div>
+
+
+
+<script>
+
+  new Chart(document.getElementById("6schart"), {
+    plugins: [ChartDataLabels],
+    type: 'bar',
+    data: {
+      labels: {{.areas}},
+      datasets: [
+        {{if eq .n 1}}
+        {
+          label: {{index .dates 0}},
+          data: {{index .data 0 }},
+        },
+        {{else if eq .n 2}}
+        {
+          label: {{index .dates 0}},
+          data: {{index .data 0 }},
+        },
+        {
+          label: {{index .dates 1}},
+          data: {{index .data 1 }},
+        },
+        {{else if eq .n 3}}
+        {
+          label: {{index .dates 0}},
+          data: {{index .data 0 }},
+        },
+        {
+          label: {{index .dates 1}},
+          data: {{index .data 1 }},
+        },
+        {
+          label: {{index .dates 2}},
+          data: {{index .data 2 }},
+        },
+        {{else if eq .n 4}}
+        {
+          label: {{index .dates 0}},
+          data: {{index .data 0 }},
+        },
+        {
+          label: {{index .dates 1}},
+          data: {{index .data 1 }},
+        },
+        {
+          label: {{index .dates 2}},
+          data: {{index .data 2 }},
+        },
+        {
+          label: {{index .dates 3}},
+          data: {{index .data 3 }},
+        },
+        {{end}}
+      ]
+    },
+    options: {
+      plugins: {
+        title: {text: "6S Score", display: true},
+      },
+      responsive: true,
+      scales: {
+        x: {
+          grid: { display: false, },
+        },
+        y: {
+          display: false,
+          beginAtZero: true,
+          grid: { display: false, },
+        },
+      },
+    },
+  });
+</script>
