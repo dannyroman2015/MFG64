@@ -1,0 +1,150 @@
+<div class="notification has-text-centered is-link is-light">
+  Xem nhập báo cáo cho Efficiency
+</div>
+
+<form id="inputForm" action="/viewreport" method="post" class="box">
+  <div class="field is-horizontal">
+    <div class="field-label is-normal">
+      <label class="label">Work Center</label>
+    </div>
+
+    <div class="field-body">
+      <div class="field is-narrow">
+        <div class="control">
+          <div class="select">
+            <select name="workcenter">
+              <option value="ALL">ALL</option>
+              <option value="CUTTING">CUTTING</option>
+              <option value="LAMINATION">LAMINATION</option>
+              <option value="REEDEDLINE">REEDEDLINE</option>
+              <option value="VENEERLAMINATION">VENEERLAMINATION</option>
+              <option value="PANELCNC">PANELCNC</option>
+              <option value="ASSEMBLY">ASSEMBLY</option>
+              <option value="WOODFINISHING">WOODFINISHING</option>
+              <option value="PACKING">PACKING</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="field is-horizontal">
+    <div class="field-label">
+      <label class="label">Nhà Máy</label>
+    </div>
+
+    <div class="field-body">
+      <div class="field">
+          <div class="control">
+            <label class="radio">
+              <input value="1" type="radio" name="factory" checked/>
+              Xưởng 1
+            </label>
+            <label class="radio">
+              <input value="2" type="radio" name="factory" />
+              Xưởng 2
+            </label>
+          </div>
+      </div>
+    </div>
+  
+  </div>
+
+  <div class="field is-horizontal">
+    <div class="field-label">
+      <label class="label">Loại Hàng</label>
+    </div>
+
+    <div class="field-body">
+      <div class="field">
+          <div class="control">
+            <label class="radio">
+              <input value="BRAND" type="radio" name="typeofproduct"/>
+              BRAND
+            </label>
+            <label class="radio">
+              <input value="RH" type="radio" name="typeofproduct" />
+              RH
+            </label>
+            <label class="radio">
+              <input value="" type="radio" name="typeofproduct" checked/>
+              Không phân loại
+            </label>
+          </div>
+      </div>
+    </div>
+  
+  </div>
+
+  <div class="field is-horizontal">
+    <div class="field-label is-normal">
+      <label class="label">Từ ngày</label>
+    </div>
+
+    <div class="field-body">
+      <div class="field is-narrow">
+        <p class="control">
+          <input id="fromdate" name="fromdate" class="input" type="date">
+        </p>
+        <p class="help is-link">Mặc định là 7 ngày trước.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="field is-horizontal">
+    <div class="field-label is-normal">
+      <label class="label">Tới ngày</label>
+    </div>
+
+    <div class="field-body">
+      <div class="field is-narrow">
+        <p class="control">
+          <input id="todate" name="todate" class="input" type="date">
+        </p>
+        <p class="help is-link">Mặc định là ngày hôm nay.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="field is-horizontal">
+    <div class="field-label"></div>
+    <div class="field-body">
+      <div class="field">
+        <div class="control">
+          <button class="button is-link is-outlined">
+            Download
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+
+<!-- <div class="notification has-text-centered is-light">
+  Lịch sử nhập
+</div>
+<div class="table-container is-centered">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Ngày Nhập</th>
+        <th>Sản Lượng</th>
+        <th>Giờ Công</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{ range .data }}
+        <tr>
+          <td>{{ index . 0}}</td>
+          <td>{{ index . 1}}</td>
+          <td>{{ index . 2}}</td>
+        </tr>
+      {{ end }}
+    </tbody>
+  </table>
+</div> -->
+
+<script>
+  document.getElementById("inputdate").valueAsDate = new Date()
+</script>

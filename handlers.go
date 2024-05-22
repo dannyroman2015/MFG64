@@ -739,3 +739,94 @@ func (s *Server) safetyHandler(c *fiber.Ctx) error {
 		"daysNoAcc":           daysNoAcc,
 	})
 }
+
+func (s *Server) viewreportHandler(c *fiber.Ctx) error {
+
+	return c.Render("efficiency/viewreport", fiber.Map{}, "layout")
+}
+
+func (s *Server) viewreportPostHandler(c *fiber.Ctx) error {
+	workcenter := c.FormValue("workcenter")
+	fromdate := c.FormValue("fromdate")
+	todate := c.FormValue("todate")
+	f := excelize.NewFile()
+	defer func() {
+		if err := f.Close(); err != nil {
+			fmt.Println(err)
+		}
+	}()
+	f.SetCellValue("Sheet1", "A1", "Work Center")
+	f.SetCellValue("Sheet1", "B1", workcenter)
+	f.SetCellValue("Sheet1", "D1", "From")
+	f.SetCellValue("Sheet1", "E1", fromdate)
+	f.SetCellValue("Sheet1", "F1", "To")
+	f.SetCellValue("Sheet1", "G1", todate)
+	f.SetCellValue("Sheet1", "A2", "Ngày giờ nhập")
+	f.SetCellValue("Sheet1", "B2", "Số Lượng")
+	f.SetCellValue("Sheet1", "C2", "Manhr")
+	f.SetActiveSheet(1)
+	sql := `select created_datetime, qty, manhr from efficienct_reports 
+		where work_center ='` + workcenter + `' and date >='` + fromdate + `' and date <='` + todate + `' order by date desc, created_datetime desc`
+
+	rows, err := s.db.Query(sql)
+	if err != nil {
+		log.Println(err)
+	}
+
+	var data [][]string
+	for rows.Next() {
+		var a = make([]string, 3)
+		var t string
+		rows.Scan(&t, &a[1], &a[2])
+
+		a[0] = t[0:18]
+		a[0] = strings.Replace(a[0], "T", " ", 1)
+
+		data = append(data, a)
+	}
+	if err := f.SaveAs("./static/uploads/Book1.xlsx"); err != nil {
+		fmt.Println(err)
+	}
+
+	return c.Download("./static/uploads/Book1.xlsx")
+}
+
+func (s *Server) downloadreportHandler(c *fiber.Ctx) error {
+	log.Println("ksdhfk")
+	workcenter := c.FormValue("workcenter")
+	fromdate := c.FormValue("fromdate")
+	todate := c.FormValue("todate")
+	f := excelize.NewFile()
+	defer func() {
+		if err := f.Close(); err != nil {
+			fmt.Println(err)
+		}
+	}()
+	f.SetCellValue("Sheet1", "A1", "Hekhrhe")
+	f.SetActiveSheet(1)
+
+	sql := `select created_datetime, qty, manhr from efficienct_reports 
+		where work_center ='` + workcenter + `' and date >='` + fromdate + `' and date <='` + todate + `' order by date desc, created_datetime desc`
+
+	rows, err := s.db.Query(sql)
+	if err != nil {
+		log.Println(err)
+	}
+
+	var data [][]string
+	for rows.Next() {
+		var a = make([]string, 3)
+		var t string
+		rows.Scan(&t, &a[1], &a[2])
+
+		a[0] = t[0:18]
+		a[0] = strings.Replace(a[0], "T", " ", 1)
+
+		data = append(data, a)
+	}
+	if err := f.SaveAs("./static/uploads/Book1.xlsx"); err != nil {
+		fmt.Println(err)
+	}
+
+	return c.Download("./static/uploads/Book1.xlsx")
+}
