@@ -1,5 +1,5 @@
 <div class="notification has-text-centered is-link is-light">
-  Xem nhập báo cáo cho Efficiency
+  Tải dữ liệu nhập báo cáo cho Efficiency
 </div>
 
 <form id="inputForm" action="/viewreport" method="post" class="box">
@@ -13,7 +13,6 @@
         <div class="control">
           <div class="select">
             <select name="workcenter">
-              <option value="ALL">ALL</option>
               <option value="CUTTING">CUTTING</option>
               <option value="LAMINATION">LAMINATION</option>
               <option value="REEDEDLINE">REEDEDLINE</option>
@@ -29,52 +28,6 @@
     </div>
   </div>
   
-  <div class="field is-horizontal">
-    <div class="field-label">
-      <label class="label">Nhà Máy</label>
-    </div>
-
-    <div class="field-body">
-      <div class="field">
-          <div class="control">
-            <label class="radio">
-              <input value="1" type="radio" name="factory" checked/>
-              Xưởng 1
-            </label>
-            <label class="radio">
-              <input value="2" type="radio" name="factory" />
-              Xưởng 2
-            </label>
-          </div>
-      </div>
-    </div>
-  
-  </div>
-
-  <div class="field is-horizontal">
-    <div class="field-label">
-      <label class="label">Loại Hàng</label>
-    </div>
-
-    <div class="field-body">
-      <div class="field">
-          <div class="control">
-            <label class="radio">
-              <input value="BRAND" type="radio" name="typeofproduct"/>
-              BRAND
-            </label>
-            <label class="radio">
-              <input value="RH" type="radio" name="typeofproduct" />
-              RH
-            </label>
-            <label class="radio">
-              <input value="" type="radio" name="typeofproduct" checked/>
-              Không phân loại
-            </label>
-          </div>
-      </div>
-    </div>
-  
   </div>
 
   <div class="field is-horizontal">
@@ -87,7 +40,6 @@
         <p class="control">
           <input id="fromdate" name="fromdate" class="input" type="date">
         </p>
-        <p class="help is-link">Mặc định là 7 ngày trước.</p>
       </div>
     </div>
   </div>
@@ -102,7 +54,6 @@
         <p class="control">
           <input id="todate" name="todate" class="input" type="date">
         </p>
-        <p class="help is-link">Mặc định là ngày hôm nay.</p>
       </div>
     </div>
   </div>
@@ -144,7 +95,3 @@
     </tbody>
   </table>
 </div> -->
-
-<script>
-  document.getElementById("inputdate").valueAsDate = new Date()
-</script>

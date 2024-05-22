@@ -115,7 +115,6 @@ func (s *Server) Run() {
 
 	app.Get("/viewreport", s.viewreportHandler)
 	app.Post("/viewreport", s.viewreportPostHandler)
-	app.Post("/downloadreport", s.downloadreportHandler)
 
 	app.Get("/inputmanhr", s.inputmanhrHandler)
 	app.Post("/inputmanhr", s.inputmanhrPostHandler)
