@@ -796,3 +796,13 @@ func (s *Server) viewreportPostHandler(c *fiber.Ctx) error {
 
 	return c.Download("./static/uploads/Book1.xlsx")
 }
+
+func (s *Server) score6sHandler(c *fiber.Ctx) error {
+
+	return c.Render("efficiency/score6s", fiber.Map{})
+}
+
+func (s *Server) input6sHandler(c *fiber.Ctx) error {
+
+	return c.Render("efficiency/input6s", fiber.Map{}, "layout")
+}

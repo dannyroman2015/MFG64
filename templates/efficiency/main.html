@@ -258,8 +258,16 @@
           </div>
   
           <div class="cell is-cols-span-2">
-
-
+            <div  hx-get="/score6s"
+                  hx-target="#safety"
+                  hx-trigger="load"
+                  hx-include="#safefromdate">
+                  <div class="cssload-loader">
+                    <div class="cssload-inner cssload-one"></div>
+                    <div class="cssload-inner cssload-two"></div>
+                    <div class="cssload-inner cssload-three"></div>
+                  </div>
+            </div>
           </div>
 
         </div>

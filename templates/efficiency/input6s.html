@@ -1,0 +1,91 @@
+<div class="notification has-text-centered is-link is-light">
+  Form chấm điểm 6S
+</div>
+
+<form id="inputForm" action="/input6s" method="post" class="box">
+  <div class="field is-horizontal">
+    <div class="field-label is-normal">
+      <label class="label">Area</label>
+    </div>
+
+    <div class="field-body">
+      <div class="field is-narrow">
+        <div class="control">
+          <div class="select">
+            <select name="area">
+              <option value="CUTTING">CUTTING</option>
+              <option value="WOODLAMINATION">WOOD LAMINATION</option>
+              <option value="CURVE VENEER LAMINATION">CURVE VENEER LAMINATION</option>
+              <option value="FLAT VENEER LAMINATION">FLAT VENEER LAMINATION</option>
+              <option value="COMPONENT CNC">COMPONENT CNC</option>
+              <option value="COMPONENT FINEMILL">COMPONENT FINEMILL</option>
+              <option value="PANEL CNC">PANEL CNC</option>
+              <option value="ASSEMBLY">ASSEMBLY</option>
+              <option value="OEM ASSEMBLY">OEM ASSEMBLY</option>
+              <option value="WOOD FINISHING">WOOD FINISHING</option>
+              <option value="OEM WOOD FINISHING">OEM WOOD FINISHING</option>
+              <option value="MECHANIC CAST IRON">MECHANIC CAST IRON</option>
+              <option value="MECHANIC METAL">MECHANIC METAL</option>
+              <option value="WELDING">WELDING</option>
+              <option value="METAL FINISHING">METAL FINISHING</option>
+              <option value="CONCRETE">CONCRETE</option>
+              <option value="UPHOLSTERY">UPHOLSTERY</option>
+              <option value="PACKING">PACKING</option>
+              <option value="OEM PACKING">OEM PACKING</option>
+              <option value="QUALITY">QUALITY</option>
+              <option value="WH">WH</option>
+              <option value="TECH">TECH</option>
+              <option value="MAINT">MAINT</option>
+              <option value="PROCESS">PROCESS</option>
+              <option value="HR">HR</option>
+              <option value="EHS">EHS</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  </div>
+
+  <div class="field is-horizontal">
+    <div class="field-label is-normal">
+      <label class="label">Ngày</label>
+    </div>
+
+    <div class="field-body">
+      <div class="field is-narrow">
+        <p class="control">
+          <input id="fromdate" name="fromdate" class="input" type="date">
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="field is-horizontal">
+    <div class="field-label is-normal">
+      <label class="label">Điểm</label>
+    </div>
+
+    <div class="field-body">
+      <div class="field is-narrow">
+        <p class="control">
+          <input id="score" name="score" class="input" type="number">
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="field is-horizontal">
+    <div class="field-label"></div>
+    <div class="field-body">
+      <div class="field">
+        <div class="control">
+          <button class="button is-link is-outlined">
+            Gửi
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
