@@ -57,13 +57,30 @@
           data: {{index .data 3 }},
         },
         {{end}}
+        {
+          datalabels: {
+            labels: { title: null, }
+          },
+          type: "line",
+          label: "Target(7)",
+          data: {{.targets}},
+          pointStyle: 'line',
+          pointRadius: 0,
+          borderWidth: 1,
+        },
       ]
     },
     options: {
       plugins: {
-        title: {text: "6S Score", display: true},
+        title: {text: "6S Score", display: true, font: {size: 20,}},
+        legend: {
+          labels: {
+            usePointStyle: true,
+          },
+        }
       },
       responsive: true,
+      
       scales: {
         x: {
           grid: { display: false, },

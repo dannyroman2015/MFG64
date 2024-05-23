@@ -248,7 +248,7 @@
             <div  hx-get="/safety"
                   hx-target="#safety" 
                   hx-trigger="load"
-                  hx-include="#safefromdate">
+                  hx-include="#fromdate">
                   <div class="cssload-loader">
                     <div class="cssload-inner cssload-one"></div>
                     <div class="cssload-inner cssload-two"></div>
@@ -261,7 +261,7 @@
             <div  hx-get="/score6s"
                   hx-target="#score6s"
                   hx-trigger="load"
-                  >
+                  hx-include="[name='fromdate']">
                   <div class="cssload-loader">
                     <div class="cssload-inner cssload-one"></div>
                     <div class="cssload-inner cssload-two"></div>
@@ -280,6 +280,7 @@
 <style>
   .center {
     justify-content: center;
+    padding: 10px;
   }
 
   /*#region loading icon*/

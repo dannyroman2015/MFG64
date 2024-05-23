@@ -517,7 +517,7 @@ func (s *Server) qulityChartHandler(c *fiber.Ctx) error {
 	var colors = map[string]string{
 		"M-FIN":     "#54bebe",
 		"FIN-2":     "#A0DEFF",
-		"FIN-1":     "#8E3E63",
+		"FIN-1":     "#FF6500",
 		"M-WELD":    "#badbdb",
 		"UPH":       "#dedad2",
 		"ASS-1":     "#e4bcad",
@@ -799,6 +799,8 @@ func (s *Server) viewreportPostHandler(c *fiber.Ctx) error {
 }
 
 func (s *Server) score6sHandler(c *fiber.Ctx) error {
+	safefromdate := c.FormValue("fromdate")
+	month := safefromdate[5:7]
 	areas := []string{"CUTTING", "WOOD LAMINATION", "CURVE VENEER LAMINATION", "FLAT VENEER LAMINATION",
 		"COMPONENT CNC", "COMPONENT FINEMILL", "PANEL CNC", "ASSEMBLY", "OEM ASSEMBLY", "WOOD FINISHING",
 		"OEM WOOD FINISHING", "MECHANIC CAST IRON", "MECHANIC METAL", "WELDING", "METAL FINISHING", "CONCRETE",
@@ -806,12 +808,16 @@ func (s *Server) score6sHandler(c *fiber.Ctx) error {
 	}
 	numberOfareas := len(areas)
 
-	sql := `select distinct date from score6s where date >= '2024-05-01' and date <= '2024-05-31' order by date`
+	sql := `select distinct date from score6s where date >= '2024-` + month + `-01' and date <= '2024-` + month + `-31' order by date`
 
 	rows, _ := s.db.Query(sql)
 	var data = [][]int{}
 	var dates = []string{}
 	var n = 0
+	var targets = make([]int, numberOfareas)
+	for i := 0; i < numberOfareas; i++ {
+		targets[i] = 7
+	}
 	for rows.Next() {
 		var a string
 		rows.Scan(&a)
@@ -821,41 +827,12 @@ func (s *Server) score6sHandler(c *fiber.Ctx) error {
 		n++
 	}
 
-	sql = `select area, date, score from score6s where date >= '2024-05-01' and date <= '2024-05-31' order by date`
+	sql = `select area, date, score from score6s where date >= '2024-` + month + `-01' and date <= '2024-` + month + `-31' order by date`
 
 	rows, err := s.db.Query(sql)
 	if err != nil {
 		panic(err)
 	}
-
-	// var data = map[string][]int{
-	// 	"CUTTING":                 make([]int, numberOfDate),
-	// 	"WOOD LAMINATION":         make([]int, numberOfDate),
-	// 	"CURVE VENEER LAMINATION": make([]int, numberOfDate),
-	// 	"FLAT VENEER LAMINATION":  make([]int, numberOfDate),
-	// 	"COMPONENT CNC":           make([]int, numberOfDate),
-	// 	"COMPONENT FINEMILL":      make([]int, numberOfDate),
-	// 	"PANEL CNC":               make([]int, numberOfDate),
-	// 	"ASSEMBLY":                make([]int, numberOfDate),
-	// 	"OEM ASSEMBLY":            make([]int, numberOfDate),
-	// 	"WOOD FINISHING":          make([]int, numberOfDate),
-	// 	"OEM WOOD FINISHING":      make([]int, numberOfDate),
-	// 	"MECHANIC CAST IRON":      make([]int, numberOfDate),
-	// 	"MECHANIC METAL":          make([]int, numberOfDate),
-	// 	"WELDING":                 make([]int, numberOfDate),
-	// 	"METAL FINISHING":         make([]int, numberOfDate),
-	// 	"CONCRETE":                make([]int, numberOfDate),
-	// 	"UPHOLSTERY":              make([]int, numberOfDate),
-	// 	"PACKING":                 make([]int, numberOfDate),
-	// 	"OEM PACKING":             make([]int, numberOfDate),
-	// 	"QUALITY":                 make([]int, numberOfDate),
-	// 	"WH":                      make([]int, numberOfDate),
-	// 	"TECH":                    make([]int, numberOfDate),
-	// 	"MAINT":                   make([]int, numberOfDate),
-	// 	"PROCESS":                 make([]int, numberOfDate),
-	// 	"HR":                      make([]int, numberOfDate),
-	// 	"EHS":                     make([]int, numberOfDate),
-	// }
 
 	for rows.Next() {
 		var a, b string
@@ -867,10 +844,11 @@ func (s *Server) score6sHandler(c *fiber.Ctx) error {
 	}
 
 	return c.Render("efficiency/score6s", fiber.Map{
-		"areas": areas,
-		"dates": dates,
-		"data":  data,
-		"n":     n,
+		"areas":   areas,
+		"dates":   dates,
+		"data":    data,
+		"n":       n,
+		"targets": targets,
 	})
 }
 
