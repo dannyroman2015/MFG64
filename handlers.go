@@ -500,6 +500,8 @@ func (s *Server) qulityChartHandler(c *fiber.Ctx) error {
 	}
 	lastdate := ""
 	i := -1
+	var checkqty = []float64{}
+	var failqty = []float64{}
 	for rows.Next() {
 		var a, b string
 		var c, d float64
@@ -513,6 +515,8 @@ func (s *Server) qulityChartHandler(c *fiber.Ctx) error {
 			lastdate = a
 		}
 		data[b][i] = int(math.Round(d * 100 / c))
+		checkqty = append(checkqty, c)
+		failqty = append(failqty, d)
 	}
 	var colors = map[string]string{
 		"M-FIN":     "#54bebe",
@@ -532,9 +536,11 @@ func (s *Server) qulityChartHandler(c *fiber.Ctx) error {
 		"M-MACHINE": "#22a7f0",
 	}
 	return c.Render("efficiency/quality_chart", fiber.Map{
-		"dates":  dates,
-		"data":   data,
-		"colors": colors,
+		"dates":    dates,
+		"data":     data,
+		"colors":   colors,
+		"checkqty": checkqty,
+		"failqty":  failqty,
 	})
 }
 
