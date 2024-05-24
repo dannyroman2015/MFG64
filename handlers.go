@@ -900,3 +900,34 @@ func (s *Server) getlist6sPostHandler(c *fiber.Ctx) error {
 		"list": list,
 	})
 }
+
+func (s *Server) qualityhistoryHandler(c *fiber.Ctx) error {
+	date_issue := c.Query("date_issue")
+	section_code := c.Query("section_code")
+
+	var sql string
+	if section_code == "" {
+		sql = `select date_issue, section_code, qty_check, qty_fail from quatity_report
+		 where date_issue = '` + date_issue + `'`
+	} else {
+		sql = `select date_issue, section_code, qty_check, qty_fail from quatity_report
+			 where date_issue = '` + date_issue + `' and section_code = '` + section_code + `'`
+	}
+
+	rows, err := s.db.Query(sql)
+	if err != nil {
+		log.Println("fail to access quality report")
+		return c.SendString("Loi truy xuat")
+	}
+	var data = [][]string{}
+	for rows.Next() {
+		var a = make([]string, 4)
+		rows.Scan(&a[0], &a[1], &a[2], &a[3])
+		a[0] = a[0][:10]
+		data = append(data, a)
+	}
+
+	return c.Render("efficiency/qualityhistory", fiber.Map{
+		"data": data,
+	})
+}

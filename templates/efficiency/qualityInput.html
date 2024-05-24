@@ -12,7 +12,7 @@
       <div class="field">
         <div class="control">
           <div class="select">
-            <select name="section_code">
+            <select hx-get="/qualityhistory" hx-include="#date_issue" hx-target="#qualityhistory" id="section_code" name="section_code">
               <option value="" disabled selected>Chọn bộ phận</option>
               <option value="M-FIN">M-FIN</option>
               <option value="FIN-1">FIN-1</option>
@@ -45,7 +45,8 @@
     <div class="field-body">
       <div class="field is-narrow">
         <p class="control">
-          <input hx-get="/listtarget" id="date_issue" name="date_issue" class="input" type="date">
+          <input hx-get="/qualityhistory" hx-target="#qualityhistory" hx-include="#section_code"
+            id="date_issue" name="date_issue" class="input" type="date">
         </p>
         <p class="help is-link">Mặc định là ngày hôm nay.</p>
       </div>
@@ -124,7 +125,7 @@
         <th>Số Lượng Lỗi</th>
       </tr>
     </thead>
-    <tbody>
+    <tbody id="qualityhistory">
       {{ range .data }}
         <tr>
           <td>{{index . 0}}</td>

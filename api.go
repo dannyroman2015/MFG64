@@ -119,8 +119,10 @@ func (s *Server) Run() {
 	app.Get("/inputmanhr", s.inputmanhrHandler)
 	app.Post("/inputmanhr", s.inputmanhrPostHandler)
 
-	app.Get("qualityinput", s.qualityInputHandler)
-	app.Post("qualityinput", s.qualityInputPostHandler)
+	app.Get("/qualityinput", s.qualityInputHandler)
+	app.Post("/qualityinput", s.qualityInputPostHandler)
+	app.Get("/qualityhistory", s.qualityhistoryHandler)
+
 	app.Get("/qualitychart", s.qulityChartHandler)
 	app.Get("/qualityquickinput", s.qualityquickinputHandler)
 	app.Post("qualityquickinput", s.qualityquickinputPostHandler)
