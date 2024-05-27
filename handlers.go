@@ -97,6 +97,43 @@ func (s *Server) prodvalueChartHandler(c *fiber.Ctx) error {
 		targets = append(targets, target)
 	}
 
+	numberOfTargets := len(targets)
+	var rhlist1 = make([]float64, numberOfTargets)
+	var rhlist2 = make([]float64, numberOfTargets)
+	var brandlist1 = make([]float64, numberOfTargets)
+	var brandlist2 = make([]float64, numberOfTargets)
+
+	rows, err = s.db.Query(`SELECT date, factory_no, type, sum(qty) from 
+		efficienct_reports where work_center = 'PACKING' group by date, factory_no, type having 
+		date >= '` + fromdate + `' order by date`)
+	if err != nil {
+		panic(err)
+	}
+	ld := ""
+	i := -1
+	for rows.Next() {
+		var a, b, c string
+		var d float64
+		rows.Scan(&a, &b, &c, &d)
+		a = strings.Split(a, "T")[0]
+		if ld != a {
+			i++
+			ld = a
+		}
+		if b == "1" && c == "RH" {
+			rhlist1[i] = d
+		}
+		if b == "1" && c == "BRAND" {
+			brandlist1[i] = d
+		}
+		if b == "2" && c == "BRAND" {
+			brandlist2[i] = d
+		}
+		if b == "2" && c == "RH" {
+			rhlist2[i] = d
+		}
+	}
+
 	var latestCreated string
 	rows, err = s.db.Query(`select created_datetime from efficienct_reports where work_center 
 		= 'PACKING' order by id desc limit 1`)
@@ -117,7 +154,7 @@ func (s *Server) prodvalueChartHandler(c *fiber.Ctx) error {
 		}
 	}
 
-	return c.Render("efficiency/chart", fiber.Map{
+	return c.Render("efficiency/provalue_chart", fiber.Map{
 		"workcenter":    "Production Value",
 		"labels":        labels,
 		"quanity":       quanity,
@@ -127,6 +164,10 @@ func (s *Server) prodvalueChartHandler(c *fiber.Ctx) error {
 		"units":         units,
 		"latestCreated": latestCreated,
 		"targetUnits":   targetUnits,
+		"rhlist1":       rhlist1,
+		"brandlist1":    brandlist1,
+		"rhlist2":       rhlist2,
+		"brandlist2":    brandlist2,
 	})
 }
 
