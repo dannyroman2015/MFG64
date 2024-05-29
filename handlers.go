@@ -839,8 +839,9 @@ func (s *Server) viewreportPostHandler(c *fiber.Ctx) error {
 	f.SetCellValue("Sheet1", "B2", "Số Lượng")
 	f.SetCellValue("Sheet1", "C2", "Manhr")
 	f.SetCellValue("Sheet1", "D2", "Xưởng")
+	f.SetCellValue("Sheet1", "E2", "Loại Hàng")
 	f.SetActiveSheet(1)
-	sql := `select created_datetime, qty, manhr, factory_no from efficienct_reports 
+	sql := `select created_datetime, qty, manhr, factory_no, type from efficienct_reports 
 		where work_center ='` + workcenter + `' and date >='` + fromdate + `' and date <='` + todate + `' order by date desc, created_datetime desc`
 
 	rows, err := s.db.Query(sql)
@@ -851,9 +852,9 @@ func (s *Server) viewreportPostHandler(c *fiber.Ctx) error {
 	var data [][]string
 	i := 3
 	for rows.Next() {
-		var a = make([]string, 4)
+		var a = make([]string, 5)
 		var t string
-		rows.Scan(&t, &a[1], &a[2], &a[3])
+		rows.Scan(&t, &a[1], &a[2], &a[3], &a[4])
 
 		a[0] = t[0:19]
 		a[0] = strings.Replace(a[0], "T", " ", 1)
@@ -863,6 +864,7 @@ func (s *Server) viewreportPostHandler(c *fiber.Ctx) error {
 		f.SetCellValue("Sheet1", fmt.Sprintf("B%d", i), a[1])
 		f.SetCellValue("Sheet1", fmt.Sprintf("C%d", i), a[2])
 		f.SetCellValue("Sheet1", fmt.Sprintf("D%d", i), a[3])
+		f.SetCellValue("Sheet1", fmt.Sprintf("E%d", i), a[4])
 		i++
 	}
 	if err := f.SaveAs("./static/uploads/Book1.xlsx"); err != nil {
