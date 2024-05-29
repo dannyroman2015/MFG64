@@ -16,6 +16,8 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/basicauth"
 	"github.com/gofiber/template/html/v2"
 	"github.com/xuri/excelize/v2"
+	"golang.org/x/text/language"
+	"golang.org/x/text/message"
 )
 
 type InputDate_data struct {
@@ -936,6 +938,26 @@ func (s *Server) efficientChartHandler(c *fiber.Ctx) error {
 		}
 	}
 
+	var demand float64
+	month := fromdate[5:7]
+	sql := `select demandofmonth from targets where 
+		workcenter = '` + workcenter + `' and date >= '2024-` + month + `-01' and date <= '` + fromdate + `' and demandofmonth <> 0 order by demandofmonth desc limit 1`
+	rows, err = s.db.Query(sql)
+	if err != nil {
+		log.Println(err)
+	}
+	for rows.Next() {
+		var a float64
+		rows.Scan(&a)
+		demand = a
+	}
+
+	var mtd float64
+	sql = `select sum(qty) from efficienct_reports where work_center = '` + workcenter + `' and date <= '` + fromdate + `'`
+	if err = s.db.QueryRow(sql).Scan(&mtd); err != nil {
+		log.Println(err)
+	}
+	mtdstr := message.NewPrinter(language.English).Sprintf("%.f", mtd)
 	randColor := fmt.Sprintf("rgba(%d, %d, %d, 0.4)", rand.Intn(255), rand.Intn(255), rand.Intn(255))
 
 	return c.Render("efficiency/chart", fiber.Map{
@@ -949,5 +971,7 @@ func (s *Server) efficientChartHandler(c *fiber.Ctx) error {
 		"units":         units,
 		"latestCreated": latestCreated,
 		"targetUnits":   targetUnits,
+		"demand":        demand,
+		"mtd":           mtdstr,
 	})
 }

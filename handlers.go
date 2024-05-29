@@ -696,7 +696,6 @@ func (s *Server) targetPostHandler(c *fiber.Ctx) error {
 	target := c.FormValue("target")
 	if target == "" {
 		return c.SendString("Please choose target")
-
 	}
 
 	weekdays := []string{}
@@ -721,7 +720,7 @@ func (s *Server) targetPostHandler(c *fiber.Ctx) error {
 	if c.FormValue("Sunday") != "" {
 		weekdays = append(weekdays, c.FormValue("Sunday"))
 	}
-	log.Println(weekdays)
+
 	units := map[string]string{
 		"CUTTING":          "m³/h",
 		"LAMINATION":       "m²/h",
@@ -733,14 +732,25 @@ func (s *Server) targetPostHandler(c *fiber.Ctx) error {
 		"PACKING":          "$/h",
 	}
 	unit := units[wc]
-
-	sql := `insert into targets(workcenter, date, target, unit) values `
-	for i := startDate; endDate.Sub(i) >= 0; i = i.AddDate(0, 0, 1) {
-		if slices.Contains(weekdays, i.Weekday().String()) {
-			sql += `('` + wc + `', '` + i.Format("2006-01-02") + `', ` + target + `, '` + unit + `'),`
+	var sql string
+	demand := c.FormValue("demandofmonth")
+	if demand == "" || demand == "0" {
+		sql = `insert into targets(workcenter, date, target, unit) values `
+		for i := startDate; endDate.Sub(i) >= 0; i = i.AddDate(0, 0, 1) {
+			if slices.Contains(weekdays, i.Weekday().String()) {
+				sql += `('` + wc + `', '` + i.Format("2006-01-02") + `', ` + target + `, '` + unit + `'),`
+			}
 		}
+		sql = sql[:len(sql)-1] + ` on conflict(workcenter, date) do update set target = EXCLUDED.target `
+	} else {
+		sql = `insert into targets(workcenter, date, target, unit, demandofmonth) values `
+		for i := startDate; endDate.Sub(i) >= 0; i = i.AddDate(0, 0, 1) {
+			if slices.Contains(weekdays, i.Weekday().String()) {
+				sql += `('` + wc + `', '` + i.Format("2006-01-02") + `', ` + target + `, '` + unit + `',` + demand + `),`
+			}
+		}
+		sql = sql[:len(sql)-1] + ` on conflict(workcenter, date) do update set target = EXCLUDED.target, demandofmonth = EXCLUDED.demandofmonth `
 	}
-	sql = sql[:len(sql)-1] + ` on conflict(workcenter, date) do update set target = EXCLUDED.target `
 	_, err := s.db.Exec(sql)
 	if err != nil {
 		log.Println(err)

@@ -1,3 +1,8 @@
+<div class="rightside">
+  MTD: <strong>{{.mtd}}</strong> / 
+  Demand: <strong>{{.demand}}</strong>
+  
+</div>
 <div class="chart-container">
   <canvas id="{{.workcenter}}"></canvas>
 </div>
@@ -6,6 +11,19 @@
   .chart-container {
     border-bottom: 1px solid black;
     padding-bottom: 20px;
+  }
+  .month {
+    width: 40px;
+    height: 20px;
+    border: none;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+  }
+  .rightside {
+    float: right;
+    margin-top: -30px;
+    margin-right: 10px;
   }
 </style>
 
