@@ -1005,3 +1005,8 @@ func (s *Server) qualityhistoryHandler(c *fiber.Ctx) error {
 		"data": data,
 	})
 }
+
+func (s *Server) guideHandler(c *fiber.Ctx) error {
+
+	return c.Render("staffquality/guide", fiber.Map{}, "layout")
+}

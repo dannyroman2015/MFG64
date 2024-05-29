@@ -101,6 +101,8 @@ func (s *Server) Run() {
 	// app.Get("/", s.indexGetHandler)
 	app.Get("/", s.efficiencyHandler)
 
+	app.Get("/guide", s.guideHandler)
+
 	app.Get("/evaluate", s.evaluateHandler)
 	app.Post("/workerbypw", s.workerbypwPostHandler)
 	app.Post("/searchstaff", s.searchstaffPostHandler)
