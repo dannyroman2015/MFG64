@@ -2,7 +2,8 @@
   Form nhập báo cáo cho Efficiency
 </div>
 
-<form id="inputForm" action="/efficiencyreport" method="post" class="box">
+<form x-data="{wc:''}"
+id="inputForm" action="/efficiencyreport" method="post" class="box">
   <div class="field is-horizontal">
     <div class="field-label is-normal">
       <label class="label">Work Center</label>
@@ -12,7 +13,7 @@
       <div class="field is-narrow">
         <div class="control">
           <div class="select">
-            <select id="mo" name="workcenter">
+            <select x-model="wc" id="mo" name="workcenter">
               {{ range .workcenters }}
               <option value="{{.}}">{{.}}</option>
               {{ end }}
@@ -21,7 +22,7 @@
         </div>
       </div>
 
-      {{ if eq .workcenter  "PANELCNC" }}
+      {{ if eq .workcenter "PANELCNC" }}
         <div class="field is-narrow">
           <div class="control">
             <div class="select">
@@ -117,6 +118,37 @@
       </div>
     </div>
   </div>
+
+  <div x-show="wc=='PACKING'" class="field is-horizontal">
+    <div class="field-label is-normal">
+      <label class="label">Số lượng</label>
+    </div>
+
+    <div class="field-body">
+      <div class="field has-addons">
+        <p class="control">
+          <input  name="pcs" class="input" value="0" min="0" type="number">
+        </p>
+
+        <p class="control"><a class="button is-static">pcs</a></p>
+      </div>
+    </div>
+  </div>
+
+  <div x-show="wc=='PACKING' || wc=='WOODFINISHING' || wc=='ASSEMBLY'" class="field is-horizontal">
+    <div class="field-label is-normal">
+      <label class="label">Sản Lượng hàng trên chuyền</label>
+    </div>
+
+    <div class="field-body">
+      <div class="field has-addons">
+        <p class="control">
+          <input  name="qtywait" class="input" value="0" step="any" min="0" type="number">
+        </p>
+      </div>
+    </div>
+  </div>
+
 
   <div class="field is-horizontal">
     <div class="field-label is-normal">
