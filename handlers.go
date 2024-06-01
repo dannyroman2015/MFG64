@@ -436,17 +436,17 @@ func (s *Server) summarytableHandler(c *fiber.Ctx) error {
 
 	return c.Render("efficiency/summary_body", fiber.Map{
 		// "arr": arr,
-		"totalm":    p.Sprint(totalm),
+		"totalm":    p.Sprintf("%.f", totalm),
 		"pcs":       pcs,
-		"rhmtdm":    p.Sprint(rhmtdm),
-		"brandmtdm": p.Sprint(brandmtdm),
+		"rhmtdm":    p.Sprintf("%.f", rhmtdm),
+		"brandmtdm": p.Sprintf("%.f", brandmtdm),
 		"days":      days,
 		"mtdavg":    p.Sprint(mtdavg),
 		"rhmtdavgp": rhmtdavgp,
-		"rhmtdavgm": p.Sprint(rhmtdavgm),
+		"rhmtdavgm": p.Sprintf("%.f", rhmtdavgm),
 		"brandavgp": brandavgp,
-		"brandavgm": p.Sprint(brandavgm),
-		"totales":   p.Sprint(totales),
+		"brandavgm": p.Sprintf("%.f", brandavgm),
+		"totales":   p.Sprintf("%.f", totales),
 	})
 }
 

@@ -944,11 +944,21 @@ func (s *Server) efficientChartHandler(c *fiber.Ctx) error {
 		}
 	}
 
+	var month string
+	var nextmonth string
+	if slices.Contains([]string{"28", "29", "30", "31"}, fromdate[8:10]) {
+		tmpt, _ := time.Parse("2006-01-02", fromdate)
+		month = tmpt.Format("01")
+		nextmonth = tmpt.AddDate(0, 1, 0).Format("01")
+	} else {
+		month = time.Now().Format("01")
+		nextmonth = time.Now().AddDate(0, 1, 0).Format("01")
+	}
 	var demand float64
-	month := time.Now().Format("01")
+
 	sql := `select demandofmonth from targets where 
 		workcenter = '` + workcenter + `' and date >= '2024-` + month + `-01' 
-		and date <= '` + time.Now().Format("2006-01-02") + `' and demandofmonth <> 0 order by demandofmonth desc limit 1`
+		and date <= '2024-` + nextmonth + `-01' and demandofmonth <> 0 order by demandofmonth desc limit 1`
 	rows, err = s.db.Query(sql)
 	if err != nil {
 		log.Println(err)
@@ -961,7 +971,7 @@ func (s *Server) efficientChartHandler(c *fiber.Ctx) error {
 
 	var mtd float64
 	sql = `select sum(qty) from efficienct_reports where work_center = '` + workcenter + `' 
-	 and date >='2024-` + month + `-01' and date <= '` + time.Now().Format("2006-01-02") + `'`
+	 and date >='2024-` + month + `-01' and date <= '2024-` + nextmonth + `-01'`
 	rows, err = s.db.Query(sql)
 	if err != nil {
 		log.Println(err)
