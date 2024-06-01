@@ -81,6 +81,15 @@
     },
     options: {
       plugins: {
+        tooltip: {
+          callbacks: {
+            footer: (tooltipItems) => {
+              let sum = 0;
+              sum = tooltipItems[0].parsed._stacks.y[0] + tooltipItems[0].parsed._stacks.y[1] + tooltipItems[0].parsed._stacks.y[2]
+              return 'Sum: ' + sum;
+            }
+          }
+        },
         datalabels: {
           font: {size: 10},
           color: 'black', align: 'top', anchor: 'start', offset: 0,
