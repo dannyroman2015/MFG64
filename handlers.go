@@ -11,6 +11,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/xuri/excelize/v2"
+	"golang.org/x/text/message"
 )
 
 func (s *Server) efficiencyHandler(c *fiber.Ctx) error {
@@ -368,31 +369,84 @@ func (s *Server) inputwhissuePostHandler(c *fiber.Ctx) error {
 }
 
 func (s *Server) summarytableHandler(c *fiber.Ctx) error {
-	var arr [][]string
+	curmon := time.Now().Format("01")
+	nextmon := time.Now().AddDate(0, 1, 0).Format("01")
 
-	sql := `select plan, actual, rh_act_pcs, rh_act_money, m64_act_pcs, m64_act_money 
-			from packing_summary order by stt`
+	sql := `select type, sum(qty), sum(pcs) from efficienct_reports where date >= '2024-` + curmon + `-01' and date < '2024-` + nextmon + `-01'
+		 group by work_center, type having work_center = 'PACKING' order by type`
+
 	rows, err := s.db.Query(sql)
 	if err != nil {
-		panic(err)
+		log.Println(err)
+		return c.SendString("Lỗi lấy dữ liệu")
 	}
+	var moneys = make([]float64, 2)
+	var pcs = make([]int, 2)
+	var totalm float64
 
 	for rows.Next() {
-		var as = []string{"", "", "", "", "", ""}
-		rows.Scan(&as[0], &as[1], &as[2], &as[3], &as[4], &as[5])
-		for i := 0; i < len(as); i++ {
-			if as[i] == "0" {
-				as[i] = ""
-			}
+		var a string
+		var b float64
+		var c int
+		rows.Scan(&a, &b, &c)
+		if a == "RH" {
+			moneys[1] = b
+			pcs[1] = c
+		} else {
+			moneys[0] = b
+			pcs[0] = c
 		}
-		arr = append(arr, as)
+		totalm += b
+
 	}
 
+	days := time.Now().Day()
+	mtdavg := totalm / float64(days)
+	rhmtdavgp := pcs[1] / days
+	rhmtdavgm := moneys[1] / float64(days)
+	brandavgp := pcs[0] / days
+	brandavgm := moneys[0] / float64(days)
+	rhmtdm := moneys[1]
+	brandmtdm := moneys[0]
+
+	nextdays := time.Since(time.Date(2024, time.Now().Month()+1, 1, 0, 0, 0, 0, time.Local))
+	daystill := nextdays.Hours() / -24
+	totales := math.Round(mtdavg * daystill)
+
+	// var arr [][]string
+
+	// sql := `select plan, actual, rh_act_pcs, rh_act_money, m64_act_pcs, m64_act_money
+	// 		from packing_summary order by stt`
+	// rows, err := s.db.Query(sql)
+	// if err != nil {
+	// 	panic(err)
+	// }
+
+	// for rows.Next() {
+	// 	var as = []string{"", "", "", "", "", ""}
+	// 	rows.Scan(&as[0], &as[1], &as[2], &as[3], &as[4], &as[5])
+	// 	for i := 0; i < len(as); i++ {
+	// 		if as[i] == "0" {
+	// 			as[i] = ""
+	// 		}
+	// 	}
+	// 	arr = append(arr, as)
+	// }
+	p := message.NewPrinter(message.MatchLanguage("en"))
+
 	return c.Render("efficiency/summary_body", fiber.Map{
-		"arr": arr,
-		// "today": time.Now().Format("02/01"),
-		// "nd":    time.Now().AddDate(0, 0, 1).Format("02/01"),
-		// "rd":    time.Now().AddDate(0, 0, 2).Format("02/01"),
+		// "arr": arr,
+		"totalm":    p.Sprint(totalm),
+		"pcs":       pcs,
+		"rhmtdm":    p.Sprint(rhmtdm),
+		"brandmtdm": p.Sprint(brandmtdm),
+		"days":      days,
+		"mtdavg":    p.Sprint(mtdavg),
+		"rhmtdavgp": rhmtdavgp,
+		"rhmtdavgm": p.Sprint(rhmtdavgm),
+		"brandavgp": brandavgp,
+		"brandavgm": p.Sprint(brandavgm),
+		"totales":   p.Sprint(totales),
 	})
 }
 

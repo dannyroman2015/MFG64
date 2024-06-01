@@ -945,9 +945,10 @@ func (s *Server) efficientChartHandler(c *fiber.Ctx) error {
 	}
 
 	var demand float64
-	month := fromdate[5:7]
+	month := time.Now().Format("01")
 	sql := `select demandofmonth from targets where 
-		workcenter = '` + workcenter + `' and date >= '2024-` + month + `-01' and date <= '` + fromdate + `' and demandofmonth <> 0 order by demandofmonth desc limit 1`
+		workcenter = '` + workcenter + `' and date >= '2024-` + month + `-01' 
+		and date <= '` + time.Now().Format("2006-01-02") + `' and demandofmonth <> 0 order by demandofmonth desc limit 1`
 	rows, err = s.db.Query(sql)
 	if err != nil {
 		log.Println(err)
@@ -959,10 +960,16 @@ func (s *Server) efficientChartHandler(c *fiber.Ctx) error {
 	}
 
 	var mtd float64
-	sql = `select sum(qty) from efficienct_reports where work_center = '` + workcenter + `' and date <= '` + fromdate + `'`
-	if err = s.db.QueryRow(sql).Scan(&mtd); err != nil {
+	sql = `select sum(qty) from efficienct_reports where work_center = '` + workcenter + `' 
+	 and date >='2024-` + month + `-01' and date <= '` + time.Now().Format("2006-01-02") + `'`
+	rows, err = s.db.Query(sql)
+	if err != nil {
 		log.Println(err)
 	}
+	for rows.Next() {
+		rows.Scan(&mtd)
+	}
+
 	mtdstr := message.NewPrinter(language.English).Sprintf("%.f", mtd)
 	randColor := fmt.Sprintf("rgba(%d, %d, %d, 0.4)", rand.Intn(255), rand.Intn(255), rand.Intn(255))
 
