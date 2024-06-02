@@ -2,7 +2,7 @@
   Form nhập báo cáo cho Efficiency
 </div>
 
-<form x-data="{wc:''}"
+<form x-data="{wc:'{{index .workcenters 0}}'}"
 id="inputForm" action="/efficiencyreport" method="post" class="box">
   <div class="field is-horizontal">
     <div class="field-label is-normal">
