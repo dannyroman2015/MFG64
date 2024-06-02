@@ -907,7 +907,7 @@ func (s *Server) efficientChartHandler(c *fiber.Ctx) error {
 		var a, b string
 		var c, d float64
 		rows.Scan(&a, &b, &c, &d)
-		i := slices.Index(datesOfTarget, a)
+		// i := slices.Index(datesOfTarget, a)
 		a = strings.Split(a, "T")[0]
 		t, _ := time.Parse("2006-01-02", a)
 		a = t.Format("2 Jan")
@@ -915,13 +915,15 @@ func (s *Server) efficientChartHandler(c *fiber.Ctx) error {
 		if d == 0 {
 			efficiency = append(efficiency, 0)
 		} else {
-			efficiency = append(efficiency, math.Round((c/d)*100/tmp_targets[i]))
+			// efficiency = append(efficiency, math.Round((c/d)*100/tmp_targets[i]))
+			efficiency = append(efficiency, math.Round((c/d)*100))
 		}
 
 		labels = append(labels, a)
 		c = math.Round(c)
 		quanity = append(quanity, c)
-		targets = append(targets, tmp_targets[i]*d)
+		// targets = append(targets, tmp_targets[i]*d)
+		targets = append(targets, d)
 	}
 
 	var latestCreated string
