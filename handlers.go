@@ -11,6 +11,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/xuri/excelize/v2"
+	"golang.org/x/text/language"
 	"golang.org/x/text/message"
 )
 
@@ -1076,3 +1077,328 @@ func (s *Server) guideHandler(c *fiber.Ctx) error {
 
 	return c.Render("staffquality/guide", fiber.Map{}, "layout")
 }
+
+func (s *Server) assemblyHandler(c *fiber.Ctx) error {
+	fromdate := c.Query("fromdate")
+
+	sql := `select distinct date from efficienct_reports where work_center = 'ASSEMBLY' and date >= '` + fromdate + `' order by date`
+	rows, err := s.db.Query(sql)
+	if err != nil {
+		log.Println(err)
+		return c.SendString("Loi truy van")
+	}
+	var dates []string
+	for rows.Next() {
+		var a string
+		rows.Scan(&a)
+		a = strings.Split(a, "T")[0]
+		t, _ := time.Parse("2006-01-02", a)
+		a = t.Format("2 Jan")
+		dates = append(dates, a)
+	}
+
+	nod := len(dates)
+	var rhlist1 = make([]float64, nod)
+	var rhlist2 = make([]float64, nod)
+	var brandlist1 = make([]float64, nod)
+	var brandlist2 = make([]float64, nod)
+	rows, err = s.db.Query(`SELECT date, factory_no, type, sum(qty) from 
+ 		efficienct_reports where work_center = 'ASSEMBLY' group by date, factory_no, type having 
+ 		date >= '` + fromdate + `' order by date`)
+	if err != nil {
+		panic(err)
+	}
+	ld := ""
+	i := -1
+	for rows.Next() {
+		var a, b, c string
+		var d float64
+		rows.Scan(&a, &b, &c, &d)
+		a = strings.Split(a, "T")[0]
+		if ld != a {
+			i++
+			ld = a
+		}
+		if b == "1" && c == "RH" {
+			rhlist1[i] = d
+		}
+		if b == "1" && c == "BRAND" {
+			brandlist1[i] = d
+		}
+		if b == "2" && c == "BRAND" {
+			brandlist2[i] = d
+		}
+		if b == "2" && c == "RH" {
+			rhlist2[i] = d
+		}
+	}
+
+	// targets
+	rows, err = s.db.Query(`select date, target from targets 
+	where workcenter = 'ASSEMBLY' and date >= '` + fromdate + `'`)
+	if err != nil {
+		log.Println(err)
+		return c.SendString("Loi lay du lieu targets")
+	}
+	var datesOfTarget []string
+	var tmp_targets []float64
+	for rows.Next() {
+		var a string
+		var b float64
+		rows.Scan(&a, &b)
+		datesOfTarget = append(datesOfTarget, a)
+		tmp_targets = append(tmp_targets, b)
+	}
+
+	rows, err = s.db.Query(`SELECT date, work_center, sum(qty), sum(manhr) from 
+		efficienct_reports group by date, work_center having work_center = 'ASSEMBLY' 
+		and date >= '` + fromdate + `' order by date`)
+	if err != nil {
+		panic(err)
+	}
+	var targets []float64
+	var efficiency []float64
+	for rows.Next() {
+		var a, b string
+		var c, d float64
+		rows.Scan(&a, &b, &c, &d)
+		i := slices.Index(datesOfTarget, a)
+		if d == 0 || i == -1 {
+			efficiency = append(efficiency, 0)
+		} else {
+			efficiency = append(efficiency, math.Round((c/d)*100/tmp_targets[i]))
+		}
+		if i == -1 {
+			targets = append(targets, 0)
+		} else {
+			targets = append(targets, tmp_targets[i]*d)
+		}
+	}
+
+	var latestCreated string
+	rows, err = s.db.Query(`select created_datetime from efficienct_reports where work_center 
+		= 'ASSEMBLY' order by id desc limit 1`)
+	if err != nil {
+		panic(err)
+	}
+	for rows.Next() {
+		err := rows.Scan(&latestCreated)
+		if err != nil {
+			latestCreated = ""
+			// panic(err)
+		} else {
+			t, err := time.Parse("2006-01-02T15:04:05.999999999Z", latestCreated)
+			if err != nil {
+				panic(err)
+			}
+			latestCreated = t.Add(time.Hour * 7).Format("15:04")
+		}
+	}
+
+	var month string
+	var nextmonth string
+	if slices.Contains([]string{"28", "29", "30", "31"}, fromdate[8:10]) {
+		tmpt, _ := time.Parse("2006-01-02", fromdate)
+		month = tmpt.Format("01")
+		nextmonth = tmpt.AddDate(0, 1, 0).Format("01")
+	} else {
+		month = time.Now().Format("01")
+		nextmonth = time.Now().AddDate(0, 1, 0).Format("01")
+	}
+	var demand float64
+
+	sql = `select demandofmonth from targets where 
+		workcenter = 'ASSEMBLY' and date >= '2024-` + month + `-01' 
+		and date <= '2024-` + nextmonth + `-01' and demandofmonth <> 0 order by demandofmonth desc limit 1`
+	rows, err = s.db.Query(sql)
+	if err != nil {
+		log.Println(err)
+	}
+	for rows.Next() {
+		var a float64
+		rows.Scan(&a)
+		demand = a
+	}
+
+	var mtd float64
+	sql = `select sum(qty) from efficienct_reports where work_center = 'ASSEMBLY' 
+	 and date >='2024-` + month + `-01' and date <= '2024-` + nextmonth + `-01'`
+	rows, err = s.db.Query(sql)
+	if err != nil {
+		log.Println(err)
+	}
+	for rows.Next() {
+		rows.Scan(&mtd)
+	}
+	mtdstr := message.NewPrinter(language.English).Sprintf("%.f", mtd)
+
+	sql = `select distinct on (date) onconveyor from efficienct_reports 
+		where date >= '` + fromdate + `' and work_center = 'ASSEMBLY' order by date nulls last`
+	rows, err = s.db.Query(sql)
+	if err != nil {
+		log.Println(err)
+		return c.SendString("loi lay du lieu tren chuyen")
+	}
+	var onconveyors []float64
+	for rows.Next() {
+		var a float64
+		rows.Scan(&a)
+		onconveyors = append(onconveyors, a)
+	}
+
+	return c.Render("efficiency/assemblychart", fiber.Map{
+		"dates":         dates,
+		"rhlist1":       rhlist1,
+		"rhlist2":       rhlist2,
+		"brandlist1":    brandlist1,
+		"brandlist2":    brandlist2,
+		"targets":       targets,
+		"efficiency":    efficiency,
+		"latestCreated": latestCreated,
+		"demand":        demand,
+		"mtd":           mtdstr,
+		"onconveyors":   onconveyors,
+	})
+}
+
+// fromdate := c.Query("fromdate")
+
+// 	var labels []string
+// 	var quanity []float64
+// 	var laborrate []float64
+// 	var actual_target float64
+// 	var targets []float64
+// 	var target float64
+// 	var units = map[string]string{
+// 		"Production Value": "Amount($)",
+// 		"CUTTING":          "Quanity(cmb)",
+// 		"LAMINATION":       "Quanity(m2)",
+// 		"REEDEDLINE":       "Quanity(m2)",
+// 		"VENEERLAMINATION": "Quanity(m2)",
+// 		"PANELCNC":         "Quanity(sheet)",
+// 		"ASSEMBLY":         "Amount($)",
+// 		"WOODFINISHING":    "Amount($)",
+// 		"PACKING":          "Amount($)",
+// 	}
+// 	var targetUnits = map[string]string{
+// 		"Production Value": "$", "CUTTING": "cmb", "LAMINATION": "m2", "REEDEDLINE": "m2", "VENEERLAMINATION": "m2", "PANELCNC": "sheet", "ASSEMBLY": "$", "WOODFINISHING": "$", "PACKING": "$",
+// 	}
+// 	rows, err := s.db.Query(`select actual_target, target from efficienct_workcenter
+// 		where workcenter = 'PACKING'`)
+// 	if err != nil {
+// 		panic(err)
+// 	}
+// 	for rows.Next() {
+// 		rows.Scan(&actual_target, &target)
+// 	}
+
+// 	var totalManhrBydate = map[string]float64{}
+// 	rows, err = s.db.Query(`SELECT date, sum(manhr) from efficienct_reports
+// 		group by date having date >= '` + fromdate + `' order by date`)
+// 	if err != nil {
+// 		panic(err)
+// 	}
+// 	for rows.Next() {
+// 		var a string
+// 		var b float64
+// 		rows.Scan(&a, &b)
+// 		a = strings.Split(a, "T")[0]
+// 		totalManhrBydate[a] = b
+// 	}
+
+// 	rows, err = s.db.Query(`SELECT date, work_center, sum(qty), sum(manhr) from
+// 		efficienct_reports group by date, work_center having work_center = 'PACKING'
+// 		and date >= '` + fromdate + `' order by date`)
+// 	if err != nil {
+// 		panic(err)
+// 	}
+// 	for rows.Next() {
+// 		var a, b string
+// 		var c, d float64
+// 		rows.Scan(&a, &b, &c, &d)
+// 		a = strings.Split(a, "T")[0]
+// 		if d == 0 {
+// 			laborrate = append(laborrate, 0)
+// 		} else {
+// 			laborrate = append(laborrate, math.Round(c/totalManhrBydate[a]))
+// 		}
+// 		t, _ := time.Parse("2006-01-02", a)
+// 		a = t.Format("2 Jan")
+
+// 		labels = append(labels, a)
+// 		quanity = append(quanity, c)
+// 		targets = append(targets, target)
+// 	}
+
+// 	numberOfTargets := len(targets)
+// 	var rhlist1 = make([]float64, numberOfTargets)
+// 	var rhlist2 = make([]float64, numberOfTargets)
+// 	var brandlist1 = make([]float64, numberOfTargets)
+// 	var brandlist2 = make([]float64, numberOfTargets)
+
+// 	rows, err = s.db.Query(`SELECT date, factory_no, type, sum(qty) from
+// 		efficienct_reports where work_center = 'PACKING' group by date, factory_no, type having
+// 		date >= '` + fromdate + `' order by date`)
+// 	if err != nil {
+// 		panic(err)
+// 	}
+// 	ld := ""
+// 	i := -1
+// 	for rows.Next() {
+// 		var a, b, c string
+// 		var d float64
+// 		rows.Scan(&a, &b, &c, &d)
+// 		a = strings.Split(a, "T")[0]
+// 		if ld != a {
+// 			i++
+// 			ld = a
+// 		}
+// 		if b == "1" && c == "RH" {
+// 			rhlist1[i] = d
+// 		}
+// 		if b == "1" && c == "BRAND" {
+// 			brandlist1[i] = d
+// 		}
+// 		if b == "2" && c == "BRAND" {
+// 			brandlist2[i] = d
+// 		}
+// 		if b == "2" && c == "RH" {
+// 			rhlist2[i] = d
+// 		}
+// 	}
+
+// 	var latestCreated string
+// 	rows, err = s.db.Query(`select created_datetime from efficienct_reports where work_center
+// 		= 'PACKING' order by id desc limit 1`)
+// 	if err != nil {
+// 		panic(err)
+// 	}
+// 	for rows.Next() {
+// 		err := rows.Scan(&latestCreated)
+// 		if err != nil {
+// 			latestCreated = ""
+// 			// panic(err)
+// 		} else {
+// 			t, err := time.Parse("2006-01-02T15:04:05.999999999Z", latestCreated)
+// 			if err != nil {
+// 				panic(err)
+// 			}
+// 			latestCreated = t.Add(time.Hour * 7).Format("15:04")
+// 		}
+// 	}
+
+// 	return c.Render("efficiency/provalue_chart", fiber.Map{
+// 		"workcenter":    "Production Value",
+// 		"labels":        labels,
+// 		"quanity":       quanity,
+// 		"efficiency":    laborrate,
+// 		"targets":       targets,
+// 		"chartLabels":   []string{"Quanity", "labor rate($/manhr)", "Target"},
+// 		"units":         units,
+// 		"latestCreated": latestCreated,
+// 		"targetUnits":   targetUnits,
+// 		"rhlist1":       rhlist1,
+// 		"brandlist1":    brandlist1,
+// 		"rhlist2":       rhlist2,
+// 		"brandlist2":    brandlist2,
+// 	})

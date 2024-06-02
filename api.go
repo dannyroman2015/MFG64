@@ -112,6 +112,8 @@ func (s *Server) Run() {
 	app.Get("/efficiency", s.efficiencyHandler)
 	app.Get("/efficiencywithdate", s.efficiencyWithdateHandler)
 
+	app.Get("/assembly", s.assemblyHandler)
+
 	app.Get("/login", s.loginGetHandler)
 
 	app.Get("/efficiencyreport", s.efficiencyReportHandler)
