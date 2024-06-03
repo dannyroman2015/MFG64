@@ -999,7 +999,7 @@ func (s *Server) efficientChartHandler(c *fiber.Ctx) error {
 		"units":         units,
 		"latestCreated": latestCreated,
 		"targetUnits":   targetUnits,
-		"demand":        demand,
+		"demand":        message.NewPrinter(language.English).Sprintf("%.f", demand),
 		"mtd":           mtdstr,
 	})
 }
