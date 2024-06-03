@@ -393,12 +393,12 @@ func (s *Server) summarytableHandler(c *fiber.Ctx) error {
 		if a == "RH" {
 			moneys[1] = b
 			pcs[1] = c
-		} else {
+		}
+		if a == "BRAND" {
 			moneys[0] = b
 			pcs[0] = c
 		}
 		totalm += b
-
 	}
 
 	days := time.Now().Day()
