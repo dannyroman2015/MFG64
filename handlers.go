@@ -1246,6 +1246,8 @@ func (s *Server) assemblyHandler(c *fiber.Ctx) error {
 		onconveyors = append(onconveyors, a)
 	}
 
+	p := message.NewPrinter(language.English)
+
 	return c.Render("efficiency/assemblychart", fiber.Map{
 		"dates":         dates,
 		"rhlist1":       rhlist1,
@@ -1255,7 +1257,7 @@ func (s *Server) assemblyHandler(c *fiber.Ctx) error {
 		"targets":       targets,
 		"efficiency":    efficiency,
 		"latestCreated": latestCreated,
-		"demand":        demand,
+		"demand":        p.Sprintf("%.f", demand),
 		"mtd":           mtdstr,
 		"onconveyors":   onconveyors,
 	})
