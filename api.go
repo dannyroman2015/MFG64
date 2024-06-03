@@ -113,6 +113,8 @@ func (s *Server) Run() {
 	app.Get("/efficiencywithdate", s.efficiencyWithdateHandler)
 
 	app.Get("/assembly", s.assemblyHandler)
+	app.Get("/woodfinishing", s.woodfinishingHandler)
+	app.Get("/packing", s.packingHandler)
 
 	app.Get("/login", s.loginGetHandler)
 
@@ -870,7 +872,7 @@ func (s *Server) efficientChartHandler(c *fiber.Ctx) error {
 	var efficiency []float64
 	// var actual_target float64
 	// var target float64
-	var targets []float64
+
 	var units = map[string]string{
 		"Production Value": "Amount($)", "CUTTING": "Quantity(cbm)", "LAMINATION": "Quantity(m2)", "REEDEDLINE": "Quantity(m2)", "VENEERLAMINATION": "Quantity(m2)", "PANELCNC": "Quantity(sheet)", "ASSEMBLY": "Amount($)", "WOODFINISHING": "Amount($)", "PACKING": "Amount($)",
 	}
@@ -878,8 +880,8 @@ func (s *Server) efficientChartHandler(c *fiber.Ctx) error {
 		"Production Value": "$", "CUTTING": "cbm", "LAMINATION": "m2", "REEDEDLINE": "m2", "VENEERLAMINATION": "m2", "PANELCNC": "sheet", "ASSEMBLY": "$", "WOODFINISHING": "$", "PACKING": "$",
 	}
 
-	rows, err := s.db.Query(`select date, target from targets 
-	where workcenter = '` + workcenter + `' and date >= '` + fromdate + `'`)
+	rows, err := s.db.Query(`select date, target, workers, hours from targets 
+	where workcenter = '` + workcenter + `' and date >= '` + fromdate + `' order by date`)
 	// rows, err := s.db.Query(`select actual_target, target from efficienct_workcenter
 	// 	where workcenter = '` + workcenter + `'`)
 	if err != nil {
@@ -889,14 +891,17 @@ func (s *Server) efficientChartHandler(c *fiber.Ctx) error {
 	// 	rows.Scan(&actual_target, &target)
 	// }
 
+	var targets []float64
 	var datesOfTarget []string
 	var tmp_targets []float64
 	for rows.Next() {
 		var a string
-		var b float64
-		rows.Scan(&a, &b)
+		var b, c, d float64
+
+		rows.Scan(&a, &b, &c, &d)
 		datesOfTarget = append(datesOfTarget, a)
 		tmp_targets = append(tmp_targets, b)
+		targets = append(targets, b*c*d)
 	}
 
 	rows, err = s.db.Query(`SELECT date, work_center, sum(qty), sum(manhr) from 
@@ -922,11 +927,11 @@ func (s *Server) efficientChartHandler(c *fiber.Ctx) error {
 		labels = append(labels, a)
 		c = math.Round(c)
 		quanity = append(quanity, c)
-		if i == -1 {
-			targets = append(targets, 0)
-		} else {
-			targets = append(targets, tmp_targets[i]*d)
-		}
+		// if i == -1 {
+		// 	targets = append(targets, 0)
+		// } else {
+		// 	targets = append(targets, tmp_targets[i]*d)
+		// }
 	}
 
 	var latestCreated string

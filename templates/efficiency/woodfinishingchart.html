@@ -1,0 +1,160 @@
+<div class="rightside">
+  MTD: <strong>{{.mtd}}</strong> / 
+  Demand: <strong>{{.demand}}</strong>
+</div>
+<div class="chart-container">
+  <canvas id="woodfinishingchart"></canvas>
+</div>
+
+<style>
+  .chart-container {
+    border-bottom: 1px solid black;
+    padding-bottom: 20px;
+  }
+</style>
+
+<script>
+  new Chart(document.getElementById("woodfinishingchart"), {
+    plugins: [ChartDataLabels],
+    type: 'bar',
+    data: {
+      labels: {{.dates}},
+      datasets: [
+      {
+        datalabels: {
+          labels: {
+            title: null,
+          }
+        },
+        label: "X1-RH($)",
+        data: {{ .rhlist1 }},
+        backgroundColor: "rgba(75, 192, 192, 0.6)",
+        pointStyle: 'rect',
+      },
+
+      {
+        datalabels: {
+          labels: {
+            title: null,
+          }
+        },
+        label: "X1-BRAND($)",
+        data: {{ .brandlist1 }},
+        backgroundColor: "rgba(153, 102, 255, 0.6)",
+        pointStyle: 'rect',
+      },
+
+      {
+        datalabels: {
+          labels: {
+            title: null,
+          }
+        },
+        label: "X2-RH($)",
+        data: {{ .rhlist2 }},
+        backgroundColor: "rgba(255, 99, 132, 0.6)",
+        pointStyle: 'rect',
+      },
+
+      {
+        datalabels: {
+          labels: {
+            title: null,
+          }
+        },
+        type: "bar",
+        label: "Trên chuyền($)",
+        data: {{ .onconveyors }},
+        backgroundColor: "lightgray",
+        pointStyle: 'rect',
+        stack: 'non-stacked',
+      },
+      
+      {
+        datalabels: {
+          labels: {
+            value: {
+              color: '#433F45',
+            }
+          }
+        },
+        label: "Efficiency(%)",
+        data: {{.efficiency}},
+        yAxisID: 'y1',
+        type: "line",
+        pointStyle: 'line',
+        pointRadius: 0,
+        borderWidth: 1,
+        backgroundColor: '#433F45',
+        borderColor: '#433F45',
+      },
+      
+      {
+        datalabels: {
+          labels: {
+            title: null,
+          }
+        },
+        label: 'Target($)' ,
+        data: {{.targets}},
+        yAxisID: 'y',
+        type: "line",
+        pointStyle: 'circle',
+        pointRadius: 1,
+        tension: 0.1,
+        borderWidth: 1,
+        backgroundColor: 'blue',
+        borderColor: 'blue',
+      },
+    ]
+    },
+    options: {
+      plugins: {
+        tooltip: {
+          callbacks: {
+            footer: (tooltipItems) => {
+              let sum = 0;
+              sum = tooltipItems[0].parsed._stacks.y[0] + tooltipItems[0].parsed._stacks.y[1] + tooltipItems[0].parsed._stacks.y[2]
+              return 'Sum: ' + sum;
+            }
+          }
+        },
+        datalabels: {
+          font: {size: 10},
+          color: 'black', align: 'top', anchor: 'start', offset: 0,
+          formatter: function(value, context) {
+            return value.toLocaleString()
+          },
+        },
+        title: {text: "WOODFINISHING (lastest update at {{.latestCreated}})", display: true},
+        legend: {
+          labels: {
+            usePointStyle: true,
+          },
+        }
+      },
+      responsive: true,
+      scales: {
+        x: {
+          stacked: true,
+          grid: { display: false, },
+        },
+        y: {
+          stacked: true,
+          display: false,
+          beginAtZero: true,
+          grid: { display: false, },
+        },
+        y1: {
+          type: 'linear',
+          display: false,
+          position: 'right',
+          grid: {
+            drawOnChartArea: false,
+            display: false,
+          },
+        },
+      },
+    },
+  });
+</script>

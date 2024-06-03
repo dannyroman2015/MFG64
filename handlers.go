@@ -35,9 +35,6 @@ func (s *Server) prodvalueChartHandler(c *fiber.Ctx) error {
 	var labels []string
 	var quanity []float64
 	var laborrate []float64
-	var actual_target float64
-	var targets []float64
-	var target float64
 	var units = map[string]string{
 		"Production Value": "Amount($)",
 		"CUTTING":          "Quanity(cmb)",
@@ -52,14 +49,45 @@ func (s *Server) prodvalueChartHandler(c *fiber.Ctx) error {
 	var targetUnits = map[string]string{
 		"Production Value": "$", "CUTTING": "cmb", "LAMINATION": "m2", "REEDEDLINE": "m2", "VENEERLAMINATION": "m2", "PANELCNC": "sheet", "ASSEMBLY": "$", "WOODFINISHING": "$", "PACKING": "$",
 	}
-	rows, err := s.db.Query(`select actual_target, target from efficienct_workcenter 
-		where workcenter = 'PACKING'`)
+	////
+	rows, err := s.db.Query(`select date, target, workers, hours from targets 
+	where workcenter = 'PACKING' and date >= '` + fromdate + `' order by date`)
+	if err != nil {
+		log.Println(err)
+		return c.SendString("Loi lay du lieu targets")
+	}
+	var targets []float64
+	var datesOfTarget []string
+	var tmp_targets []float64
+	for rows.Next() {
+		var a string
+		var b, c, d float64
+		rows.Scan(&a, &b, &c, &d)
+		datesOfTarget = append(datesOfTarget, a)
+		tmp_targets = append(tmp_targets, b)
+		targets = append(targets, b*c*d)
+	}
+
+	rows, err = s.db.Query(`SELECT date, work_center, sum(qty), sum(manhr) from 
+		efficienct_reports group by date, work_center having work_center = 'PACKING' 
+		and date >= '` + fromdate + `' order by date`)
 	if err != nil {
 		panic(err)
 	}
+
+	var efficiency []float64
 	for rows.Next() {
-		rows.Scan(&actual_target, &target)
+		var a, b string
+		var c, d float64
+		rows.Scan(&a, &b, &c, &d)
+		i := slices.Index(datesOfTarget, a)
+		if d == 0 || i == -1 {
+			efficiency = append(efficiency, 0)
+		} else {
+			efficiency = append(efficiency, math.Round((c/d)*100/tmp_targets[i]))
+		}
 	}
+	////
 
 	var totalManhrBydate = map[string]float64{}
 	rows, err = s.db.Query(`SELECT date, sum(manhr) from efficienct_reports 
@@ -96,7 +124,6 @@ func (s *Server) prodvalueChartHandler(c *fiber.Ctx) error {
 
 		labels = append(labels, a)
 		quanity = append(quanity, c)
-		targets = append(targets, target)
 	}
 
 	numberOfTargets := len(targets)
@@ -748,9 +775,11 @@ func (s *Server) targetPostHandler(c *fiber.Ctx) error {
 	startDate, _ := time.Parse("2006-01-02", dateRange[0])
 	endDate, _ := time.Parse("2006-01-02", dateRange[1])
 
+	workers := c.FormValue("workers")
+	hours := c.FormValue("hours")
 	target := c.FormValue("target")
-	if target == "" {
-		return c.SendString("Please choose target")
+	if target == "" || workers == "" || hours == "" {
+		return c.SendString("Please choose target, numbers of workers and working hours")
 	}
 
 	weekdays := []string{}
@@ -790,22 +819,23 @@ func (s *Server) targetPostHandler(c *fiber.Ctx) error {
 	var sql string
 	demand := c.FormValue("demandofmonth")
 	if demand == "" || demand == "0" {
-		sql = `insert into targets(workcenter, date, target, unit) values `
+		sql = `insert into targets(workcenter, date, target, unit, workers, hours) values `
 		for i := startDate; endDate.Sub(i) >= 0; i = i.AddDate(0, 0, 1) {
 			if slices.Contains(weekdays, i.Weekday().String()) {
-				sql += `('` + wc + `', '` + i.Format("2006-01-02") + `', ` + target + `, '` + unit + `'),`
+				sql += `('` + wc + `', '` + i.Format("2006-01-02") + `', ` + target + `, '` + unit + `', ` + workers + `, ` + hours + `),`
 			}
 		}
-		sql = sql[:len(sql)-1] + ` on conflict(workcenter, date) do update set target = EXCLUDED.target `
+		sql = sql[:len(sql)-1] + ` on conflict(workcenter, date) do update set target = EXCLUDED.target, workers = EXCLUDED.workers, hours = EXCLUDED.hours `
 	} else {
-		sql = `insert into targets(workcenter, date, target, unit, demandofmonth) values `
+		sql = `insert into targets(workcenter, date, target, unit, demandofmonth, workers, hours) values `
 		for i := startDate; endDate.Sub(i) >= 0; i = i.AddDate(0, 0, 1) {
 			if slices.Contains(weekdays, i.Weekday().String()) {
-				sql += `('` + wc + `', '` + i.Format("2006-01-02") + `', ` + target + `, '` + unit + `',` + demand + `),`
+				sql += `('` + wc + `', '` + i.Format("2006-01-02") + `', ` + target + `, '` + unit + `',` + demand + `, ` + workers + `, ` + hours + `),`
 			}
 		}
-		sql = sql[:len(sql)-1] + ` on conflict(workcenter, date) do update set target = EXCLUDED.target, demandofmonth = EXCLUDED.demandofmonth `
+		sql = sql[:len(sql)-1] + ` on conflict(workcenter, date) do update set target = EXCLUDED.target, demandofmonth = EXCLUDED.demandofmonth, workers = EXCLUDED.workers, hours = EXCLUDED.hours `
 	}
+
 	_, err := s.db.Exec(sql)
 	if err != nil {
 		log.Println(err)
@@ -828,10 +858,10 @@ func (s *Server) getTargetsHistory(c *fiber.Ctx) error {
 	wc := c.FormValue("workcenter")
 	var sql string
 	if wc == "" {
-		sql = `select date, workcenter, target, unit from targets where date >= '` + start + `' and date <= '` + end + `' order by date desc, workcenter`
+		sql = `select date, workcenter, target, unit, workers, hours from targets where date >= '` + start + `' and date <= '` + end + `' order by date desc, workcenter`
 	} else {
 
-		sql = `select date, workcenter, target, unit from targets where date >= '` + start + `' and date <= '` + end + `' and workcenter = '` + wc + `' order by date desc`
+		sql = `select date, workcenter, target, unit, workers, hours from targets where date >= '` + start + `' and date <= '` + end + `' and workcenter = '` + wc + `' order by date desc`
 	}
 	rows, err := s.db.Query(sql)
 	if err != nil {
@@ -840,8 +870,8 @@ func (s *Server) getTargetsHistory(c *fiber.Ctx) error {
 	}
 	var list = [][]string{}
 	for rows.Next() {
-		var a = make([]string, 4)
-		rows.Scan(&a[0], &a[1], &a[2], &a[3])
+		var a = make([]string, 6)
+		rows.Scan(&a[0], &a[1], &a[2], &a[3], &a[4], &a[5])
 		a[0] = strings.Split(a[0], "T")[0]
 		list = append(list, a)
 	}
@@ -1136,20 +1166,22 @@ func (s *Server) assemblyHandler(c *fiber.Ctx) error {
 	}
 
 	// targets
-	rows, err = s.db.Query(`select date, target from targets 
-	where workcenter = 'ASSEMBLY' and date >= '` + fromdate + `'`)
+	rows, err = s.db.Query(`select date, target, workers, hours from targets 
+	where workcenter = 'ASSEMBLY' and date >= '` + fromdate + `' order by date`)
 	if err != nil {
 		log.Println(err)
 		return c.SendString("Loi lay du lieu targets")
 	}
+	var targets []float64
 	var datesOfTarget []string
 	var tmp_targets []float64
 	for rows.Next() {
 		var a string
-		var b float64
-		rows.Scan(&a, &b)
+		var b, c, d float64
+		rows.Scan(&a, &b, &c, &d)
 		datesOfTarget = append(datesOfTarget, a)
 		tmp_targets = append(tmp_targets, b)
+		targets = append(targets, b*c*d)
 	}
 
 	rows, err = s.db.Query(`SELECT date, work_center, sum(qty), sum(manhr) from 
@@ -1158,7 +1190,7 @@ func (s *Server) assemblyHandler(c *fiber.Ctx) error {
 	if err != nil {
 		panic(err)
 	}
-	var targets []float64
+
 	var efficiency []float64
 	for rows.Next() {
 		var a, b string
@@ -1169,11 +1201,6 @@ func (s *Server) assemblyHandler(c *fiber.Ctx) error {
 			efficiency = append(efficiency, 0)
 		} else {
 			efficiency = append(efficiency, math.Round((c/d)*100/tmp_targets[i]))
-		}
-		if i == -1 {
-			targets = append(targets, 0)
-		} else {
-			targets = append(targets, tmp_targets[i]*d)
 		}
 	}
 
@@ -1251,6 +1278,370 @@ func (s *Server) assemblyHandler(c *fiber.Ctx) error {
 	p := message.NewPrinter(language.English)
 
 	return c.Render("efficiency/assemblychart", fiber.Map{
+		"dates":         dates,
+		"rhlist1":       rhlist1,
+		"rhlist2":       rhlist2,
+		"brandlist1":    brandlist1,
+		"brandlist2":    brandlist2,
+		"targets":       targets,
+		"efficiency":    efficiency,
+		"latestCreated": latestCreated,
+		"demand":        p.Sprintf("%.f", demand),
+		"mtd":           mtdstr,
+		"onconveyors":   onconveyors,
+	})
+}
+
+func (s *Server) woodfinishingHandler(c *fiber.Ctx) error {
+	fromdate := c.Query("fromdate")
+
+	sql := `select distinct date from efficienct_reports where work_center = 'WOODFINISHING' and date >= '` + fromdate + `' order by date`
+	rows, err := s.db.Query(sql)
+	if err != nil {
+		log.Println(err)
+		return c.SendString("Loi truy van")
+	}
+	var dates []string
+	for rows.Next() {
+		var a string
+		rows.Scan(&a)
+		a = strings.Split(a, "T")[0]
+		t, _ := time.Parse("2006-01-02", a)
+		a = t.Format("2 Jan")
+		dates = append(dates, a)
+	}
+
+	nod := len(dates)
+	var rhlist1 = make([]float64, nod)
+	var rhlist2 = make([]float64, nod)
+	var brandlist1 = make([]float64, nod)
+	var brandlist2 = make([]float64, nod)
+	rows, err = s.db.Query(`SELECT date, factory_no, type, sum(qty) from 
+ 		efficienct_reports where work_center = 'WOODFINISHING' group by date, factory_no, type having 
+ 		date >= '` + fromdate + `' order by date`)
+	if err != nil {
+		panic(err)
+	}
+	ld := ""
+	i := -1
+	for rows.Next() {
+		var a, b, c string
+		var d float64
+		rows.Scan(&a, &b, &c, &d)
+		a = strings.Split(a, "T")[0]
+		if ld != a {
+			i++
+			ld = a
+		}
+		if b == "1" && c == "RH" {
+			rhlist1[i] = d
+		}
+		if b == "1" && c == "BRAND" {
+			brandlist1[i] = d
+		}
+		if b == "2" && c == "BRAND" {
+			brandlist2[i] = d
+		}
+		if b == "2" && c == "RH" {
+			rhlist2[i] = d
+		}
+	}
+
+	// targets
+	rows, err = s.db.Query(`select date, target, workers, hours from targets 
+	where workcenter = 'WOODFINISHING' and date >= '` + fromdate + `' order by date`)
+	if err != nil {
+		log.Println(err)
+		return c.SendString("Loi lay du lieu targets")
+	}
+	var targets []float64
+	var datesOfTarget []string
+	var tmp_targets []float64
+	for rows.Next() {
+		var a string
+		var b, c, d float64
+		rows.Scan(&a, &b, &c, &d)
+		datesOfTarget = append(datesOfTarget, a)
+		tmp_targets = append(tmp_targets, b)
+		targets = append(targets, b*c*d)
+	}
+
+	rows, err = s.db.Query(`SELECT date, work_center, sum(qty), sum(manhr) from 
+		efficienct_reports group by date, work_center having work_center = 'WOODFINISHING' 
+		and date >= '` + fromdate + `' order by date`)
+	if err != nil {
+		panic(err)
+	}
+
+	var efficiency []float64
+	for rows.Next() {
+		var a, b string
+		var c, d float64
+		rows.Scan(&a, &b, &c, &d)
+		i := slices.Index(datesOfTarget, a)
+		if d == 0 || i == -1 {
+			efficiency = append(efficiency, 0)
+		} else {
+			efficiency = append(efficiency, math.Round((c/d)*100/tmp_targets[i]))
+		}
+	}
+
+	var latestCreated string
+	rows, err = s.db.Query(`select created_datetime from efficienct_reports where work_center 
+		= 'WOODFINISHING' order by id desc limit 1`)
+	if err != nil {
+		panic(err)
+	}
+	for rows.Next() {
+		err := rows.Scan(&latestCreated)
+		if err != nil {
+			latestCreated = ""
+			// panic(err)
+		} else {
+			t, err := time.Parse("2006-01-02T15:04:05.999999999Z", latestCreated)
+			if err != nil {
+				panic(err)
+			}
+			latestCreated = t.Add(time.Hour * 7).Format("15:04")
+		}
+	}
+
+	var month string
+	var nextmonth string
+	if slices.Contains([]string{"28", "29", "30", "31"}, fromdate[8:10]) {
+		tmpt, _ := time.Parse("2006-01-02", fromdate)
+		month = tmpt.Format("01")
+		nextmonth = tmpt.AddDate(0, 1, 0).Format("01")
+	} else {
+		month = time.Now().Format("01")
+		nextmonth = time.Now().AddDate(0, 1, 0).Format("01")
+	}
+	var demand float64
+
+	sql = `select demandofmonth from targets where 
+		workcenter = 'WOODFINISHING' and date >= '2024-` + month + `-01' 
+		and date <= '2024-` + nextmonth + `-01' and demandofmonth <> 0 order by demandofmonth desc limit 1`
+	rows, err = s.db.Query(sql)
+	if err != nil {
+		log.Println(err)
+	}
+	for rows.Next() {
+		var a float64
+		rows.Scan(&a)
+		demand = a
+	}
+
+	var mtd float64
+	sql = `select sum(qty) from efficienct_reports where work_center = 'WOODFINISHING' 
+	 and date >='2024-` + month + `-01' and date <= '2024-` + nextmonth + `-01'`
+	rows, err = s.db.Query(sql)
+	if err != nil {
+		log.Println(err)
+	}
+	for rows.Next() {
+		rows.Scan(&mtd)
+	}
+	mtdstr := message.NewPrinter(language.English).Sprintf("%.f", mtd)
+
+	sql = `select distinct on (date) onconveyor from efficienct_reports 
+		where date >= '` + fromdate + `' and work_center = 'WOODFINISHING' order by date nulls last`
+	rows, err = s.db.Query(sql)
+	if err != nil {
+		log.Println(err)
+		return c.SendString("loi lay du lieu tren chuyen")
+	}
+	var onconveyors []float64
+	for rows.Next() {
+		var a float64
+		rows.Scan(&a)
+		onconveyors = append(onconveyors, a)
+	}
+
+	p := message.NewPrinter(language.English)
+
+	return c.Render("efficiency/woodfinishingchart", fiber.Map{
+		"dates":         dates,
+		"rhlist1":       rhlist1,
+		"rhlist2":       rhlist2,
+		"brandlist1":    brandlist1,
+		"brandlist2":    brandlist2,
+		"targets":       targets,
+		"efficiency":    efficiency,
+		"latestCreated": latestCreated,
+		"demand":        p.Sprintf("%.f", demand),
+		"mtd":           mtdstr,
+		"onconveyors":   onconveyors,
+	})
+}
+
+func (s *Server) packingHandler(c *fiber.Ctx) error {
+	fromdate := c.Query("fromdate")
+
+	sql := `select distinct date from efficienct_reports where work_center = 'PACKING' and date >= '` + fromdate + `' order by date`
+	rows, err := s.db.Query(sql)
+	if err != nil {
+		log.Println(err)
+		return c.SendString("Loi truy van")
+	}
+	var dates []string
+	for rows.Next() {
+		var a string
+		rows.Scan(&a)
+		a = strings.Split(a, "T")[0]
+		t, _ := time.Parse("2006-01-02", a)
+		a = t.Format("2 Jan")
+		dates = append(dates, a)
+	}
+
+	nod := len(dates)
+	var rhlist1 = make([]float64, nod)
+	var rhlist2 = make([]float64, nod)
+	var brandlist1 = make([]float64, nod)
+	var brandlist2 = make([]float64, nod)
+	rows, err = s.db.Query(`SELECT date, factory_no, type, sum(qty) from 
+ 		efficienct_reports where work_center = 'PACKING' group by date, factory_no, type having 
+ 		date >= '` + fromdate + `' order by date`)
+	if err != nil {
+		panic(err)
+	}
+	ld := ""
+	i := -1
+	for rows.Next() {
+		var a, b, c string
+		var d float64
+		rows.Scan(&a, &b, &c, &d)
+		a = strings.Split(a, "T")[0]
+		if ld != a {
+			i++
+			ld = a
+		}
+		if b == "1" && c == "RH" {
+			rhlist1[i] = d
+		}
+		if b == "1" && c == "BRAND" {
+			brandlist1[i] = d
+		}
+		if b == "2" && c == "BRAND" {
+			brandlist2[i] = d
+		}
+		if b == "2" && c == "RH" {
+			rhlist2[i] = d
+		}
+	}
+
+	// targets
+	rows, err = s.db.Query(`select date, target, workers, hours from targets 
+	where workcenter = 'PACKING' and date >= '` + fromdate + `' order by date`)
+	if err != nil {
+		log.Println(err)
+		return c.SendString("Loi lay du lieu targets")
+	}
+	var targets []float64
+	var datesOfTarget []string
+	var tmp_targets []float64
+	for rows.Next() {
+		var a string
+		var b, c, d float64
+		rows.Scan(&a, &b, &c, &d)
+		datesOfTarget = append(datesOfTarget, a)
+		tmp_targets = append(tmp_targets, b)
+		targets = append(targets, b*c*d)
+	}
+
+	rows, err = s.db.Query(`SELECT date, work_center, sum(qty), sum(manhr) from 
+		efficienct_reports group by date, work_center having work_center = 'PACKING' 
+		and date >= '` + fromdate + `' order by date`)
+	if err != nil {
+		panic(err)
+	}
+
+	var efficiency []float64
+	for rows.Next() {
+		var a, b string
+		var c, d float64
+		rows.Scan(&a, &b, &c, &d)
+		i := slices.Index(datesOfTarget, a)
+		if d == 0 || i == -1 {
+			efficiency = append(efficiency, 0)
+		} else {
+			efficiency = append(efficiency, math.Round((c/d)*100/tmp_targets[i]))
+		}
+	}
+
+	var latestCreated string
+	rows, err = s.db.Query(`select created_datetime from efficienct_reports where work_center 
+		= 'PACKING' order by id desc limit 1`)
+	if err != nil {
+		panic(err)
+	}
+	for rows.Next() {
+		err := rows.Scan(&latestCreated)
+		if err != nil {
+			latestCreated = ""
+			// panic(err)
+		} else {
+			t, err := time.Parse("2006-01-02T15:04:05.999999999Z", latestCreated)
+			if err != nil {
+				panic(err)
+			}
+			latestCreated = t.Add(time.Hour * 7).Format("15:04")
+		}
+	}
+
+	var month string
+	var nextmonth string
+	if slices.Contains([]string{"28", "29", "30", "31"}, fromdate[8:10]) {
+		tmpt, _ := time.Parse("2006-01-02", fromdate)
+		month = tmpt.Format("01")
+		nextmonth = tmpt.AddDate(0, 1, 0).Format("01")
+	} else {
+		month = time.Now().Format("01")
+		nextmonth = time.Now().AddDate(0, 1, 0).Format("01")
+	}
+	var demand float64
+
+	sql = `select demandofmonth from targets where 
+		workcenter = 'PACKING' and date >= '2024-` + month + `-01' 
+		and date <= '2024-` + nextmonth + `-01' and demandofmonth <> 0 order by demandofmonth desc limit 1`
+	rows, err = s.db.Query(sql)
+	if err != nil {
+		log.Println(err)
+	}
+	for rows.Next() {
+		var a float64
+		rows.Scan(&a)
+		demand = a
+	}
+
+	var mtd float64
+	sql = `select sum(qty) from efficienct_reports where work_center = 'PACKING' 
+	 and date >='2024-` + month + `-01' and date <= '2024-` + nextmonth + `-01'`
+	rows, err = s.db.Query(sql)
+	if err != nil {
+		log.Println(err)
+	}
+	for rows.Next() {
+		rows.Scan(&mtd)
+	}
+	mtdstr := message.NewPrinter(language.English).Sprintf("%.f", mtd)
+
+	sql = `select distinct on (date) onconveyor from efficienct_reports 
+		where date >= '` + fromdate + `' and work_center = 'PACKING' order by date nulls last`
+	rows, err = s.db.Query(sql)
+	if err != nil {
+		log.Println(err)
+		return c.SendString("loi lay du lieu tren chuyen")
+	}
+	var onconveyors []float64
+	for rows.Next() {
+		var a float64
+		rows.Scan(&a)
+		onconveyors = append(onconveyors, a)
+	}
+
+	p := message.NewPrinter(language.English)
+
+	return c.Render("efficiency/packingchart", fiber.Map{
 		"dates":         dates,
 		"rhlist1":       rhlist1,
 		"rhlist2":       rhlist2,

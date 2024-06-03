@@ -107,13 +107,13 @@
 
   <div class="field is-horizontal">
     <div class="field-label is-normal">
-      <label class="label">Số lượng nhân công</label>
+      <label class="label">Number of workers</label>
     </div>
 
     <div class="field-body">
-      <div class="field">
+      <div class="field is-narrow">
         <p class="control">
-          <input  name="target" class="input" step="any" min="0" type="number" placeholder="Số nhân công">
+          <input  name="workers" class="input" step="any" min="0" type="number" placeholder="Số nhân công">
         </p>
       </div>
     </div>
@@ -121,14 +121,16 @@
 
   <div class="field is-horizontal">
     <div class="field-label is-normal">
-      <label class="label">Số lượng nhân công</label>
+      <label class="label">Working hours per day</label>
     </div>
 
     <div class="field-body">
-      <div class="field">
+      <div class="field is-narrow">
         <p class="control">
-          <select name="ca" id="">
-            <option value=""></option>
+          <select class="select" name="hours" id="">
+            <option value="10.5">10.5 hours</option>
+            <option value="10">10 hours</option>
+            <option value="8">8 hours</option>
           </select>
         </p>
       </div>
