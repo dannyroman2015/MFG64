@@ -22,29 +22,49 @@
       labels: {{.dates}},
       datasets: [
       {
-        label: "X1-RH",
+        datalabels: {
+          labels: {
+            title: null,
+          }
+        },
+        label: "X1-RH($)",
         data: {{ .rhlist1 }},
         backgroundColor: "rgba(75, 192, 192, 0.6)",
         pointStyle: 'rect',
       },
 
       {
-        label: "X1-BRAND",
+        datalabels: {
+          labels: {
+            title: null,
+          }
+        },
+        label: "X1-BRAND($)",
         data: {{ .brandlist1 }},
         backgroundColor: "rgba(153, 102, 255, 0.6)",
         pointStyle: 'rect',
       },
 
       {
-        label: "X2-RH",
+        datalabels: {
+          labels: {
+            title: null,
+          }
+        },
+        label: "X2-RH($)",
         data: {{ .rhlist2 }},
         backgroundColor: "rgba(255, 99, 132, 0.6)",
         pointStyle: 'rect',
       },
 
       {
+        datalabels: {
+          labels: {
+            title: null,
+          }
+        },
         type: "bar",
-        label: "Trên chuyền",
+        label: "Trên chuyền($)",
         data: {{ .onconveyors }},
         backgroundColor: "lightgray",
         pointStyle: 'rect',
@@ -59,7 +79,7 @@
             }
           }
         },
-        label: "Efficiency",
+        label: "Efficiency(%)",
         data: {{.efficiency}},
         yAxisID: 'y1',
         type: "line",
@@ -76,7 +96,7 @@
             title: null,
           }
         },
-        label: 'Target' ,
+        label: 'Target($)' ,
         data: {{.targets}},
         yAxisID: 'y',
         type: "line",
