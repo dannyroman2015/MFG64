@@ -1172,6 +1172,8 @@ func (s *Server) assemblyHandler(c *fiber.Ctx) error {
 		log.Println(err)
 		return c.SendString("Loi lay du lieu targets")
 	}
+	var workers []int
+	var hours []float64
 	var targets []float64
 	var datesOfTarget []string
 	var tmp_targets []float64
@@ -1182,6 +1184,8 @@ func (s *Server) assemblyHandler(c *fiber.Ctx) error {
 		datesOfTarget = append(datesOfTarget, a)
 		tmp_targets = append(tmp_targets, b)
 		targets = append(targets, b*c*d)
+		workers = append(workers, int(c))
+		hours = append(hours, d)
 	}
 
 	rows, err = s.db.Query(`SELECT date, work_center, sum(qty), sum(manhr) from 
@@ -1289,6 +1293,8 @@ func (s *Server) assemblyHandler(c *fiber.Ctx) error {
 		"demand":        p.Sprintf("%.f", demand),
 		"mtd":           mtdstr,
 		"onconveyors":   onconveyors,
+		"workers":       workers,
+		"hours":         hours,
 	})
 }
 

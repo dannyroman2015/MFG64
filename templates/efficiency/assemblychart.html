@@ -114,8 +114,11 @@
           callbacks: {
             footer: (tooltipItems) => {
               let sum = 0;
+              let i = tooltipItems[0].dataIndex;
+              let arr = {{.workers}};
+              
               sum = tooltipItems[0].parsed._stacks.y[0] + tooltipItems[0].parsed._stacks.y[1] + tooltipItems[0].parsed._stacks.y[2]
-              return 'Sum: ' + sum;
+              return 'Sum: ' + sum + '\nWorkers: ' + arr[i];
             }
           }
         },
