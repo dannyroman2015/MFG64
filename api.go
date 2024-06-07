@@ -848,14 +848,15 @@ func (s *Server) efficiencyReportPostHandler(c *fiber.Ctx) error {
 	manhr, _ = strconv.ParseFloat(c.FormValue("manhr"), 64)
 	pcs := c.FormValue("pcs")
 	onconveyor := c.FormValue("qtywait")
-	var sql string
+	veneertype := c.FormValue("veneertype")
+
 	// if pcs == "" || pcs == "0" {
 	// sql = `insert into efficienct_reports(work_center, date, qty, manhr, type, factory_no, cnc_machine, created_datetime) values ($1, $2, $3, $4, $5, $6, $7, current_timestamp)`
 	// } else {
-	sql = `insert into efficienct_reports(work_center, date, qty, manhr, type, factory_no, cnc_machine, created_datetime, pcs, onconveyor) values ($1, $2, $3, $4, $5, $6, $7, current_timestamp, $8, $9)`
+	sql := `insert into efficienct_reports(work_center, date, qty, manhr, type, factory_no, cnc_machine, created_datetime, pcs, onconveyor, veneertype) values ($1, $2, $3, $4, $5, $6, $7, current_timestamp, $8, $9, $10)`
 	// }
 
-	_, err := s.db.Exec(sql, workcenter, inputdate, qty, manhr, typeofproduct, factory, cncmachine, pcs, onconveyor)
+	_, err := s.db.Exec(sql, workcenter, inputdate, qty, manhr, typeofproduct, factory, cncmachine, pcs, onconveyor, veneertype)
 	if err != nil {
 		panic(err)
 	}

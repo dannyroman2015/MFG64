@@ -85,7 +85,6 @@ id="inputForm" action="/efficiencyreport" method="post" class="box">
           </div>
       </div>
     </div>
-  
   </div>
 
   <div class="field is-horizontal">
@@ -99,6 +98,28 @@ id="inputForm" action="/efficiencyreport" method="post" class="box">
           <input id="inputdate" name="inputdate" class="input" type="date">
         </p>
         <p class="help is-link">Mặc định là ngày hôm nay.</p>
+      </div>
+    </div>
+  </div>
+
+  <div x-show="wc=='VENEERLAMINATION'" class="field is-horizontal">
+    <div class="field-label is-normal">
+      <label class="label">Loại Veneer</label>
+    </div>
+
+    <div class="field-body">
+      <div class="field is-narrow">
+        <p class="control">
+          <div class="select">
+            <select name="veneertype">
+              <option value="" selected disabled>Chọn loại Veneer</option>
+              <option value="reeded">Reeded</option>
+              <option value="straight">Thẳng</option>
+              <option value="curve">Cong</option>
+              <option value="rework">Rework</option>
+            </select>
+          </div>
+        </p>
       </div>
     </div>
   </div>
