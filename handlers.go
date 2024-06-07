@@ -131,6 +131,8 @@ func (s *Server) prodvalueChartHandler(c *fiber.Ctx) error {
 	var rhlist2 = make([]float64, numberOfTargets)
 	var brandlist1 = make([]float64, numberOfTargets)
 	var brandlist2 = make([]float64, numberOfTargets)
+	var outsourcelist1 = make([]float64, numberOfTargets)
+	var outsourcelist2 = make([]float64, numberOfTargets)
 
 	rows, err = s.db.Query(`SELECT date, factory_no, type, sum(qty) from 
 		efficienct_reports where work_center = 'PACKING' group by date, factory_no, type having 
@@ -161,6 +163,12 @@ func (s *Server) prodvalueChartHandler(c *fiber.Ctx) error {
 		if b == "2" && c == "RH" {
 			rhlist2[i] = d
 		}
+		if b == "1" && c == "Outsource" {
+			outsourcelist1[i] = d
+		}
+		if b == "2" && c == "Outsource" {
+			outsourcelist2[i] = d
+		}
 	}
 
 	var latestCreated string
@@ -184,19 +192,21 @@ func (s *Server) prodvalueChartHandler(c *fiber.Ctx) error {
 	}
 
 	return c.Render("efficiency/provalue_chart", fiber.Map{
-		"workcenter":    "Production Value",
-		"labels":        labels,
-		"quanity":       quanity,
-		"efficiency":    laborrate,
-		"targets":       targets,
-		"chartLabels":   []string{"Quanity", "labor rate($/manhr)", "Target"},
-		"units":         units,
-		"latestCreated": latestCreated,
-		"targetUnits":   targetUnits,
-		"rhlist1":       rhlist1,
-		"brandlist1":    brandlist1,
-		"rhlist2":       rhlist2,
-		"brandlist2":    brandlist2,
+		"workcenter":     "Production Value",
+		"labels":         labels,
+		"quanity":        quanity,
+		"efficiency":     laborrate,
+		"targets":        targets,
+		"chartLabels":    []string{"Quanity", "labor rate($/manhr)", "Target"},
+		"units":          units,
+		"latestCreated":  latestCreated,
+		"targetUnits":    targetUnits,
+		"rhlist1":        rhlist1,
+		"brandlist1":     brandlist1,
+		"rhlist2":        rhlist2,
+		"brandlist2":     brandlist2,
+		"outsourcelist1": outsourcelist1,
+		"outsourcelist2": outsourcelist2,
 	})
 }
 
@@ -290,30 +300,61 @@ func (s *Server) woodrecoveryHandler(c *fiber.Ctx) error {
 	var recoveries []float64
 	var targets []float64
 
-	sql := `select date, recovery, target from wood_recovery where date >= '` + c.FormValue("fromdate") + `' order by date`
-
+	sql := `select date, avg(target) from wood_recovery group by date having date >= '` + c.FormValue("fromdate") + `' order by date`
 	rows, err := s.db.Query(sql)
 	if err != nil {
 		log.Println("fail to get data from wood_recovery")
-		panic(err)
+		c.SendString("loi truy xuat")
 	}
-
 	for rows.Next() {
 		var a string
-		var b, c float64
-		rows.Scan(&a, &b, &c)
-		a = strings.Split(a, "T")[0]
-		t, _ := time.Parse("2006-01-02", a)
-		a = t.Format("2 Jan")
+		var b float64
+		rows.Scan(&a, &b)
 		dates = append(dates, a)
-		recoveries = append(recoveries, b)
-		targets = append(targets, c)
+		targets = append(targets, b)
+	}
+	nod := len(dates)
+
+	sql = `select date, type, recovery from wood_recovery where date >= '` + c.FormValue("fromdate") + `' order by date`
+
+	rows, err = s.db.Query(sql)
+	if err != nil {
+		log.Println("fail to get data from wood_recovery")
+		c.SendString("loi truy xuat")
+	}
+
+	var rhlist = make([]float64, nod)
+	var brandlist = make([]float64, nod)
+	i := -1
+	ld := ""
+	for rows.Next() {
+		var a, b string
+		var c float64
+		rows.Scan(&a, &b, &c)
+		if ld != a {
+			i++
+			ld = a
+		}
+		if b == "RH" {
+			rhlist[i] = c
+		}
+		if b == "BRAND" {
+			brandlist[i] = c
+		}
+	}
+
+	for j := 0; j < len(dates); j++ {
+		t := strings.Split(dates[j], "T")[0]
+		dt, _ := time.Parse("2006-01-02", t)
+		dates[j] = dt.Format("2 Jan")
 	}
 
 	return c.Render("efficiency/wood_recover", fiber.Map{
 		"dates":      dates,
 		"recoveries": recoveries,
 		"targets":    targets,
+		"rhlist":     rhlist,
+		"brandlist":  brandlist,
 	})
 }
 
@@ -326,10 +367,10 @@ func (s *Server) inputwoodrecoveryPostHandler(c *fiber.Ctx) error {
 	date := c.FormValue("inputdate")
 	recovery := c.FormValue("recovery")
 	target := c.FormValue("wrtarget")
-	log.Println(date, recovery, target)
+	recoveryType := c.FormValue("recoveryType")
 
-	sql := `insert into wood_recovery(date, recovery, target) values ($1, $2, $3)`
-	_, err := s.db.Exec(sql, date, recovery, target)
+	sql := `insert into wood_recovery(date, recovery, target, type) values ($1, $2, $3, $4)`
+	_, err := s.db.Exec(sql, date, recovery, target, recoveryType)
 	if err != nil {
 		log.Println("fail to insert data into wood_recovery")
 		panic(err)
@@ -1322,6 +1363,8 @@ func (s *Server) woodfinishingHandler(c *fiber.Ctx) error {
 	var rhlist2 = make([]float64, nod)
 	var brandlist1 = make([]float64, nod)
 	var brandlist2 = make([]float64, nod)
+	var outsourcelist1 = make([]float64, nod)
+	var outsourcelist2 = make([]float64, nod)
 	rows, err = s.db.Query(`SELECT date, factory_no, type, sum(qty) from 
  		efficienct_reports where work_center = 'WOODFINISHING' group by date, factory_no, type having 
  		date >= '` + fromdate + `' order by date`)
@@ -1350,6 +1393,12 @@ func (s *Server) woodfinishingHandler(c *fiber.Ctx) error {
 		}
 		if b == "2" && c == "RH" {
 			rhlist2[i] = d
+		}
+		if b == "1" && c == "Outsource" {
+			outsourcelist1[i] = d
+		}
+		if b == "2" && c == "Outsource" {
+			outsourcelist2[i] = d
 		}
 	}
 
@@ -1466,17 +1515,19 @@ func (s *Server) woodfinishingHandler(c *fiber.Ctx) error {
 	p := message.NewPrinter(language.English)
 
 	return c.Render("efficiency/woodfinishingchart", fiber.Map{
-		"dates":         dates,
-		"rhlist1":       rhlist1,
-		"rhlist2":       rhlist2,
-		"brandlist1":    brandlist1,
-		"brandlist2":    brandlist2,
-		"targets":       targets,
-		"efficiency":    efficiency,
-		"latestCreated": latestCreated,
-		"demand":        p.Sprintf("%.f", demand),
-		"mtd":           mtdstr,
-		"onconveyors":   onconveyors,
+		"dates":          dates,
+		"rhlist1":        rhlist1,
+		"rhlist2":        rhlist2,
+		"brandlist1":     brandlist1,
+		"brandlist2":     brandlist2,
+		"targets":        targets,
+		"efficiency":     efficiency,
+		"latestCreated":  latestCreated,
+		"demand":         p.Sprintf("%.f", demand),
+		"mtd":            mtdstr,
+		"onconveyors":    onconveyors,
+		"outsourcelist1": outsourcelist1,
+		"outsourcelist2": outsourcelist2,
 	})
 }
 
@@ -1504,6 +1555,8 @@ func (s *Server) packingHandler(c *fiber.Ctx) error {
 	var rhlist2 = make([]float64, nod)
 	var brandlist1 = make([]float64, nod)
 	var brandlist2 = make([]float64, nod)
+	var outsourcelist1 = make([]float64, nod)
+	var outsourcelist2 = make([]float64, nod)
 	rows, err = s.db.Query(`SELECT date, factory_no, type, sum(qty) from 
  		efficienct_reports where work_center = 'PACKING' group by date, factory_no, type having 
  		date >= '` + fromdate + `' order by date`)
@@ -1532,6 +1585,12 @@ func (s *Server) packingHandler(c *fiber.Ctx) error {
 		}
 		if b == "2" && c == "RH" {
 			rhlist2[i] = d
+		}
+		if b == "1" && c == "Outsource" {
+			outsourcelist1[i] = d
+		}
+		if b == "2" && c == "Outsource" {
+			outsourcelist2[i] = d
 		}
 	}
 
@@ -1648,16 +1707,18 @@ func (s *Server) packingHandler(c *fiber.Ctx) error {
 	p := message.NewPrinter(language.English)
 
 	return c.Render("efficiency/packingchart", fiber.Map{
-		"dates":         dates,
-		"rhlist1":       rhlist1,
-		"rhlist2":       rhlist2,
-		"brandlist1":    brandlist1,
-		"brandlist2":    brandlist2,
-		"targets":       targets,
-		"efficiency":    efficiency,
-		"latestCreated": latestCreated,
-		"demand":        p.Sprintf("%.f", demand),
-		"mtd":           mtdstr,
-		"onconveyors":   onconveyors,
+		"dates":          dates,
+		"rhlist1":        rhlist1,
+		"rhlist2":        rhlist2,
+		"brandlist1":     brandlist1,
+		"brandlist2":     brandlist2,
+		"targets":        targets,
+		"efficiency":     efficiency,
+		"latestCreated":  latestCreated,
+		"demand":         p.Sprintf("%.f", demand),
+		"mtd":            mtdstr,
+		"onconveyors":    onconveyors,
+		"outsourcelist1": outsourcelist1,
+		"outsourcelist2": outsourcelist2,
 	})
 }

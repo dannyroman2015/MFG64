@@ -19,15 +19,27 @@
       {
         datalabels: {
           labels: {
-            title: true
-          },
+            title: true,
+          }
         },
-        label: "Wood Recovery(%)",
-        data: {{.recoveries}},
-        yAxisID: 'y',
+        label: "RH(%)",
+        data: {{ .rhlist }},
+        backgroundColor: "rgba(75, 192, 192, 0.6)",
         pointStyle: 'rect',
-        backgroundColor: 'rgba(163, 85, 85, 0.8)',
       },
+
+      {
+        datalabels: {
+          labels: {
+            title: true,
+          }
+        },
+        label: "BRAND(%)",
+        data: {{ .brandlist }},
+        backgroundColor: "rgba(153, 102, 255, 0.6)",
+        pointStyle: 'rect',
+      },
+
       {
         datalabels: {
           labels: {
