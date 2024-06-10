@@ -843,6 +843,7 @@ func (s *Server) efficiencyReportPostHandler(c *fiber.Ctx) error {
 	inputdate := c.FormValue("inputdate")
 	factory = c.FormValue("factory")
 	typeofproduct = c.FormValue("typeofproduct")
+	color := c.FormValue("color")
 	var qty, manhr float64
 	qty, _ = strconv.ParseFloat(c.FormValue("qty"), 64)
 	manhr, _ = strconv.ParseFloat(c.FormValue("manhr"), 64)
@@ -853,10 +854,10 @@ func (s *Server) efficiencyReportPostHandler(c *fiber.Ctx) error {
 	// if pcs == "" || pcs == "0" {
 	// sql = `insert into efficienct_reports(work_center, date, qty, manhr, type, factory_no, cnc_machine, created_datetime) values ($1, $2, $3, $4, $5, $6, $7, current_timestamp)`
 	// } else {
-	sql := `insert into efficienct_reports(work_center, date, qty, manhr, type, factory_no, cnc_machine, created_datetime, pcs, onconveyor, veneertype) values ($1, $2, $3, $4, $5, $6, $7, current_timestamp, $8, $9, $10)`
+	sql := `insert into efficienct_reports(work_center, date, qty, manhr, type, factory_no, cnc_machine, created_datetime, pcs, onconveyor, veneertype, reededline_color) values ($1, $2, $3, $4, $5, $6, $7, current_timestamp, $8, $9, $10, $11)`
 	// }
 
-	_, err := s.db.Exec(sql, workcenter, inputdate, qty, manhr, typeofproduct, factory, cncmachine, pcs, onconveyor, veneertype)
+	_, err := s.db.Exec(sql, workcenter, inputdate, qty, manhr, typeofproduct, factory, cncmachine, pcs, onconveyor, veneertype, color)
 	if err != nil {
 		panic(err)
 	}
