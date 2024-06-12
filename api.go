@@ -992,6 +992,8 @@ func (s *Server) efficientChartHandler(c *fiber.Ctx) error {
 		rows.Scan(&mtd)
 	}
 
+	log.Println(targets)
+
 	mtdstr := message.NewPrinter(language.English).Sprintf("%.f", mtd)
 	randColor := fmt.Sprintf("rgba(%d, %d, %d, 0.4)", rand.Intn(255), rand.Intn(255), rand.Intn(255))
 
