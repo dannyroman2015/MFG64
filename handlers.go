@@ -1666,7 +1666,7 @@ func (s *Server) packingHandler(c *fiber.Ctx) error {
 		nextmonth = time.Now().AddDate(0, 1, 0).Format("01")
 	}
 	var demand float64
-
+	log.Println(month, nextmonth)
 	sql = `select demandofmonth from targets where 
 		workcenter = 'PACKING' and date >= '2024-` + month + `-01' 
 		and date <= '2024-` + nextmonth + `-01' and demandofmonth <> 0 order by demandofmonth desc limit 1`
