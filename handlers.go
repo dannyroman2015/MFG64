@@ -470,7 +470,7 @@ func (s *Server) summarytableHandler(c *fiber.Ctx) error {
 	}
 
 	days := time.Now().Day()
-	days = days - 4 // tính lại sau
+	days = days - 3 // tính lại sau
 	mtdavg := totalm / float64(days)
 	log.Println(days)
 	rhmtdavgp := pcs[1] / days
