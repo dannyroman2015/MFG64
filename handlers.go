@@ -470,8 +470,9 @@ func (s *Server) summarytableHandler(c *fiber.Ctx) error {
 	}
 
 	days := time.Now().Day()
-	days = days - 2 // tính lại sau
+	days = days - 3 // tính lại sau
 	mtdavg := totalm / float64(days)
+	log.Println(days)
 	rhmtdavgp := pcs[1] / days
 	rhmtdavgm := moneys[1] / float64(days)
 	brandavgp := pcs[0] / days
@@ -481,7 +482,7 @@ func (s *Server) summarytableHandler(c *fiber.Ctx) error {
 
 	nextdays := time.Since(time.Date(2024, time.Now().Month()+1, 1, 0, 0, 0, 0, time.Local))
 	daystill := nextdays.Hours() / -24
-	daystill = daystill - 3 //bỏ, tính lại sau
+	daystill = daystill - 2 //bỏ, tính lại sau
 	totales := math.Round(mtdavg*daystill + totalm)
 
 	// var arr [][]string
