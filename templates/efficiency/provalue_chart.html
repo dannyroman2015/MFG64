@@ -45,12 +45,12 @@
         pointStyle: 'rect',
       },
 
-      {
-        label: "X2-Outsource",
-        data: {{ .outsourcelist2 }},
-        backgroundColor: "rgb(244, 242, 126)",
-        pointStyle: 'rect',
-      },
+      // {
+      //   label: "X2-Outsource",
+      //   data: {{ .outsourcelist2 }},
+      //   backgroundColor: "rgb(244, 242, 126)",
+      //   pointStyle: 'rect',
+      // },
       
       {
         datalabels: {
@@ -108,7 +108,11 @@
           font: {size: 10},
           color: 'black', align: 'top', anchor: 'start', offset: 0,
           formatter: function(value, context) {
-            return value.toLocaleString()
+            if (value != 0) {
+              return value.toLocaleString()
+            } else {
+              return ""
+            }
           },
         },
         title: {text: "{{.workcenter}} (lastest update at {{.latestCreated}})", display: true},
