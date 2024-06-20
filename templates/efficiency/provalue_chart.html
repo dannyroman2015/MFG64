@@ -98,8 +98,9 @@
         tooltip: {
           callbacks: {
             footer: (tooltipItems) => {
+              console.log(tooltipItems)
               let sum = 0;
-              sum = tooltipItems[0].parsed._stacks.y[0] + tooltipItems[0].parsed._stacks.y[1] + tooltipItems[0].parsed._stacks.y[2]
+              sum = tooltipItems[0].parsed._stacks.y[0] + tooltipItems[0].parsed._stacks.y[1] + tooltipItems[0].parsed._stacks.y[2] + tooltipItems[0].parsed._stacks.y[3]
               return 'Sum: ' + sum;
             }
           }
