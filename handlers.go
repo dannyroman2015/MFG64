@@ -129,12 +129,13 @@ func (s *Server) prodvalueChartHandler(c *fiber.Ctx) error {
 	}
 
 	numberOfTargets := len(targets)
-	var rhlist1 = make([]float64, numberOfTargets)
-	var rhlist2 = make([]float64, numberOfTargets)
-	var brandlist1 = make([]float64, numberOfTargets)
-	var brandlist2 = make([]float64, numberOfTargets)
-	var outsourcelist1 = make([]float64, numberOfTargets)
-	var outsourcelist2 = make([]float64, numberOfTargets)
+	log.Println(numberOfTargets)
+	var rhlist1 = make([]float64, numberOfTargets+1)
+	var rhlist2 = make([]float64, numberOfTargets+1)
+	var brandlist1 = make([]float64, numberOfTargets+1)
+	var brandlist2 = make([]float64, numberOfTargets+1)
+	var outsourcelist1 = make([]float64, numberOfTargets+1)
+	var outsourcelist2 = make([]float64, numberOfTargets+1)
 
 	rows, err = s.db.Query(`SELECT date, factory_no, type, sum(qty) from 
 		efficienct_reports where work_center = 'PACKING' group by date, factory_no, type having 
@@ -153,6 +154,7 @@ func (s *Server) prodvalueChartHandler(c *fiber.Ctx) error {
 			i++
 			ld = a
 		}
+
 		if b == "1" && c == "RH" {
 			rhlist1[i] = d
 		}
@@ -472,9 +474,8 @@ func (s *Server) summarytableHandler(c *fiber.Ctx) error {
 	}
 
 	days := time.Now().Day()
-	days = days - 3 // tính lại sau
+	days = days - 4 // tính lại sau
 	mtdavg := totalm / float64(days)
-	log.Println(days)
 	rhmtdavgp := pcs[1] / days
 	rhmtdavgm := moneys[1] / float64(days)
 	brandavgp := pcs[0] / days
@@ -484,7 +485,7 @@ func (s *Server) summarytableHandler(c *fiber.Ctx) error {
 
 	nextdays := time.Since(time.Date(2024, time.Now().Month()+1, 1, 0, 0, 0, 0, time.Local))
 	daystill := nextdays.Hours() / -24
-	daystill = daystill - 2 //bỏ, tính lại sau
+	daystill = daystill - 1 //bỏ, tính lại sau
 	totales := math.Round(mtdavg*daystill + totalm)
 
 	// var arr [][]string
