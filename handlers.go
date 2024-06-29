@@ -66,6 +66,8 @@ func (s *Server) prodvalueChartHandler(c *fiber.Ctx) error {
 		datesOfTarget = append(datesOfTarget, a)
 		tmp_targets = append(tmp_targets, b)
 		targets = append(targets, b*c*d)
+		log.Println(a)
+		log.Println(b, c, d)
 	}
 
 	rows, err = s.db.Query(`SELECT date, work_center, sum(qty), sum(manhr) from 
