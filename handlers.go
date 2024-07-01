@@ -128,7 +128,7 @@ func (s *Server) prodvalueChartHandler(c *fiber.Ctx) error {
 		quanity = append(quanity, c)
 	}
 
-	numberOfTargets := len(targets)
+	numberOfTargets := len(targets) + 1
 	log.Println(numberOfTargets)
 	var rhlist1 = make([]float64, numberOfTargets)
 	var rhlist2 = make([]float64, numberOfTargets)
