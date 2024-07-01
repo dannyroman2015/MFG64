@@ -450,11 +450,11 @@ func (s *Server) summarytableHandler(c *fiber.Ctx) error {
 	// } else {
 
 	// }
-	// curmon = time.Now().Format("01")
-	// nextmon = time.Now().AddDate(0, 1, 0).Format("01")
-	curmon = "06"
-	nextmon = "07"
-	log.Println("asdhf", curmon, nextmon)
+	curmon = time.Now().Format("01")
+	nextmon = time.Now().AddDate(0, 1, 0).Format("01")
+	// curmon = "06"
+	// nextmon = "07"
+	// log.Println("asdhf", curmon, nextmon)
 	sql := `select type, sum(qty), sum(pcs) from efficienct_reports where date >= '2024-` + curmon + `-01' and date < '2024-` + nextmon + `-01'
 		 group by work_center, type having work_center = 'PACKING' order by type`
 
@@ -483,9 +483,9 @@ func (s *Server) summarytableHandler(c *fiber.Ctx) error {
 		totalm += b
 	}
 
-	// days := time.Now().Day()
-	days := 30
-	days = days - 5 // tính lại sau
+	days := time.Now().Day()
+	// days := 30
+	// days = days // tính lại sau
 	mtdavg := totalm / float64(days)
 	rhmtdavgp := pcs[1] / days
 	rhmtdavgm := moneys[1] / float64(days)
@@ -497,7 +497,7 @@ func (s *Server) summarytableHandler(c *fiber.Ctx) error {
 	nextdays := time.Since(time.Date(2024, time.Now().Month()+1, 1, 0, 0, 0, 0, time.Local))
 	daystill := nextdays.Hours() / -24
 	// daystill = daystill //bỏ, tính lại sau
-	daystill = 0
+	// daystill = 0
 	totales := math.Round(mtdavg*daystill + totalm)
 
 	// var arr [][]string
