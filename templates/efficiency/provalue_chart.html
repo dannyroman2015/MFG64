@@ -70,27 +70,27 @@
         backgroundColor: '#433F45',
         borderColor: '#433F45',
       },
-      {
-        datalabels: {
-          formatter: function(value, context) {
-            if (context.dataIndex == context.dataset.data.length - 1) {
-              return value.toLocaleString()
-            } else {
-              return null
-            }
-          },
-        },
-        label: 'Target ({{ index .targetUnits .workcenter}})' ,
-        data: {{.targets}},
-        yAxisID: 'y',
-        type: "line",
-        pointStyle: 'line',
-        pointRadius: 1,
-        tension: 0.1,
-        borderWidth: 1,
-        backgroundColor: 'blue',
-        borderColor: 'blue',
-      },
+      // {
+      //   datalabels: {
+      //     formatter: function(value, context) {
+      //       if (context.dataIndex == context.dataset.data.length - 1) {
+      //         return value.toLocaleString()
+      //       } else {
+      //         return null
+      //       }
+      //     },
+      //   },
+      //   label: 'Target ({{ index .targetUnits .workcenter}})' ,
+      //   data: {{.targets}},
+      //   yAxisID: 'y',
+      //   type: "line",
+      //   pointStyle: 'line',
+      //   pointRadius: 1,
+      //   tension: 0.1,
+      //   borderWidth: 1,
+      //   backgroundColor: 'blue',
+      //   borderColor: 'blue',
+      // },
     ]
     },
     options: {

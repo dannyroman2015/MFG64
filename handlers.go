@@ -130,12 +130,12 @@ func (s *Server) prodvalueChartHandler(c *fiber.Ctx) error {
 
 	numberOfTargets := len(targets) + 2
 	log.Println(numberOfTargets)
-	var rhlist1 = make([]float64, numberOfTargets)
-	var rhlist2 = make([]float64, numberOfTargets)
-	var brandlist1 = make([]float64, numberOfTargets)
-	var brandlist2 = make([]float64, numberOfTargets)
-	var outsourcelist1 = make([]float64, numberOfTargets)
-	var outsourcelist2 = make([]float64, numberOfTargets)
+	var rhlist1 = make([]float64, 30)
+	var rhlist2 = make([]float64, 30)
+	var brandlist1 = make([]float64, 30)
+	var brandlist2 = make([]float64, 30)
+	var outsourcelist1 = make([]float64, 30)
+	var outsourcelist2 = make([]float64, 30)
 
 	rows, err = s.db.Query(`SELECT date, factory_no, type, sum(qty) from 
 		efficienct_reports where work_center = 'PACKING' group by date, factory_no, type having 
