@@ -672,6 +672,7 @@ func (s *Server) qulityChartHandler(c *fiber.Ctx) error {
 		"UPH":       make([]int, numberOfDate),
 		"ASS-1":     make([]int, numberOfDate),
 		"FIT-1":     make([]int, numberOfDate),
+		"FIT-2":     make([]int, numberOfDate),
 		"ASS-2":     make([]int, numberOfDate),
 		"WW-FM":     make([]int, numberOfDate),
 		"PAC-2":     make([]int, numberOfDate),
@@ -697,6 +698,7 @@ func (s *Server) qulityChartHandler(c *fiber.Ctx) error {
 			dates = append(dates, a)
 			lastdate = a
 		}
+		log.Println(a, b, c, d)
 		data[b][i] = int(math.Round(d * 100 / c))
 		checkqty = append(checkqty, c)
 		failqty = append(failqty, d)
