@@ -698,7 +698,6 @@ func (s *Server) qulityChartHandler(c *fiber.Ctx) error {
 			dates = append(dates, a)
 			lastdate = a
 		}
-		log.Println(a, b, c, d)
 		data[b][i] = int(math.Round(d * 100 / c))
 		checkqty = append(checkqty, c)
 		failqty = append(failqty, d)
