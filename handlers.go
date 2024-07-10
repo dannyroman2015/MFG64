@@ -483,11 +483,19 @@ func (s *Server) summarytableHandler(c *fiber.Ctx) error {
 		totalm += b
 	}
 
-	// sql = `select distinct date from efficienct_reports where date >= '2024-` + curmon + `-01' and date < '2024-` + nextmon + `-01'
-	// 	 group by work_center, type having work_center = 'PACKING'`
+	sql = `select distinct date from efficienct_reports where date >= '2024-` + curmon + `-01' and date < '2024-` + nextmon + `-01' and work_center = 'PACKING'`
+	rows, err = s.db.Query(sql)
+	if err != nil {
+		log.Println(err)
+		return c.SendString("Lỗi lấy dữ liệu")
+	}
+	days := 1 // tính lại sau
+	for rows.Next() {
+		days++
+	}
+	days--
+	// days := time.Now().Day()
 
-	days := time.Now().Day()
-	days = days - 2 // tính lại sau
 	mtdavg := totalm / float64(days)
 	rhmtdavgp := pcs[1] / days
 	rhmtdavgm := moneys[1] / float64(days)
