@@ -463,8 +463,8 @@ func (s *Server) summarytableHandler(c *fiber.Ctx) error {
 		log.Println(err)
 		return c.SendString("Lỗi lấy dữ liệu")
 	}
-	var moneys = make([]float64, 2)
-	var pcs = make([]int, 2)
+	var moneys = make([]float64, 3)
+	var pcs = make([]int, 3)
 	var totalm float64
 
 	for rows.Next() {
@@ -479,6 +479,10 @@ func (s *Server) summarytableHandler(c *fiber.Ctx) error {
 		if a == "BRAND" {
 			moneys[0] = b
 			pcs[0] = c
+		}
+		if a == "Outsource" {
+			moneys[2] = b
+			pcs[2] = c
 		}
 		totalm += b
 	}
@@ -503,6 +507,7 @@ func (s *Server) summarytableHandler(c *fiber.Ctx) error {
 	brandavgm := moneys[0] / float64(days)
 	rhmtdm := moneys[1]
 	brandmtdm := moneys[0]
+	outsourcemtdm := moneys[2]
 
 	nextdays := time.Since(time.Date(2024, time.Now().Month()+1, 1, 0, 0, 0, 0, time.Local))
 	daystill := nextdays.Hours() / -24
@@ -534,17 +539,18 @@ func (s *Server) summarytableHandler(c *fiber.Ctx) error {
 
 	return c.Render("efficiency/summary_body", fiber.Map{
 		// "arr": arr,
-		"totalm":    p.Sprintf("%.f", totalm),
-		"pcs":       pcs,
-		"rhmtdm":    p.Sprintf("%.f", rhmtdm),
-		"brandmtdm": p.Sprintf("%.f", brandmtdm),
-		"days":      days,
-		"mtdavg":    p.Sprintf("%.f", mtdavg),
-		"rhmtdavgp": rhmtdavgp,
-		"rhmtdavgm": p.Sprintf("%.f", rhmtdavgm),
-		"brandavgp": brandavgp,
-		"brandavgm": p.Sprintf("%.f", brandavgm),
-		"totales":   p.Sprintf("%.f", totales),
+		"totalm":        p.Sprintf("%.f", totalm),
+		"pcs":           pcs,
+		"rhmtdm":        p.Sprintf("%.f", rhmtdm),
+		"brandmtdm":     p.Sprintf("%.f", brandmtdm),
+		"outsourcemtdm": p.Sprintf("%.f", outsourcemtdm),
+		"days":          days,
+		"mtdavg":        p.Sprintf("%.f", mtdavg),
+		"rhmtdavgp":     rhmtdavgp,
+		"rhmtdavgm":     p.Sprintf("%.f", rhmtdavgm),
+		"brandavgp":     brandavgp,
+		"brandavgm":     p.Sprintf("%.f", brandavgm),
+		"totales":       p.Sprintf("%.f", totales),
 	})
 }
 
