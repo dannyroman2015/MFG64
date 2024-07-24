@@ -1028,9 +1028,11 @@ func (s *Server) viewreportPostHandler(c *fiber.Ctx) error {
 		var a = make([]string, 6)
 		var t string
 		rows.Scan(&t, &a[1], &a[2], &a[3], &a[4], &a[5])
-
-		a[0] = t[0:19]
-		a[0] = strings.Replace(a[0], "T", " ", 1)
+		tmp, err := time.Parse(time.RFC3339, t)
+		if err != nil {
+			log.Println(err)
+		}
+		a[0] = tmp.Add(7 * time.Hour).Format("2006-01-02 15:04:05")
 
 		data = append(data, a)
 		f.SetCellValue("Sheet1", fmt.Sprintf("A%d", i), a[0])
