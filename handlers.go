@@ -511,11 +511,12 @@ func (s *Server) summarytableHandler(c *fiber.Ctx) error {
 
 	nextdays := time.Since(time.Date(2024, time.Now().Month()+1, 1, 0, 0, 0, 0, time.Local))
 	daystill := nextdays.Hours() / -24
-	daystill = daystill - 4 //bỏ, tính lại sau
+	// daystill = daystill - 4 //bỏ, tính lại sau
+	log.Println("days still", daystill)
 	// daystill = 0
 	// totales := math.Round(mtdavg*daystill + totalm)
-	totales := math.Round(mtdavg * 27)
-
+	totales := math.Round(mtdavg*daystill + totalm)
+	log.Println("totales", totales)
 	// var arr [][]string
 
 	// sql := `select plan, actual, rh_act_pcs, rh_act_money, m64_act_pcs, m64_act_money
