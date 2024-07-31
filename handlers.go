@@ -511,6 +511,7 @@ func (s *Server) summarytableHandler(c *fiber.Ctx) error {
 
 	nextdays := time.Since(time.Date(2024, time.Now().Month()+1, 1, 0, 0, 0, 0, time.Local))
 	daystill := nextdays.Hours() / -24
+
 	// daystill = daystill - 4 //bỏ, tính lại sau
 	// daystill = 0
 	// totales := math.Round(mtdavg*daystill + totalm)
@@ -1007,13 +1008,14 @@ func (s *Server) viewreportPostHandler(c *fiber.Ctx) error {
 	f.SetCellValue("Sheet1", "F1", "To")
 	f.SetCellValue("Sheet1", "G1", todate)
 	f.SetCellValue("Sheet1", "A2", "Ngày giờ nhập")
-	f.SetCellValue("Sheet1", "B2", "Sản Lượng")
-	f.SetCellValue("Sheet1", "C2", "Manhr")
-	f.SetCellValue("Sheet1", "D2", "Xưởng")
-	f.SetCellValue("Sheet1", "E2", "Loại Hàng")
-	f.SetCellValue("Sheet1", "F2", "Số lượng (pcs)")
+	f.SetCellValue("Sheet1", "B2", "Nhập cho ngày")
+	f.SetCellValue("Sheet1", "C2", "Sản Lượng")
+	f.SetCellValue("Sheet1", "D2", "Manhr")
+	f.SetCellValue("Sheet1", "E2", "Xưởng")
+	f.SetCellValue("Sheet1", "F2", "Loại Hàng")
+	f.SetCellValue("Sheet1", "G2", "Số lượng (pcs)")
 	f.SetActiveSheet(1)
-	sql := `select created_datetime, qty, manhr, factory_no, type, pcs from efficienct_reports 
+	sql := `select created_datetime, date, qty, manhr, factory_no, type, pcs from efficienct_reports 
 		where work_center ='` + workcenter + `' and date >='` + fromdate + `' and date <='` + todate + `' order by date desc, created_datetime desc`
 
 	rows, err := s.db.Query(sql)
@@ -1024,12 +1026,12 @@ func (s *Server) viewreportPostHandler(c *fiber.Ctx) error {
 	var data [][]string
 	i := 3
 	for rows.Next() {
-		var a = make([]string, 6)
+		var a = make([]string, 7)
 		var t string
-		rows.Scan(&t, &a[1], &a[2], &a[3], &a[4], &a[5])
+		rows.Scan(&t, &a[1], &a[2], &a[3], &a[4], &a[5], &a[6])
 		tmp, _ := time.Parse(time.RFC3339, t)
 		a[0] = tmp.Add(7 * time.Hour).Format("2006-01-02 15:04:05")
-		// a[0] = t[0:19]
+		a[1] = a[1][0:10]
 		// a[0] = strings.Replace(a[0], "T", " ", 1)
 
 		data = append(data, a)
@@ -1039,6 +1041,7 @@ func (s *Server) viewreportPostHandler(c *fiber.Ctx) error {
 		f.SetCellValue("Sheet1", fmt.Sprintf("D%d", i), a[3])
 		f.SetCellValue("Sheet1", fmt.Sprintf("E%d", i), a[4])
 		f.SetCellValue("Sheet1", fmt.Sprintf("F%d", i), a[5])
+		f.SetCellValue("Sheet1", fmt.Sprintf("F%d", i), a[6])
 		i++
 	}
 	if err := f.SaveAs("./static/uploads/Book1.xlsx"); err != nil {
