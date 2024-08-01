@@ -2,7 +2,7 @@
 
   <div class="card">
     <header class="card-header">
-      <p class="card-header-title">Daily Packing Plan & Output Summary</p>
+      <p class="card-header-title">Daily Packing Plan & Output Summary (Month 7)</p>
       <label for="" class="card-header-icon">    
         From 
         <input  id="fromdate" name="fromdate" type="date" value={{.fromdate}} class="card-header-icon"
@@ -25,7 +25,7 @@
               <th>Outsource($)</th>
             </tr>
           </thead>
-          <!-- <tbody hx-get="/summarytable" hx-target=this hx-trigger="load" hx-swap="outerHTML"> -->
+          <tbody hx-get="/summarytable" hx-target=this hx-trigger="load" hx-swap="outerHTML">
             
           </tbody>
         </table>
