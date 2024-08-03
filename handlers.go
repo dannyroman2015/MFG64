@@ -450,10 +450,10 @@ func (s *Server) summarytableHandler(c *fiber.Ctx) error {
 	// } else {
 
 	// }
-	// curmon = time.Now().Format("01")
-	// nextmon = time.Now().AddDate(0, 1, 0).Format("01")
-	curmon = "07"
-	nextmon = "08"
+	curmon = time.Now().Format("01")
+	nextmon = time.Now().AddDate(0, 1, 0).Format("01")
+	// curmon = "07"
+	// nextmon = "08"
 	// log.Println("asdhf", curmon, nextmon)
 	sql := `select type, sum(qty), sum(pcs) from efficienct_reports where date >= '2024-` + curmon + `-01' and date < '2024-` + nextmon + `-01'
 		 group by work_center, type having work_center = 'PACKING' order by type`
@@ -487,16 +487,18 @@ func (s *Server) summarytableHandler(c *fiber.Ctx) error {
 		totalm += b
 	}
 
-	sql = `select distinct date from efficienct_reports where date >= '2024-` + curmon + `-01' and date < '2024-` + nextmon + `-01' and work_center = 'PACKING'`
+	sql = `select distinct date from efficienct_reports where date >= '2024-` + curmon + `-01' and date < '2024-` + nextmon + `-01' and work_center = 'PACKING' order by date`
 	rows, err = s.db.Query(sql)
 	if err != nil {
 		log.Println(err)
 		return c.SendString("Lỗi lấy dữ liệu")
 	}
 	days := 1 // tính lại sau
+	log.Println("start")
 	for rows.Next() {
 		days++
 	}
+	log.Println("end")
 	days--
 	// days := time.Now().Day()
 	if days == 0 {
