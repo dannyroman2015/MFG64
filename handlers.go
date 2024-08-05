@@ -504,6 +504,7 @@ func (s *Server) summarytableHandler(c *fiber.Ctx) error {
 	if days == 0 {
 		days = 1
 	}
+	days--
 	log.Println(days)
 	mtdavg := totalm / float64(days)
 	rhmtdavgp := pcs[1] / days
@@ -516,8 +517,8 @@ func (s *Server) summarytableHandler(c *fiber.Ctx) error {
 
 	nextdays := time.Since(time.Date(2024, time.Now().Month()+1, 1, 0, 0, 0, 0, time.Local))
 	daystill := nextdays.Hours() / -24
-	daystill = daystill - 3 //bỏ, tính lại sau
-	log.Println("daystill", daystill)
+
+	// daystill = daystill - 4 //bỏ, tính lại sau
 	// daystill = 0
 	// totales := math.Round(mtdavg*daystill + totalm)
 	totales := math.Round(mtdavg*daystill + totalm)
@@ -1046,7 +1047,7 @@ func (s *Server) viewreportPostHandler(c *fiber.Ctx) error {
 		f.SetCellValue("Sheet1", fmt.Sprintf("D%d", i), a[3])
 		f.SetCellValue("Sheet1", fmt.Sprintf("E%d", i), a[4])
 		f.SetCellValue("Sheet1", fmt.Sprintf("F%d", i), a[5])
-		f.SetCellValue("Sheet1", fmt.Sprintf("F%d", i), a[6])
+		f.SetCellValue("Sheet1", fmt.Sprintf("G%d", i), a[6])
 		i++
 	}
 	if err := f.SaveAs("./static/uploads/Book1.xlsx"); err != nil {
