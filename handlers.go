@@ -517,8 +517,8 @@ func (s *Server) summarytableHandler(c *fiber.Ctx) error {
 
 	nextdays := time.Since(time.Date(2024, time.Now().Month()+1, 1, 0, 0, 0, 0, time.Local))
 	daystill := nextdays.Hours() / -24
-
-	// daystill = daystill - 4 //bỏ, tính lại sau
+	log.Println(daystill)
+	daystill = daystill - 3 //bỏ, tính lại sau
 	// daystill = 0
 	// totales := math.Round(mtdavg*daystill + totalm)
 	totales := math.Round(mtdavg*daystill + totalm)
