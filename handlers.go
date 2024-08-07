@@ -504,7 +504,6 @@ func (s *Server) summarytableHandler(c *fiber.Ctx) error {
 	if days == 0 {
 		days = 1
 	}
-	days--
 	log.Println(days)
 	mtdavg := totalm / float64(days)
 	rhmtdavgp := pcs[1] / days
