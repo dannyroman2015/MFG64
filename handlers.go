@@ -504,7 +504,7 @@ func (s *Server) summarytableHandler(c *fiber.Ctx) error {
 	if days == 0 {
 		days = 1
 	}
-	days--
+	// days--
 	mtdavg := totalm / float64(days)
 	rhmtdavgp := pcs[1] / days
 	rhmtdavgm := moneys[1] / float64(days)
